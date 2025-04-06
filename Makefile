@@ -4,6 +4,9 @@ up:
 	docker-compose exec php-fpm composer install
 	docker-compose exec php-fpm php bin/console doctrine:migrations:migrate --no-interaction
 
+down:
+	docker-compose down
+
 php:
 	docker-compose exec -u 1000 php-fpm bash
 

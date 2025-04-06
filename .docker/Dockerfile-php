@@ -37,4 +37,6 @@ RUN chown -R www-data:www-data /var/www
 RUN mkdir -p /var/www/.composer
 RUN chown -R www-data:www-data /var/www/.composer
 
+RUN git config --system --add safe.directory /var/www/project
+
 WORKDIR /var/www/project/
