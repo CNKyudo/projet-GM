@@ -1,0 +1,16 @@
+FROM node:20-alpine
+
+RUN mkdir /.npm-global && chown -R node:node /.npm-global
+RUN mkdir /app && chown -R node:node /app
+
+ENV NPM_CONFIG_PREFIX=/.npm-global
+ENV PATH=$PATH:/.npm-global/bin
+
+WORKDIR  /app
+
+USER node
+
+COPY --chown=node:node front/ ./
+
+RUN npm install
+
