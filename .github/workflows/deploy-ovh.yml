@@ -1,0 +1,40 @@
+name: Deploy to OVH Web Cloud
+
+on:
+  push:
+    branches:
+      - deploy-ovh
+
+jobs:
+  ftp-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get latest code
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Install Composer dependencies
+        run: composer install --optimize-autoloader
+
+      - name: Upload via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        env:
+            CI: true
+            FTP_DEBUG: true
+        with:
+          protocol: ftp
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./
+          server-dir: /www/gm/
+          passive: true
+          exclude: |
+            .git/
+            .env*
+            tests/
+            *.log
