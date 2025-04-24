@@ -10,11 +10,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         gnupg gnupg1 gnupg2 \
         sudo \
         ssh \
-        libpq-dev \
-    && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
+        libmariadb-dev \
     && docker-php-ext-install \
-        pgsql \
-        pdo_pgsql \
+        mysqli \
+        pdo_mysql \
         soap \
         zip \
         opcache \
