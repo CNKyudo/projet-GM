@@ -45,7 +45,7 @@ Le Makefile contient plusieurs commandes pratiques :
 ## Structure du projet
 
 L'environnement de développement du projet utilise une architecture Docker avec les services suivants :
-- **database** : MySQL 9.3
+- **database** : MySQL 8.0
 - **adminer** : Interface de gestion de base de données
 - **php-nginx** : Serveur web Nginx
 - **php-fpm** : PHP 8.3 avec les extensions nécessaires
