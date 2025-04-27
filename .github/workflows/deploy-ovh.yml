@@ -51,4 +51,4 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
-          script: cd www/gm && php bin/console doctrine:migrations:migrate --no-interaction
+          script: cd www/gm && /usr/local/php8.3/bin/php bin/console doctrine:migrations:migrate --no-interaction
