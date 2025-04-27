@@ -57,6 +57,6 @@ jobs:
             cd www/gm
             pwd
             ls -la
-            cd www/gm && /usr/local/php8.3/bin/php bin/console doctrine:migrations:migrate --no-interaction 
+            /usr/local/php8.3/bin/php bin/console doctrine:migrations:migrate --no-interaction 
 
           debug: true
