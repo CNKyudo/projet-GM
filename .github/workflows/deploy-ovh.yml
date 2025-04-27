@@ -36,13 +36,13 @@ jobs:
           local-dir: ./
           server-dir: /www/gm/
           exclude: |
-            .git/
+            .git/*
             .env*
-            tests/
+            tests/*
             *.log
-            var/cache/dev/
-            var/cache/test/
-            var/log/
+            var/cache/dev/*
+            var/cache/test/*
+            var/log/*
 
       - name: Execute migrations on server via SSH
         uses: appleboy/ssh-action@master
