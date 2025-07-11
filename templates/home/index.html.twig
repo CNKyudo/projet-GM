@@ -10,5 +10,9 @@
 
 <div class="example-wrapper">
     <h1>France Kyudo 仏国弓道 フランス きゅうど</h1>
+    <div>
+        Bonjour {{ app.user.email }}
+    </div>
 </div>
+<a href="{{ path("app_logout") }}">Se déconnecter</a>
 {% endblock %}
