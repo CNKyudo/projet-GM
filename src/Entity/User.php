@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -33,6 +35,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToOne(mappedBy: 'president', cascade: ['persist'])]
     private ?Club $clubWhichImPresidentOf = null;
+
+    /**
+     * @var Collection<int, Equipment>
+     */
+    #[ORM\OneToMany(targetEntity: Equipment::class, mappedBy: 'borrower_user')]
+    private Collection $borrowed_equipments;
+
+    public function __construct()
+    {
+        $this->borrowed_equipments = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -122,6 +135,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         $this->clubWhichImPresidentOf = $clubWhichImPresidentOf;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Equipment>
+     */
+    public function getBorrowedEquipments(): Collection
+    {
+        return $this->borrowed_equipments;
+    }
+
+    public function addBorrowedEquipment(Equipment $borrowedEquipment): static
+    {
+        if (!$this->borrowed_equipments->contains($borrowedEquipment)) {
+            $this->borrowed_equipments->add($borrowedEquipment);
+            $borrowedEquipment->setBorrowerUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBorrowedEquipment(Equipment $borrowedEquipment): static
+    {
+        if ($this->borrowed_equipments->removeElement($borrowedEquipment)) {
+            // set the owning side to null (unless already changed)
+            if ($borrowedEquipment->getBorrowerUser() === $this) {
+                $borrowedEquipment->setBorrowerUser(null);
+            }
+        }
 
         return $this;
     }
