@@ -5,7 +5,7 @@ services:
     image: axllent/mailpit
     ports:
       - "1025"
-      - "8025"
+      - "8025:8025"
     networks:
       - symfony
     environment:
