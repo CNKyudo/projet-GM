@@ -1,13 +1,14 @@
-FROM php:8.3-fpm
+FROM php:8.4-fpm
 RUN apt-get update && apt-get install -y --no-install-recommends \
         git \
         zlib1g-dev \
         libxml2-dev \
         libpng-dev \
         libzip-dev \
-        vim curl debconf subversion git apt-transport-https apt-utils \
+        libicu-dev \
+        vim curl debconf subversion apt-transport-https apt-utils \
         build-essential locales acl mailutils wget nodejs zip unzip \
-        gnupg gnupg1 gnupg2 \
+        gnupg \
         sudo \
         ssh \
         libmariadb-dev \
@@ -18,7 +19,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         zip \
         opcache \
         gd \
-        intl
+        intl \
+    && pecl install apcu \
+    && docker-php-ext-enable apcu \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY build/php/opcache.ini /usr/local/etc/php/conf.d/
 COPY build/php/custom.ini /usr/local/etc/php/conf.d/

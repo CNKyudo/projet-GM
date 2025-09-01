@@ -1,4 +1,4 @@
-name: Deploy to OVH Web Cloud
+name: Deploy to OVH VPS
 
 on:
   push:
@@ -6,50 +6,72 @@ on:
       - main
 
 jobs:
-  ftp-deploy:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Get latest code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.8.1
         with:
-          php-version: '8.3'
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY_GM_USER }}
 
-      - name: Install Composer dependencies
-        run: composer install --optimize-autoloader
+      - name: Copy deploy script
+        run: scp .github/workflows/deploy.sh ${{ secrets.SSH_GM_USER }}@${{ secrets.SSH_HOST }}:/var/www/projet-GM/deploy.sh
 
-      - name: Install public assets
-        run: php bin/console asset-map:compile
+      - name: Deploy on server
+        run: |
+          COMMIT_HASH=$(git rev-parse HEAD)
+          ssh ${{ secrets.SSH_GM_USER }}@${{ secrets.SSH_HOST }} \
+            "/var/www/projet-GM/deploy.sh $COMMIT_HASH"
 
-      - name: Upload via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        env:
-            CI: true
-            FTP_DEBUG: true
-        with:
-          protocol: ftp
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./
-          server-dir: /www/gm/
-          exclude: |
-            **/.git/**
-            **/.env*
-            **/tests/**
-            **/*.log
-            **/var/cache/**
-            **/var/log/**
 
-      - name: Execute migrations on server via SSH
-        uses: appleboy/ssh-action@master
-        with:
-            host: ${{ secrets.SSH_HOST }}
-            username: ${{ secrets.SSH_USERNAME }}
-            password: ${{ secrets.SSH_PASSWORD }}
-            port: ${{ secrets.SSH_PORT }}
-            script: |
-              cd www/gm
-              /usr/local/php8.3/bin/php bin/console doctrine:migrations:migrate --no-interaction
+  # ftp-deploy:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Get latest code
+  #       uses: actions/checkout@v4
+
+  #     - name: Set up PHP
+  #       uses: shivammathur/setup-php@v2
+  #       with:
+  #         php-version: '8.3'
+
+  #     - name: Install Composer dependencies
+  #       run: composer install --optimize-autoloader
+
+  #     - name: Install public assets
+  #       run: php bin/console asset-map:compile
+
+  #     - name: Upload via FTP
+  #       uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+  #       env:
+  #           CI: true
+  #           FTP_DEBUG: true
+  #       with:
+  #         protocol: ftp
+  #         server: ${{ secrets.FTP_SERVER }}
+  #         username: ${{ secrets.FTP_USERNAME }}
+  #         password: ${{ secrets.FTP_PASSWORD }}
+  #         local-dir: ./
+  #         server-dir: /www/gm/
+  #         exclude: |
+  #           **/.git/**
+  #           **/.env*
+  #           **/tests/**
+  #           **/*.log
+  #           **/var/cache/**
+  #           **/var/log/**
+
+  #     - name: Execute migrations on server via SSH
+  #       uses: appleboy/ssh-action@master
+  #       with:
+  #           host: ${{ secrets.SSH_HOST }}
+  #           username: ${{ secrets.SSH_USERNAME }}
+  #           password: ${{ secrets.SSH_PASSWORD }}
+  #           port: ${{ secrets.SSH_PORT }}
+  #           script: |
+  #             cd www/gm
+  #             /usr/local/php8.3/bin/php bin/console doctrine:migrations:migrate --no-interaction
+
