@@ -26,6 +26,13 @@ else
   git reset --hard "origin/main"
 fi
 
+if [ -f "$PROD_LINK/.env.local" ]; then
+  cp "$PROD_LINK/.env.local" "$RELEASE_DIR/.env.local"
+  echo "✅ Copie du .env.local depuis la release active"
+else
+  echo "⚠️ Aucun .env.local trouvé dans $PROD_LINK, pensez à le créer !"
+fi
+
 composer install --no-dev --classmap-authoritative --no-interaction --prefer-dist --no-scripts --no-progress
 
 php bin/console cache:clear --env=prod
