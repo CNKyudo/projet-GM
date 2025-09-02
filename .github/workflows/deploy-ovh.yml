@@ -16,6 +16,11 @@ jobs:
         uses: webfactory/ssh-agent@v0.9.1
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY_GM_USER }}
+          
+      - name: Add remote host to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
       - name: Copy deploy script
         run: scp .github/workflows/deploy.sh ${{ secrets.SSH_GM_USER }}@${{ secrets.SSH_HOST }}:/var/www/projet-GM/deploy.sh
