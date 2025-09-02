@@ -25,7 +25,7 @@ class Equipment
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'equipments')]
+    #[ORM\ManyToOne(inversedBy: 'owned_equipments')]
     private ?Club $owner_club = null;
 
     #[ORM\ManyToOne(inversedBy: 'borrowed_equipments')]

@@ -1,23 +1,22 @@
 services:
 ###> doctrine/doctrine-bundle ###
   database:
-    image: mysql:8.0
+    image: postgres:16
     environment:
-      MYSQL_DATABASE: app
-      MYSQL_PASSWORD: password
-      MYSQL_USER: app
-      MYSQL_ROOT_PASSWORD: password
+      POSTGRES_DB: app
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: password
     ports:
-      - "3306:3306"
+      - "5432:5432"
     volumes:
-      - database_data:/var/lib/mysql:rw
+      - database_data:/var/lib/postgresql/data:rw
     networks:
       - symfony
 ###< doctrine/doctrine-bundle ###
   adminer:
     image: adminer
     environment:
-      ADMINER_DEFAULT_DB_DRIVER: mysql
+      ADMINER_DEFAULT_DB_DRIVER: pgsql
       ADMINER_DEFAULT_DB_HOST: database
       ADMINER_DEFAULT_SERVER: database
       ADMINER_DEFAULT_DB_NAME: app
@@ -41,7 +40,7 @@ services:
       context: ./.docker # Specify where the Dockerfile is located (e.g. in the root directory of the project)
       dockerfile: Dockerfile-php # Specify the name of the Dockerfile
     environment: # You can use this section to set environment variables. But you can also use the .env file.
-      - DATABASE_URL=mysql://app:password@database:3306/app?serverVersion=8.0&charset=utf8mb4
+      - DATABASE_URL=pgsql://app:password@database:5432/app?serverVersion=16&charset=utf8
     volumes:
       - ./:/var/www/project/ # Location of the project for php-fpm. Note this should be the same for NGINX.*
     networks:

@@ -10,6 +10,13 @@ Pour mettre en place l'environnement de développement, vous devez disposer des 
 
 ### 1. Lancer l'environnement Docker
 
+Si vous avez déjà lancé le projet avant le 09/2025, vous aviez une base MySQL. 
+Nous avons changé pour une base PostgreSQL. Il faut donc supprimer le volume :
+
+```bash
+docker remove database_data
+```
+
 Utilisez la commande Make pour construire et démarrer les conteneurs :
 
 ```bash
@@ -27,7 +34,7 @@ Cette commande va :
 Une fois l'installation terminée, vous pouvez accéder à :
 - Application web : http://localhost:8000
 - Interface Adminer (gestion BDD) : http://localhost:8080
-    - Système : MySQL
+    - Système : PostgreSQL
     - Serveur : database
     - Utilisateur : root
     - Mot de passe : password
@@ -45,10 +52,10 @@ Le Makefile contient plusieurs commandes pratiques :
 ## Structure du projet
 
 L'environnement de développement du projet utilise une architecture Docker avec les services suivants :
-- **database** : MySQL 8.0
+- **database** : PostgreSQL 16
 - **adminer** : Interface de gestion de base de données
 - **php-nginx** : Serveur web Nginx
-- **php-fpm** : PHP 8.3 avec les extensions nécessaires
+- **php-fpm** : PHP 8.4 avec les extensions nécessaires
 
 ## Développement
 
