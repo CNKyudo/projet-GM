@@ -5,16 +5,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libxml2-dev \
         libpng-dev \
         libzip-dev \
+        libpq-dev \
         libicu-dev \
         vim curl debconf subversion apt-transport-https apt-utils \
         build-essential locales acl mailutils wget nodejs zip unzip \
         gnupg \
         sudo \
         ssh \
-        libmariadb-dev \
     && docker-php-ext-install \
-        mysqli \
-        pdo_mysql \
+        pdo \
+        pdo_pgsql \
         soap \
         zip \
         opcache \
