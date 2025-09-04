@@ -30,6 +30,11 @@ La configuration Nginx pour le projet se situe ici :
 sudo vim /etc/nginx/sites-available/projet-gm.conf
 ```
 
+Les logs de l'application sont ici :
+
+- `/var/log/nginx/projet-GM_access.log`
+- `/var/log/nginx/projet-GM_error.log`
+
 ## PHP
 
 Ce projet a un pool PHP dédié, ce qui permet d'avoir à l'avenir d'autre projet hébergés par le serveur avec des configurations différentes.
@@ -37,7 +42,7 @@ Le pool se configure ici :
 
 ```bash
 sudo vim /etc/php/8.4/fpm/pool.d/projet-gm.conf
-```bash
+```
 
 ## PostgreSQL
 

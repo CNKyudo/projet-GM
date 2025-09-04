@@ -36,6 +36,7 @@ fi
 composer install --no-dev --classmap-authoritative --no-interaction --prefer-dist --no-scripts --no-progress
 
 php bin/console cache:clear --env=prod
+php bin/console importmap:install --env=prod
 php bin/console asset-map:compile --env=prod --quiet --no-interaction
 php bin/console assets:install public --no-interaction --env=prod --no-interaction --quiet
 php bin/console doctrine:migrations:migrate --no-interaction --env=prod
