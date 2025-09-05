@@ -86,3 +86,22 @@ Il est donc possible de rollback un déploiement en changeant le lien symbolique
 ln -sfn "/var/www/projet-GM/releases/{HASH_COMMIT}" "/var/www/projet-GM/production"
 
 ```
+
+## HTTPS
+
+Le HTTPS certificat TLS est géré par l'autorité de certificat Let's Encrypt qui propose des certificats TLS de 3 mois.
+Le certificat est généré sur le serveur et lié à la configuration Nginx pour servir du HTTPS.
+Un Timer est lancé régulièrement pour tenter de renouveller le certificat.
+Pour avoir des infos sur le Timer, et quelle sera son prochain passage (Trigger), on peut utiliser la commande :
+
+```bash
+sudo systemctl status certbot.timer
+```
+
+Les logs letsencrypt sont ici : `/var/log/letsencrypt/letsencrypt.log`.
+
+On peut faire un test immédiat "à blanc" (--dry-run simule le renouvellement) :
+
+```bash
+sudo sudo certbot renew --dry-run
+```
