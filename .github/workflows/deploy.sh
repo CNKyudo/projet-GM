@@ -33,6 +33,8 @@ else
   echo "⚠️ Aucun .env.local trouvé dans $PROD_LINK, pensez à le créer !"
 fi
 
+mkdir -p "$RELEASE_DIR/var/log"
+
 composer install --no-dev --classmap-authoritative --no-interaction --prefer-dist --no-scripts --no-progress
 
 php bin/console cache:clear --env=prod
