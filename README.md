@@ -36,7 +36,7 @@ Une fois l'installation terminée, vous pouvez accéder à :
 - Interface Adminer (gestion BDD) : http://localhost:8080
     - Système : PostgreSQL
     - Serveur : database
-    - Utilisateur : root
+    - Utilisateur : app
     - Mot de passe : password
     - Base de données : app
 
