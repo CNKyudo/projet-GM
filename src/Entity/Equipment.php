@@ -56,6 +56,11 @@ class Equipment
         return $this->borrower_club;
     }
 
+    public function getTypeName(): string
+    {
+        return (new \ReflectionClass($this))->getShortName();
+    }
+
     public function setBorrowerClub(?Club $borrower_club): static
     {
         $this->borrower_club = $borrower_club;
