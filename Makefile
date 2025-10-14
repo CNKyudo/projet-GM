@@ -3,6 +3,13 @@ up:
 	docker-compose up -d
 	docker-compose exec php-fpm composer install
 	docker-compose exec php-fpm php bin/console doctrine:migrations:migrate --no-interaction
+	docker-compose exec php-fpm php bin/console tailwind:build
+
+tailwind:
+	docker-compose exec php-fpm php bin/console tailwind:build
+
+tailwind-watch:
+	docker-compose exec php-fpm php bin/console tailwind:build --watch
 
 down:
 	docker-compose down
