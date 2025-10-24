@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello EquipementController!{% endblock %}
+{% block title %}Hello EquipmentController!{% endblock %}
 
 {% block body %}
 <style>
@@ -18,21 +18,22 @@
             <th>Type</th>
             <th>Club Propriétaire</th>
             <th>Club Emprunteur</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-        {% for equipement in equipements %}
+        {% for equipment in equipments %}
             <tr>
-                <td>{{ equipement.id }}</td>
-                <td>{{ equipement.typeName }}</td>
+                <td>{{ equipment.id }}</td>
+                <td>{{ equipment.typeName }}</td>
                 <td>
-                {% if equipement.ownerClub %}
-                   {{ equipement.ownerClub.name }}
+                {% if equipment.ownerClub %}
+                   {{ equipment.ownerClub.name }}
                 {% endif %}
                 </td>
                 <td>
-                {% if equipement.borrowerClub %}
-                   {{ equipement.borrowerClub.name }}
+                {% if equipment.borrowerClub %}
+                   {{ equipment.borrowerClub.name }}
                 {% endif %}
                 </td>
             </tr>
