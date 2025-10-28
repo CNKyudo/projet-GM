@@ -10,7 +10,11 @@
 
 <div class="example-wrapper">
     <h1>Équipements</h1>
-
+    <ul>
+    <li> <a type="button" class="btn" href="/equipment/create_yumi"> Ajouter un yumi </a> </li>
+    <li> <a type="button" class="btn" href="/equipment/create_kake"> Ajouter un kake </a> </li>
+    </ul> 
+   
     <table border="1">
     <thead>
         <tr>
@@ -36,7 +40,9 @@
                    {{ equipment.borrowerClub.name }}
                 {% endif %}
                 </td>
-
+                <td>
+                <a type="button" class="btn" href="/equipment/{{ equipment.id }}/edit"> Modifier </a>
+                </td>
             </tr>
         {% endfor %}
     </tbody>

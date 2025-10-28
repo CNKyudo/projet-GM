@@ -9,7 +9,7 @@
 </style>
 
 <div class="example-wrapper">
-    <h1>Équipements</h1>
+    <h1>Détail de l'équipement</h1>
 
     <table border="1">
     <thead>
@@ -22,22 +22,22 @@
         </tr>
     </thead>
     <tbody>
-        {% for equipment in equipments %}
-            <tr>
-                <td>{{ equipment.id }}</td>
-                <td>{{ equipment.typeName }}</td>
-                <td>
-                {% if equipment.ownerClub %}
-                   {{ equipment.ownerClub.name }}
-                {% endif %}
-                </td>
-                <td>
-                {% if equipment.borrowerClub %}
-                   {{ equipment.borrowerClub.name }}
-                {% endif %}
-                </td>
-            </tr>
-        {% endfor %}
+        <tr>
+            <td>{{ equipment.id }}</td>
+            <td>{{ equipment.typeName }}</td>
+            <td>
+            {% if equipment.ownerClub %}
+                {{ equipment.ownerClub.name }}
+            {% endif %}
+            </td>
+            <td>
+            {% if equipment.borrowerClub %}
+                {{ equipment.borrowerClub.name }}
+            {% endif %}
+            </td>
+            <td>
+            </td>
+        </tr>
     </tbody>
 </table>
 </div>

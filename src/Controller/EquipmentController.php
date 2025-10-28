@@ -3,8 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Equipment;
+use App\Entity\Glove;
+use App\Entity\Yumi;
 use App\Repository\EquipmentRepository;
 use App\Form\EquipmentFormType;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,20 +26,47 @@ final class EquipmentController extends AbstractController
         ]);
     }
 
-    #[Route('/equipment/{id}', name: 'equipment.show')]
+    #[Route('/equipment/{id}', name: 'equipment.show', requirements: ['id'=>'\d+'] )]
     public function show(Request $request, int $id, EquipmentRepository $repository): Response
     {
-        $equipments = $repository->find($id);
-        // dd($equipments);
+        $equipment = $repository->find($id);
         return $this->render('equipment/show.html.twig', [
-            'equipments' => $equipments,
+            'equipment' => $equipment,
+        ]);
+    }
+
+    #[Route('/equipment/create_{type}', name: 'equipment.create')]
+    public function create(Request $request, string $type, EntityManagerInterface $em)
+    {
+        $equipmentTypes = [
+            'yumi'  => Yumi::class,
+            'kake' => Glove::class,
+        ];
+
+        if (!isset($equipmentTypes[$type])) {
+            throw new \LogicException('Invalid equipment type');
+        }
+
+        $class = $equipmentTypes[$type];
+        $equipment = new $class();
+        $form = $this->createForm(EquipmentFormType::class, $equipment);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid())
+        {
+            $em->persist($equipment);
+            $em->flush();
+            $this->addFlash('success', ucfirst($type).' ajouté.');
+            return $this->redirectToRoute('equipment.index');
+        }
+        return $this->render('equipment/create.html.twig', [
+            'form' => $form,
+            'type' => $type,
         ]);
     }
 
     #[Route('/equipment/{id}/edit', name: 'equipment.edit')]
     public function edit(Equipment $equipment, Request $request, EntityManagerInterface $em)
     {
-        // dd($equipment);
         $form = $this->createForm(EquipmentFormType::class, $equipment);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid())
