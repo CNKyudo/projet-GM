@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello EquipmentController!{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<div class="example-wrapper">
+    <h1>Équipements</h1>
+    <ul>
+    <li> <a type="button" class="btn" href="/equipment/create_yumi"> Ajouter un yumi </a> </li>
+    <li> <a type="button" class="btn" href="/equipment/create_kake"> Ajouter un kake </a> </li>
+    </ul> 
+   
+    <table border="1">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Type</th>
+            <th>Club Propriétaire</th>
+            <th>Club Emprunteur</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for equipment in equipments %}
+            <tr>
+                <td>{{ equipment.id }}</td>
+                <td>{{ equipment.typeName }}</td>
+                <td>
+                {% if equipment.ownerClub %}
+                   {{ equipment.ownerClub.name }}
+                {% endif %}
+                </td>
+                <td>
+                {% if equipment.borrowerClub %}
+                   {{ equipment.borrowerClub.name }}
+                {% endif %}
+                </td>
+                <td>
+                <a type="button" class="btn" href="/equipment/{{ equipment.id }}/edit"> Modifier </a>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}
