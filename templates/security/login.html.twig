@@ -3,31 +3,38 @@
 {% block title %}Log in!{% endblock %}
 
 {% block body %}
-    <form method="post">
-        {% if error %}
-            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-        {% endif %}
-
-        {% if app.user %}
-            <div class="mb-3">
-                You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
-            </div>
-        {% endif %}
-
-        <h1 class="h3 mb-3 font-weight-normal">Entrez vos informations de connexion</h1>
-        <label for="username">Email</label>
-        <input type="email" value="{{ last_username }}" name="_username" id="username" class="form-control" autocomplete="email" required autofocus>
-        <label for="password">Mot de passe</label>
-        <input type="password" name="_password" id="password" class="form-control" autocomplete="current-password" required>
-        <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
-
-        <button class="btn btn-lg btn-primary" type="submit">
-            Se connecter
-        </button>
-        <div class="p-8 bg-blue-500 text-white text-center rounded-lg shadow-lg">
-            🚀 Tailwind fonctionne !
+    <div class="flex flex-col md:flex-row h-screen bg-kyudo-white">
+        <div id="login_display" class="absolute inset-0 md:static md:flex-2 bg-login bg-cover bg-center bg-kyudo-white"">
+            <div class="absolute inset-0 bg-black/40 bg-login md:hidden"></div>
         </div>
-    </form>
-    <a href="{{ path("app_register") }}">Créer un compte</a>
-    <a href="{{ path("app_forgot_password_request") }}">Mot de passe oublié?</a>
+        <div id="login_form" class="relative z-10 flex min-h-screen md:min-h-0 md:flex-1 items-center justify-center p-8 bg-kyudo-white md:bg-kyudo-royal-blue">
+            <div class="w-full max-w-sm rounded-xl bg-kyudo-royal-blue/90 backdrop-blur md:bg-transparent md:backdrop-blur-0 p-6 shadow-lg md:shadow-none">
+                <form method="post">
+                    {% if error %}
+                        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                    {% endif %}
+
+                    {% if app.user %}
+                        <div class="mb-3">
+                            You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
+                        </div>
+                    {% endif %}
+
+                    <h1 class="h3 mb-3 font-weight-normal">Entrez vos informations de connexion</h1>
+                    <label for="username">Email</label>
+                    <input type="email" value="{{ last_username }}" name="_username" id="username" class="form-control" autocomplete="email" required autofocus>
+                    <label for="password">Mot de passe</label>
+                    <input type="password" name="_password" id="password" class="form-control" autocomplete="current-password" required>
+                    <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
+
+                    <button class="btn btn-lg btn-primary" type="submit">
+                        Se connecter
+                    </button>
+
+                </form>
+                <a href="{{ path("app_register") }}">Créer un compte</a>
+                <a href="{{ path("app_forgot_password_request") }}">Mot de passe oublié?</a>
+            </div>
+        </div>
+    </div>
 {% endblock %}
