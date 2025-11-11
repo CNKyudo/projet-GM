@@ -10,7 +10,6 @@ use Doctrine\ORM\Mapping\InheritanceType;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 #[ORM\Entity(repositoryClass: EquipmentRepository::class)]
-#[ORM\HasLifecycleCallbacks]
 #[InheritanceType('SINGLE_TABLE')]
 #[DiscriminatorColumn(name: 'equipment_type', type: 'string')]
 #[DiscriminatorMap([
@@ -82,19 +81,5 @@ abstract class Equipment
         $this->borrower_user = $borrower_user;
 
         return $this;
-    }
-     
-    #[ORM\PrePersist]
-    public function onPrePersist(): void
-    {
-        $now = new \DateTimeImmutable();
-        $this->createdAt = $now;
-        $this->updatedAt = $now;
-    }
-
-    #[ORM\PreUpdate]
-    public function onPreUpdate(): void
-    {
-        $this->updatedAt = new \DateTimeImmutable();
     }
 }
