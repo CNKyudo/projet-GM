@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Entity;
+use App\Enum\EquipmentType;
 use App\Repository\EquipmentRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\DiscriminatorColumn;
@@ -16,7 +17,8 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
     'yumi' => Yumi::class,
     'glove' => Glove::class
 ])]
-class Equipment
+
+abstract class Equipment
 {
     use TimestampableEntity;
 
@@ -56,9 +58,11 @@ class Equipment
         return $this->borrower_club;
     }
 
+    abstract public static function getType(): EquipmentType;
+
     public function getTypeName(): string
     {
-        return (new \ReflectionClass($this))->getShortName();
+        return static::getType()->value;
     }
 
     public function setBorrowerClub(?Club $borrower_club): static
@@ -86,7 +90,6 @@ class Equipment
         $now = new \DateTimeImmutable();
         $this->createdAt = $now;
         $this->updatedAt = $now;
-        $this->equipment_type = $this->getTypeName();
     }
 
     #[ORM\PreUpdate]
