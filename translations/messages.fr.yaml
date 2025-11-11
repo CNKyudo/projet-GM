@@ -1,0 +1,5 @@
+equipment:
+  type:
+    yumi: "Arc (Yumi)"
+    glove: "Gant (Kake)"
+  choose_type: "Choisir un type..."
