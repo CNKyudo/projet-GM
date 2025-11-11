@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 #[ORM\Entity(repositoryClass: ClubRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Club
 {
     use TimestampableEntity;
@@ -21,7 +22,7 @@ class Club
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\OneToOne(inversedBy: 'clubWhichImPresidentOf', cascade: ['persist'])]
+    #[ORM\OneToOne(inversedBy: 'clubWhichImPresidentOf')]
     private ?User $president = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -159,5 +160,19 @@ class Club
         }
 
         return $this;
+    }
+
+    #[ORM\PrePersist]
+    public function onPrePersist(): void
+    {
+        $now = new \DateTimeImmutable();
+        $this->createdAt = $now;
+        $this->updatedAt = $now;
+    }
+
+    #[ORM\PreUpdate]
+    public function onPreUpdate(): void
+    {
+        $this->updatedAt = new \DateTimeImmutable();
     }
 }

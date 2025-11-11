@@ -77,4 +77,9 @@ class Address
 
         return $this;
     }
+
+    public function __toString()
+    {
+        return $this->getStreetAddress() . ', ' . $this->getPostalCode() . ' ' . $this->getCity() . ' ' . $this->getCountry();
+    }
 }

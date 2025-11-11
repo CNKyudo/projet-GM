@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détail adresse{% endblock %}
+
+{% block body %}
+    <h1>Adresse #{{ address.id }}</h1>
+
+    <dl class="row">
+        <dt class="col-sm-3">Rue</dt>
+        <dd class="col-sm-9">{{ address.streetAddress ?: '-' }}</dd>
+
+        <dt class="col-sm-3">Code postal</dt>
+        <dd class="col-sm-9">{{ address.postalCode ?: '-' }}</dd>
+
+        <dt class="col-sm-3">Ville</dt>
+        <dd class="col-sm-9">{{ address.city ?: '-' }}</dd>
+
+        <dt class="col-sm-3">Pays</dt>
+        <dd class="col-sm-9">{{ address.country ?: '-' }}</dd>
+    </dl>
+
+    <a class="btn btn-secondary" href="{{ path('address_index') }}">Retour</a>
+    <a class="btn btn-primary" href="{{ path('address_edit', {'id': address.id}) }}">Modifier</a>
+
+    <form method="post" action="{{ path('address_delete', {'id': address.id}) }}" style="display:inline" onsubmit="return confirm('Supprimer cette adresse ?');">
+        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ address.id) }}">
+        <button class="btn btn-danger">Supprimer</button>
+    </form>
+{% endblock %}
