@@ -28,7 +28,6 @@ class EquipmentFormType extends AbstractType
                 'placeholder' => 'equipment.choose_type',
                 'translation_domain' => 'messages',
                 'mapped' => false,
-                // 'data' => (isset($options['data']) && $options['data'] instanceof Equipment) ? $options['data']::getType() : null,
             ])
             ->add('owner_club', EntityType::class, [
                 'class' => Club::class,
