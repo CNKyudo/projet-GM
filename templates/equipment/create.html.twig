@@ -1,11 +1,23 @@
 {% extends 'base.html.twig' %}
 
-{% block title "Nouvelle équipement" %}
+{% block title "Nouvel équipement" %}
 
 {% block body %}
 
     <h1>Création</h1>
 
-    {{ form(form) }}
+    {{ form_start(form) }}
+
+    {% if form.equipment_type %}
+        {{ form_row(form.equipment_type) }}
+    {% endif %}
+
+    {{ form_row(form.owner_club) }}
+    {{ form_row(form.borrower_club) }}
+    {{ form_row(form.borrower_user) }}
+
+    {{ form_rest(form) }}
+
+    {{ form_end(form) }}
 
 {% endblock %}
