@@ -6,6 +6,10 @@
 
     <h1>Modification</h1>
 
-    {{ form(form) }}
+    {% include 'equipment/form.html.twig' %}
 
+{% endblock %}
+
+{% block importmap %}
+    {{ importmap(['app', 'equipment_form']) }}
 {% endblock %}

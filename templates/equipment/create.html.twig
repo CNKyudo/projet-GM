@@ -6,18 +6,10 @@
 
     <h1>Création</h1>
 
-    {{ form_start(form) }}
+    {% include 'equipment/form.html.twig' %}
 
-    {% if form.equipment_type %}
-        {{ form_row(form.equipment_type) }}
-    {% endif %}
+{% endblock %}
 
-    {{ form_row(form.owner_club) }}
-    {{ form_row(form.borrower_club) }}
-    {{ form_row(form.borrower_user) }}
-
-    {{ form_rest(form) }}
-
-    {{ form_end(form) }}
-
+{% block importmap %}
+    {{ importmap(['app', 'equipment_form']) }}
 {% endblock %}

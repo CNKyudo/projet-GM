@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Club;
 use App\Entity\Equipment;
+use App\Entity\Glove;
 use App\Entity\User;
 use App\Entity\Yumi;
 use App\Enum\EquipmentType;
@@ -40,8 +41,7 @@ class EquipmentFormType extends AbstractType
                 'placeholder' => '--- Aucun ---',
                 'required' => false
             ])
-            ->add('save', SubmitType::class, ['label' => 'Envoyer'])
-        ;
+            ->add('save', SubmitType::class, ['label' => 'Envoyer']);
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event): void {
             $form = $event->getForm();
@@ -58,7 +58,21 @@ class EquipmentFormType extends AbstractType
                         'mapped' => false,
                         'required' => true,
                     ])
+                    ->add('glove_form', GloveFormType::class, [
+                        'attr' => [
+                            'disabled' => true
+                        ]
+                    ])
+                    ->add('yumi_form', YumiFormType::class, [
+                        'attr' => [
+                            'disabled' => true
+                        ]
+                    ])
                 ;
+            } elseif ($data instanceof Glove) {
+                $form->add('glove_form', GloveFormType::class);
+            } elseif ($data instanceof Yumi) {
+                $form->add('yumi_form', YumiFormType::class);
             }
         });
     }
