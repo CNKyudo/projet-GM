@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\EquipmentType;
 use App\Repository\YumiRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -10,6 +11,11 @@ class Yumi extends Equipment
 {
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $material = null;
+
+    public static function getType(): EquipmentType
+    {
+        return EquipmentType::YUMI;
+    }
 
     public function getMaterial(): ?string
     {

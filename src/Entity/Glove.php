@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\EquipmentType;
 use App\Repository\GloveRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -10,6 +11,11 @@ class Glove extends Equipment
 {
     #[ORM\Column(nullable: true)]
     private ?int $nb_fingers = null;
+
+    public static function getType(): EquipmentType
+    {
+        return EquipmentType::GLOVE;
+    }
 
     public function getNbFingers(): ?int
     {
