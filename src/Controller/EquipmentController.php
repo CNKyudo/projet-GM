@@ -6,9 +6,8 @@ use App\Entity\Equipment;
 use App\Entity\Glove;
 use App\Entity\Yumi;
 use App\Enum\EquipmentType;
-use App\Repository\EquipmentRepository;
 use App\Form\EquipmentFormType;
-use DateTimeImmutable;
+use App\Repository\EquipmentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,12 +26,12 @@ final class EquipmentController extends AbstractController
         ]);
     }
 
-    #[Route('/equipment/{id}', name: 'equipment.show', requirements: ['id'=>'\d+'] )]
+    #[Route('/equipment/{id}', name: 'equipment.show', requirements: ['id' => '\d+'])]
     public function show(Equipment $equipment): Response
     {
         return $this->render('equipment/show.html.twig', [
             'equipment' => $equipment,
-        ]);  
+        ]);
     }
 
     #[Route('/equipment/create', name: 'equipment.create')]
@@ -47,7 +46,7 @@ final class EquipmentController extends AbstractController
             $borrowerClub = $form->get('borrower_club')->getData();
             $borrowerUser = $form->get('borrower_user')->getData();
 
-            $equipment = match($type) {
+            $equipment = match ($type) {
                 EquipmentType::YUMI => new Yumi(),
                 EquipmentType::GLOVE => new Glove(),
             };
@@ -55,6 +54,14 @@ final class EquipmentController extends AbstractController
             $equipment->setOwnerClub($ownerClub);
             $equipment->setBorrowerClub($borrowerClub);
             $equipment->setBorrowerUser($borrowerUser);
+
+            if ($equipment instanceof Yumi) {
+                $equipment->setMaterial($form->get('yumi_form')->get('material')->getData());
+            }
+
+            if ($equipment instanceof Glove) {
+                $equipment->setNbFingers($form->get('glove_form')->get('nb_fingers')->getData());
+            }
 
             $em->persist($equipment);
             $em->flush();
@@ -64,19 +71,18 @@ final class EquipmentController extends AbstractController
         }
 
         return $this->render('equipment/create.html.twig', [
-            'form' => $form->createView()
+            'form' => $form
         ]);
     }
- 
-    #[Route('/equipment/{id}/edit', name: 'equipment.edit', requirements: ['id'=>'\d+'] )]
+
+    #[Route('/equipment/{id}/edit', name: 'equipment.edit', requirements: ['id' => '\d+'])]
     public function edit(Equipment $equipment, Request $request, EntityManagerInterface $em)
     {
         $form = $this->createForm(EquipmentFormType::class, $equipment);
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid())
-        {
+        if ($form->isSubmitted() && $form->isValid()) {
             $em->flush();
-            $this->addFlash('success','Équipement modifié.');
+            $this->addFlash('success', 'Équipement modifié.');
             return $this->redirectToRoute('equipment.index');
         }
         return $this->render('equipment/edit.html.twig', [
