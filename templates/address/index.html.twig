@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Adresses{% endblock %}
+
+{% block body %}
+    <h1>Liste des adresses</h1>
+
+    <a class="btn btn-success mb-3" href="{{ path('address_new') }}">Créer une adresse</a>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Rue</th>
+                <th>Code postal</th>
+                <th>Ville</th>
+                <th>Pays</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for address in addresses %}
+            <tr>
+                <td>{{ address.id }}</td>
+                <td>{{ address.streetAddress ?: '-' }}</td>
+                <td>{{ address.postalCode ?: '-' }}</td>
+                <td>{{ address.city ?: '-' }}</td>
+                <td>{{ address.country ?: '-' }}</td>
+                <td>
+                    <a class="btn btn-sm btn-outline-primary" href="{{ path('address_show', {'id': address.id}) }}">Voir</a>
+                    <a class="btn btn-sm btn-outline-secondary" href="{{ path('address_edit', {'id': address.id}) }}">Modifier</a>
+
+                    <form method="post" action="{{ path('address_delete', {'id': address.id}) }}" style="display:inline" onsubmit="return confirm('Supprimer cette adresse ?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ address.id) }}">
+                        <button class="btn btn-sm btn-outline-danger">Supprimer</button>
+                    </form>
+                </td>
+            </tr>
+        {% else %}
+            <tr><td colspan="6">Aucune adresse trouvée</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

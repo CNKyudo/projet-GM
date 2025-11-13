@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier le club{% endblock %}
+
+{% block body %}
+    <h1>Modifier : {{ club.name }}</h1>
+
+    {{ form(form) }}
+
+    <a class="btn btn-secondary mt-3" href="{{ path('club_index') }}">Retour à la liste</a>
+{% endblock %}

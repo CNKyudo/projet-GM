@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails du club{% endblock %}
+
+{% block body %}
+    <h1>{{ club.name }}</h1>
+
+    <dl class="row">
+        <dt class="col-sm-3">ID</dt>
+        <dd class="col-sm-9">{{ club.id }}</dd>
+
+        <dt class="col-sm-3">Président</dt>
+        <dd class="col-sm-9">{{ club.president ?: '-' }}</dd>
+
+        <dt class="col-sm-3">Email</dt>
+        <dd class="col-sm-9">{{ club.email ?: '-' }}</dd>
+
+        <dt class="col-sm-3">Adresse</dt>
+        <dd class="col-sm-9">{{ club.address ?: '-' }}</dd>
+    </dl>
+
+    <a class="btn btn-secondary" href="{{ path('club_index') }}">Retour</a>
+    <a class="btn btn-primary" href="{{ path('club_edit', {'id': club.id}) }}">Modifier</a>
+{% endblock %}

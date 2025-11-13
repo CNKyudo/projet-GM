@@ -21,7 +21,7 @@ class Club
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\OneToOne(inversedBy: 'clubWhichImPresidentOf', cascade: ['persist'])]
+    #[ORM\OneToOne(inversedBy: 'clubWhichImPresidentOf')]
     private ?User $president = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -159,5 +159,10 @@ class Club
         }
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->name;
     }
 }
