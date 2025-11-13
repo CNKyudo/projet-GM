@@ -61,7 +61,9 @@ class AddressController extends AbstractController
   #[Route('/{id}/edit', name: 'address_edit', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]
   public function edit(Request $request, Address $address, EntityManagerInterface $em): Response
   {
-    $form = $this->createForm(AddressType::class, $address);
+    $form = $this->createForm(AddressType::class, $address, [
+      'is_edit' => true,
+    ]);
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
