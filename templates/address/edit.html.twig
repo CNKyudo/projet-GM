@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier adresse{% endblock %}
+
+{% block body %}
+    <h1>Modifier l'adresse</h1>
+
+    {{ form(form) }}
+
+    <a class="btn btn-secondary mt-3" href="{{ path('address_index') }}">Retour</a>
+{% endblock %}

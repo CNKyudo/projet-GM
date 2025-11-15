@@ -1,0 +1,32 @@
+{{ form_start(form) }}
+
+    {% if form.equipment_type is defined %}
+        {{ form_row(form.equipment_type) }}
+    {% endif %}
+
+    {{ form_row(form.owner_club) }}
+    {{ form_row(form.borrower_club) }}
+    {{ form_row(form.borrower_user) }}
+
+    <div id="glove_form_section"
+        {% if (form.equipment_type is defined and form.equipment_type.vars.value != 'yumi') or form.glove_form is not defined %}
+            class="d-none"
+        {% endif %}
+    >
+        {% if form.glove_form is defined %}
+            {{ form_row(form.glove_form.nb_fingers) }}
+        {% endif %}
+    </div>
+
+    <div id="yumi_form_section"
+        {% if (form.equipment_type is defined and form.equipment_type.vars.value != 'glove') or form.yumi_form is not defined %}
+            class="d-none"
+        {% endif %}
+    >
+        {% if form.yumi_form is defined %}
+            {{ form_row(form.yumi_form.material) }}
+        {% endif %}
+    </div>
+
+{{ form_end(form) }}
+

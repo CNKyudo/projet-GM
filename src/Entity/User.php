@@ -36,7 +36,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
-    #[ORM\OneToOne(mappedBy: 'president', cascade: ['persist'])]
+    #[ORM\OneToOne(mappedBy: 'president')]
     private ?Club $clubWhichImPresidentOf = null;
 
     /**
@@ -170,5 +170,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->email;
     }
 }
