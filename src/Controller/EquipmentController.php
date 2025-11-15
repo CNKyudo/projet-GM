@@ -9,6 +9,7 @@ use App\Enum\EquipmentType;
 use App\Form\EquipmentFormType;
 use App\Repository\EquipmentRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,11 +17,19 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class EquipmentController extends AbstractController
 {
+    private const ITEMS_PER_PAGE = 20;
+
     #[Route('/equipment', name: 'equipment.index')]
-    public function index(Request $request, EquipmentRepository $repository): Response
+    public function index(Request $request, EquipmentRepository $repository, PaginatorInterface $paginator): Response
     {
-        $equipments = $repository->findAll();
-        // dd($equipments);
+        $qb = $repository->createQueryBuilder('e')->orderBy('e.id', 'DESC');
+
+        $equipments = $paginator->paginate(
+            $qb,
+            $request->query->getInt('page', 1),
+            self::ITEMS_PER_PAGE,
+        );
+
         return $this->render('equipment/index.html.twig', [
             'equipments' => $equipments,
         ]);

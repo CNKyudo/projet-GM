@@ -22,7 +22,7 @@
             <tr>
                 <td>{{ club.id }}</td>
                 <td>{{ club.name }}</td>
-                <td>{{ club.president ? (club.president|default('') ) : '-' }}</td>
+                <td>{{ club.president ? club.president : '-' }}</td>
                 <td>{{ club.email ?: '-' }}</td>
                 <td>
                     <a class="btn btn-sm btn-outline-primary" href="{{ path('club_show', {'id': club.id}) }}">Voir</a>
@@ -34,4 +34,8 @@
         {% endfor %}
         </tbody>
     </table>
+
+    <div class="d-flex justify-content-center mt-3">
+        {{ knp_pagination_render(clubs) }}
+    </div>
 {% endblock %}

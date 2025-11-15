@@ -10,15 +10,26 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Knp\Component\Pager\PaginatorInterface;
 
 #[Route('/club')]
 class ClubController extends AbstractController
 {
+    private const ITEMS_PER_PAGE = 20;
+
     #[Route('/', name: 'club_index', methods: ['GET'])]
-    public function index(ClubRepository $clubRepository): Response
+    public function index(ClubRepository $clubRepository, Request $request, PaginatorInterface $paginator): Response
     {
+        $qb = $clubRepository->createQueryBuilder('c')->orderBy('c.id', 'DESC');
+
+        $clubs = $paginator->paginate(
+            $qb,
+            $request->query->getInt('page', 1),
+            self::ITEMS_PER_PAGE,
+        );
+
         return $this->render('club/index.html.twig', [
-            'clubs' => $clubRepository->findAll(),
+            'clubs' => $clubs,
         ]);
     }
 
