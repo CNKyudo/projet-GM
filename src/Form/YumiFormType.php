@@ -10,6 +10,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 
+/**
+ * @extends AbstractType<Yumi>
+ */
 class YumiFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void

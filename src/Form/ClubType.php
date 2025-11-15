@@ -13,6 +13,9 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends AbstractType<Club>
+ */
 class ClubType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void

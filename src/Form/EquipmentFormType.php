@@ -10,14 +10,16 @@ use App\Entity\Yumi;
 use App\Enum\EquipmentType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\EnumType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\TypeInfo\Type\EnumType;
 
+/**
+ * @extends AbstractType<Equipment>
+ */
 class EquipmentFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -51,7 +53,7 @@ class EquipmentFormType extends AbstractType
                 $form
                     ->add('equipment_type', EnumType::class, [
                         'class' => EquipmentType::class,
-                        'choice_label' => fn(EquipmentType $type) => $type->label(),
+                        'choice_label' => fn (EquipmentType $type) => $type->label(),
                         'label' => 'Type d\'équipement',
                         'placeholder' => 'equipment.choose_type',
                         'translation_domain' => 'messages',
