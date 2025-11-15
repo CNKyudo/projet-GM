@@ -44,7 +44,7 @@ final class EquipmentController extends AbstractController
     }
 
     #[Route('/equipment/create', name: 'equipment.create')]
-    public function create(Request $request, EntityManagerInterface $em)
+    public function create(Request $request, EntityManagerInterface $em): Response
     {
         $form = $this->createForm(EquipmentFormType::class);
         $form->handleRequest($request);
@@ -55,6 +55,14 @@ final class EquipmentController extends AbstractController
             $borrowerClub = $form->get('borrower_club')->getData();
             $borrowerUser = $form->get('borrower_user')->getData();
 
+            if (!$type instanceof EquipmentType) {
+                $this->addFlash('error', 'Type d\'équipement non trouvé !');
+
+                return $this->render('equipment/create.html.twig', [
+                    'form' => $form,
+                ]);
+            }
+
             $equipment = match ($type) {
                 EquipmentType::YUMI => new Yumi(),
                 EquipmentType::GLOVE => new Glove(),
@@ -64,39 +72,34 @@ final class EquipmentController extends AbstractController
             $equipment->setBorrowerClub($borrowerClub);
             $equipment->setBorrowerUser($borrowerUser);
 
-            if ($equipment instanceof Yumi) {
-                $equipment->setMaterial($form->get('yumi_form')->get('material')->getData());
-            }
-
-            if ($equipment instanceof Glove) {
-                $equipment->setNbFingers($form->get('glove_form')->get('nb_fingers')->getData());
-            }
-
             $em->persist($equipment);
             $em->flush();
 
-            $this->addFlash('success', ucfirst($equipment->getTypeName()) . ' ajouté !');
+            $this->addFlash('success', ucfirst($equipment->getTypeName()).' ajouté !');
+
             return $this->redirectToRoute('equipment.index');
         }
 
         return $this->render('equipment/create.html.twig', [
-            'form' => $form
+            'form' => $form,
         ]);
     }
 
     #[Route('/equipment/{id}/edit', name: 'equipment.edit', requirements: ['id' => '\d+'])]
-    public function edit(Equipment $equipment, Request $request, EntityManagerInterface $em)
+    public function edit(Equipment $equipment, Request $request, EntityManagerInterface $em): Response
     {
         $form = $this->createForm(EquipmentFormType::class, $equipment);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $em->flush();
             $this->addFlash('success', 'Équipement modifié.');
+
             return $this->redirectToRoute('equipment.index');
         }
+
         return $this->render('equipment/edit.html.twig', [
             'equipments' => $equipment,
-            'form' => $form
+            'form' => $form,
         ]);
     }
 }

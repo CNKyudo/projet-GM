@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Entity;
+
 use App\Enum\EquipmentType;
 use App\Repository\EquipmentRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -14,7 +15,7 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
 #[DiscriminatorColumn(name: 'equipment_type', type: 'string')]
 #[DiscriminatorMap([
     'yumi' => Yumi::class,
-    'glove' => Glove::class
+    'glove' => Glove::class,
 ])]
 
 abstract class Equipment
