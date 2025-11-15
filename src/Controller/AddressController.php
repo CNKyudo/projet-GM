@@ -12,15 +12,26 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Knp\Component\Pager\PaginatorInterface;
 
 #[Route('/address')]
 class AddressController extends AbstractController
 {
+  private const ITEMS_PER_PAGE = 20;
+
   #[Route('/', name: 'address_index', methods: ['GET'])]
-  public function index(AddressRepository $addressRepository): Response
+  public function index(AddressRepository $addressRepository, Request $request, PaginatorInterface $paginator): Response
   {
+    $qb = $addressRepository->createQueryBuilder('a')->orderBy('a.id', 'DESC');
+
+    $addresses = $paginator->paginate(
+      $qb,
+      $request->query->getInt('page', 1),
+      self::ITEMS_PER_PAGE,
+    );
+
     return $this->render('address/index.html.twig', [
-      'addresses' => $addressRepository->findAll(),
+      'addresses' => $addresses,
     ]);
   }
 
