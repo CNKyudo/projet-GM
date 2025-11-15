@@ -74,7 +74,8 @@ class ClubController extends AbstractController
     #[Route('/{id}', name: 'club_delete', methods: ['POST'], requirements: ['id' => '\d+'])]
     public function delete(Request $request, Club $club, EntityManagerInterface $em): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$club->getId(), $request->request->get('_token'))) {
+        $token = (string) $request->request->get('_token');
+        if ($this->isCsrfTokenValid('delete'.$club->getId(), $token)) {
             $em->remove($club);
             $em->flush();
             $this->addFlash('success', 'Club supprimé.');

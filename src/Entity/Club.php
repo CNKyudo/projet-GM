@@ -19,7 +19,7 @@ class Club
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $name = null;
+    private string $name;
 
     #[ORM\OneToOne(inversedBy: 'clubWhichImPresidentOf')]
     private ?User $president = null;

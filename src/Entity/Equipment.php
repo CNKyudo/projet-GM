@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Entity;
+
 use App\Enum\EquipmentType;
 use App\Repository\EquipmentRepository;
 use Doctrine\ORM\Mapping as ORM;
