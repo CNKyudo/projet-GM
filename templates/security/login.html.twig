@@ -7,44 +7,47 @@
         <div id="login_display" class="absolute inset-0 md:static md:flex-2 bg-login bg-cover bg-center bg-kyudo-white"">
             <div class="absolute inset-0 bg-black/40 bg-login md:hidden"></div>
         </div>
-        <div id="login_form" class="relative z-10 flex min-h-screen md:min-h-0 md:flex-1 items-center justify-center p-8 md:bg-kyudo-royal-blue">
-            <div class="w-full max-w-sm rounded-xl bg-kyudo-white backdrop-blur md:backdrop-blur-0 p-6 shadow-2xl">
-                <form method="post">
-                    {% if error %}
-                        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-                    {% endif %}
+        <div id="login_form" class="relative z-10 flex min-h-screen md:min-h-0 md:flex-1 justify-center p-8 md:bg-kyudo-royal-blue">
+            <div class="column-1">
+                <img class="relative w-full max-w-sm rounded-xl mt-6 shadow-lg bg-white/60" src="{{ asset('pictures/france_kyudo_logo.jpg') }}" alt="France Kyudo">
+                <div class="relative w-full max-w-sm rounded-xl mt-2 bg-kyudo-white backdrop-blur md:backdrop-blur-0 p-6 shadow-2xl">
+                    <form method="post">
+                        {% if error %}
+                            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                        {% endif %}
 
-                    {% if app.user %}
-                        <div class="mb-3 text-sm text-gray-700">
-                            Vous êtes connecté en tant que {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}" class="text-kyudo-royal-blue underline">Déconnexion</a>
+                        {% if app.user %}
+                            <div class="mb-3 text-sm text-gray-700">
+                                Vous êtes connecté en tant que {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}" class="text-kyudo-royal-blue underline">Déconnexion</a>
+                            </div>
+                        {% endif %}
+
+                        <h1 class="text-2xl font-bold mb-6 text-center text-kyudo-royal-blue">Entrez vos informations de connexion</h1>
+                        <div class="mb-4">
+                            <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                            <input type="email" value="{{ last_username }}" name="_username" id="username" class="block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-kyudo-royal-blue focus:border-kyudo-royal-blue" autocomplete="email" required autofocus>
                         </div>
-                    {% endif %}
+                        <div class="mb-4">
+                            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Mot de passe</label>
+                            <input type="password" name="_password" id="password" class="block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-kyudo-royal-blue focus:border-kyudo-royal-blue" autocomplete="current-password" required>
+                        </div>
+                        <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
 
-                    <h1 class="text-2xl font-bold mb-6 text-center text-kyudo-royal-blue">Entrez vos informations de connexion</h1>
-                    <div class="mb-4">
-                        <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                        <input type="email" value="{{ last_username }}" name="_username" id="username" class="block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-kyudo-royal-blue focus:border-kyudo-royal-blue" autocomplete="email" required autofocus>
+                        <button class="w-full py-2 px-4 rounded-md bg-kyudo-royal-blue text-white font-semibold hover:bg-kyudo-blue transition-colors duration-200 shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-kyudo-royal-blue" type="submit">
+                            Se connecter
+                        </button>
+                    </form>
+
+                    <div class="flex flex-col gap-4 mt-2">
+                        <a href="{{ path('app_forgot_password_request') }}"
+                        class="w-full py-2 px-4 rounded-md bg-kyudo-gray text-kyudo-royal-blue font-semibold text-center hover:bg-kyudo-royal-blue hover:text-white transition-colors duration-200 shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-kyudo-royal-blue">
+                            Mot de passe oublié ?
+                        </a>
+                        <a href="{{ path('app_register') }}"
+                        class="w-full py-2 px-4 rounded-md bg-kyudo-blue text-white font-semibold text-center hover:bg-kyudo-royal-blue transition-colors duration-200 shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-kyudo-blue">
+                            Créer un compte
+                        </a>
                     </div>
-                    <div class="mb-4">
-                        <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Mot de passe</label>
-                        <input type="password" name="_password" id="password" class="block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-kyudo-royal-blue focus:border-kyudo-royal-blue" autocomplete="current-password" required>
-                    </div>
-                    <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
-
-                    <button class="w-full py-2 px-4 rounded-md bg-kyudo-royal-blue text-white font-semibold hover:bg-kyudo-blue transition-colors duration-200 shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-kyudo-royal-blue" type="submit">
-                        Se connecter
-                    </button>
-                </form>
-
-                <div class="flex flex-col gap-4 mt-2">
-                    <a href="{{ path('app_forgot_password_request') }}"
-                       class="w-full py-2 px-4 rounded-md bg-kyudo-gray text-kyudo-royal-blue font-semibold text-center hover:bg-kyudo-royal-blue hover:text-white transition-colors duration-200 shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-kyudo-royal-blue">
-                        Mot de passe oublié ?
-                    </a>
-                    <a href="{{ path('app_register') }}"
-                       class="w-full py-2 px-4 rounded-md bg-kyudo-blue text-white font-semibold text-center hover:bg-kyudo-royal-blue transition-colors duration-200 shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-kyudo-blue">
-                        Créer un compte
-                    </a>
                 </div>
             </div>
         </div>
