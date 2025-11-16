@@ -33,7 +33,7 @@ class ClubController extends AbstractController
         ]);
     }
 
-    #[Route('/new', name: 'club_new', methods: ['GET','POST'])]
+    #[Route('/new', name: 'club_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $em): Response
     {
         $club = new Club();
@@ -62,7 +62,7 @@ class ClubController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'club_edit', methods: ['GET','POST'], requirements: ['id' => '\d+'])]
+    #[Route('/{id}/edit', name: 'club_edit', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]
     public function edit(Request $request, Club $club, EntityManagerInterface $em): Response
     {
         $form = $this->createForm(ClubType::class, $club);
@@ -85,7 +85,8 @@ class ClubController extends AbstractController
     #[Route('/{id}', name: 'club_delete', methods: ['POST'], requirements: ['id' => '\d+'])]
     public function delete(Request $request, Club $club, EntityManagerInterface $em): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$club->getId(), $request->request->get('_token'))) {
+        $token = (string) $request->request->get('_token');
+        if ($this->isCsrfTokenValid('delete'.$club->getId(), $token)) {
             $em->remove($club);
             $em->flush();
             $this->addFlash('success', 'Club supprimé.');

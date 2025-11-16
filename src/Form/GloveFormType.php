@@ -7,10 +7,11 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\Range;
 
+/**
+ * @extends AbstractType<Glove>
+ */
 class GloveFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -21,8 +22,8 @@ class GloveFormType extends AbstractType
                 'constraints' => [
                     new Range([
                         'min' => 0,
-                        'max' => 5
-                    ])
+                        'max' => 5,
+                    ]),
                 ],
                 'required' => true,
             ]);
@@ -32,7 +33,7 @@ class GloveFormType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Glove::class,
-            'inherit_data' => true
+            'inherit_data' => true,
         ]);
     }
 }
