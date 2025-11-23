@@ -80,6 +80,6 @@ class Address
 
     public function __toString()
     {
-        return $this->getStreetAddress() . ', ' . $this->getPostalCode() . ' ' . $this->getCity() . ' ' . $this->getCountry();
+        return $this->getStreetAddress().', '.$this->getPostalCode().' '.$this->getCity().' '.$this->getCountry();
     }
 }

@@ -44,7 +44,10 @@
                 </td>
             </tr>
         {% endfor %}
-    </tbody>
-</table>
-</div>
+        </tbody>
+    </table>
+
+    <div class="d-flex justify-content-center mt-3">
+        {{ knp_pagination_render(equipments) }}
+    </div>
 {% endblock %}

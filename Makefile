@@ -23,3 +23,15 @@ php:
 migrate:
 	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:migrations:diff
 	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:migrations:migrate --no-interaction
+
+fix: csfixer phpstan
+
+csfixer:
+	@echo "Running php-cs-fixer..."
+	$(DOCKER_COMPOSE_CMD) exec php-fpm vendor/bin/php-cs-fixer fix --config=tools/.php-cs-fixer.php --allow-risky=yes
+
+phpstan:
+	@echo "Running phpstan analyse (configuration tools/phpstan.neon)..."
+	$(DOCKER_COMPOSE_CMD) exec php-fpm vendor/bin/phpstan analyse --configuration=tools/phpstan.neon
+
+.PHONY: fix phpstan csfixer

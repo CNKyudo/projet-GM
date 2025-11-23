@@ -10,19 +10,30 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Knp\Component\Pager\PaginatorInterface;
 
 #[Route('/club')]
 class ClubController extends AbstractController
 {
+    private const ITEMS_PER_PAGE = 20;
+
     #[Route('/', name: 'club_index', methods: ['GET'])]
-    public function index(ClubRepository $clubRepository): Response
+    public function index(ClubRepository $clubRepository, Request $request, PaginatorInterface $paginator): Response
     {
+        $qb = $clubRepository->createQueryBuilder('c')->orderBy('c.id', 'DESC');
+
+        $clubs = $paginator->paginate(
+            $qb,
+            $request->query->getInt('page', 1),
+            self::ITEMS_PER_PAGE,
+        );
+
         return $this->render('club/index.html.twig', [
-            'clubs' => $clubRepository->findAll(),
+            'clubs' => $clubs,
         ]);
     }
 
-    #[Route('/new', name: 'club_new', methods: ['GET','POST'])]
+    #[Route('/new', name: 'club_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $em): Response
     {
         $club = new Club();
@@ -51,7 +62,7 @@ class ClubController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'club_edit', methods: ['GET','POST'], requirements: ['id' => '\d+'])]
+    #[Route('/{id}/edit', name: 'club_edit', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]
     public function edit(Request $request, Club $club, EntityManagerInterface $em): Response
     {
         $form = $this->createForm(ClubType::class, $club);
@@ -74,7 +85,8 @@ class ClubController extends AbstractController
     #[Route('/{id}', name: 'club_delete', methods: ['POST'], requirements: ['id' => '\d+'])]
     public function delete(Request $request, Club $club, EntityManagerInterface $em): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$club->getId(), $request->request->get('_token'))) {
+        $token = (string) $request->request->get('_token');
+        if ($this->isCsrfTokenValid('delete'.$club->getId(), $token)) {
             $em->remove($club);
             $em->flush();
             $this->addFlash('success', 'Club supprimé.');
