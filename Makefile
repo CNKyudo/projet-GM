@@ -6,6 +6,13 @@ up:
 	$(DOCKER_COMPOSE_CMD) up -d
 	$(DOCKER_COMPOSE_CMD) exec php-fpm composer install
 	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:migrations:migrate --no-interaction
+	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console tailwind:build
+
+tailwind:
+	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console tailwind:build
+
+tailwind-watch:
+	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console tailwind:build --watch
 
 down:
 	$(DOCKER_COMPOSE_CMD) down

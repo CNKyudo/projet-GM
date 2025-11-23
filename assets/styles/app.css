@@ -1,7 +1,12 @@
-body {
-    background-color: skyblue;
-}
+@import "tailwindcss";
 
+@import "./kyudo_graphic_charter/variables.css";
+
+.bg-login {
+  background-image: linear-gradient(rgba(255,255,255,0.6), rgba(255,255,255,0.6)), url('../pictures/slide1-1.jpg');
+  background-size: cover;
+  background-position: center;
+}
 .d-none {
     display: none;
 }

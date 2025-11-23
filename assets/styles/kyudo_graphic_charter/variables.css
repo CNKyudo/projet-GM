@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+@theme {
+    --color-kyudo-white : rgb(255,255,255);
+    --color-kyudo-transparent-white : rgba(255,255,255, 0.8);
+    --color-kyudo-blue : rgb(0, 0, 72);
+    --color-kyudo-royal-blue : rgb(10, 0, 150);
+    --color-kyudo-washed-blue : device-cmyk(100, 90, 0, 0);
+}
