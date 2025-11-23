@@ -1,0 +1,36 @@
+<nav class="bg-white shadow sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="flex justify-between h-16 items-center">
+      {# Logo / nom du site #}
+      <a href="{{ path('app_home') }}" class="text-xl font-semibold">
+        <h1>France Kyudo 仏国弓道 フランス きゅうど</h1>
+      </a>
+
+      {# Liens principaux #}
+      <div class="hidden md:flex items-center space-x-4">
+        
+      </div>
+
+      {# Zone utilisateur #}
+      <div class="flex items-center space-x-3">
+        
+
+        {% if app.user %}
+          <span class="text-sm text-gray-600">
+            Bonjour {{ app.user.email }}
+          </span>
+          <a href="{{ path('app_logout') }}" class="text-sm text-red-500 hover:text-red-600">
+            Déconnexion
+          </a>
+        {% else %}
+          <a href="{{ path('app_login') }}" class="text-sm hover:text-blue-600">
+            Connexion
+          </a>
+          <a href="{{ path('app_register') }}" class="text-sm text-white bg-blue-600 px-3 py-1 rounded hover:bg-blue-700">
+            Inscription
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</nav>
