@@ -9,7 +9,8 @@
         </div>
         <div id="login_form" class="relative z-10 flex min-h-screen md:min-h-0 md:flex-1 justify-center p-8 md:bg-kyudo-royal-blue">
             <div class="column-1">
-                <img class="relative w-full max-w-sm rounded-xl mt-6 shadow-lg bg-white/60" src="{{ asset('pictures/france_kyudo_logo.jpg') }}" alt="France Kyudo">
+                <img class="block md:hidden relative w-full max-w-sm rounded-xl mt-6" src="{{ asset('pictures/FRANCE_KYUDO_LOGOTYPE_RVB_PRINCIPAL BLEU.png') }}" alt="France Kyudo">
+                <img class="hidden md:block relative w-full max-w-sm rounded-xl mt-6" src="{{ asset('pictures/FRANCE_KYUDO_LOGOTYPE_RVB_PRINCIPAL BLANC.png') }}" alt="France Kyudo">
                 <div class="relative w-full max-w-sm rounded-xl mt-2 bg-kyudo-white backdrop-blur md:backdrop-blur-0 p-6 shadow-2xl">
                     <form method="post">
                         {% if error %}
