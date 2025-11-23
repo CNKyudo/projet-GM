@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - FE-0003-CIError
 
 jobs:
   deploy:
