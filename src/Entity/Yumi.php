@@ -6,17 +6,21 @@ use App\Enum\EquipmentType;
 use App\Enum\YumiLength;
 use App\Repository\YumiRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation\Versioned;
 
 #[ORM\Entity(repositoryClass: YumiRepository::class)]
 class Yumi extends Equipment
 {
     #[ORM\Column(length: 255, nullable: true)]
+    #[Versioned]
     private ?string $material = null;
 
     #[ORM\Column(nullable: true)]
+    #[Versioned]
     private ?int $strength = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Versioned]
     private ?YumiLength $length = null;
 
     public static function getType(): EquipmentType
