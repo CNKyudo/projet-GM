@@ -8,6 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\DiscriminatorColumn;
 use Doctrine\ORM\Mapping\DiscriminatorMap;
 use Doctrine\ORM\Mapping\InheritanceType;
+use Gedmo\Mapping\Annotation\Loggable;
+use Gedmo\Mapping\Annotation\Versioned;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 #[ORM\Entity(repositoryClass: EquipmentRepository::class)]
@@ -17,6 +19,7 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
     'yumi' => Yumi::class,
     'glove' => Glove::class,
 ])]
+#[Loggable]
 
 abstract class Equipment
 {
@@ -28,12 +31,15 @@ abstract class Equipment
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'owned_equipments')]
+    #[Versioned]
     private ?Club $owner_club = null;
 
     #[ORM\ManyToOne(inversedBy: 'borrowed_equipments')]
+    #[Versioned]
     private ?Club $borrower_club = null;
 
     #[ORM\ManyToOne(inversedBy: 'borrowed_equipments')]
+    #[Versioned]
     private ?User $borrower_user = null;
 
     public function getId(): ?int
