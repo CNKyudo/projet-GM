@@ -1,14 +1,58 @@
 <nav class="bg-white shadow sticky top-0 z-50">
   <div class="max-w-7xl mx-auto px-4">
     <div class="flex justify-between h-16 items-center">
+
+      {% set current_route = app.request.attributes.get('_route') %}
+
       {# Logo / nom du site #}
-      <a href="{{ path('app_home') }}" class="text-xl font-semibold">
+      <a href="{{ path('app_home') }}" class="text-xl font-semibold 
+      {{ current_route == 'app_home' ? 'text-kyudo-royal-blue font-semibold' : 'text-gray-700 hover:text-kyudo-washed-blue' }}">
         <h1>France Kyudo 仏国弓道 フランス きゅうど</h1>
       </a>
 
       {# Liens principaux #}
       <div class="hidden md:flex items-center space-x-4">
-        
+
+      <a href="{{ path('app_home') }}"
+        class="
+          px-3 py-1 rounded-md text-sm font-medium
+          {{ current_route starts with 'app_home'
+            ? 'bg-kyudo-blue text-white'
+            : 'text-gray-700 hover:kyudo-washed-blue' }}
+          ">
+        Accueil
+      </a>
+
+      <a href="{{ path('club_index') }}"
+        class="
+          px-3 py-1 rounded-md text-sm font-medium
+          {{ current_route starts with 'club_index'
+            ? 'bg-kyudo-blue text-white'
+            : 'text-gray-700 hover:kyudo-washed-blue' }}
+          ">
+        Les Clubs
+      </a>
+
+      <a href="{{ path('equipment.index') }}"
+        class="
+          px-3 py-1 rounded-md text-sm font-medium
+          {{ current_route starts with 'equipment.index'
+            ? 'bg-kyudo-blue text-white'
+            : 'text-gray-700 hover:kyudo-washed-blue' }}
+          ">
+        Equipements
+      </a>
+
+      <a href="{{ path('address_index') }}"
+        class="
+          px-3 py-1 rounded-md text-sm font-medium
+          {{ current_route starts with 'address_index'
+            ? 'bg-kyudo-blue text-white'
+            : 'text-gray-700 hover:kyudo-washed-blue' }}
+          ">
+        Adresses
+      </a>
+
       </div>
 
       {# Zone utilisateur #}

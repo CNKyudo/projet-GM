@@ -2,10 +2,6 @@
 
 {% block title %}Hello HomeController!{% endblock %}
 
-{% block navbar %}
-    {% include 'partials/_navbar.html.twig' %}
-{% endblock %}
-
 {% block body %}
     <style>
         .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
@@ -15,6 +11,9 @@
     <div class="flex flex-col md:flex-row h-screen-with-navbar bg-kyudo-white">
         <div id="login_display" class="absolute inset-0 md:static md:flex-2 bg-home bg-cover bg-center bg-kyudo-white"">
             <div class="absolute inset-0 bg-black/40 bg-home md:hidden"></div>
+        </div>
+        <div class="example-wrapper">
+            <a type="button" class="btn" href="/club"> Clubs </a>
         </div>
         <div class="example-wrapper">
             <a type="button" class="btn" href="/equipment"> Équipements </a>

@@ -13,7 +13,7 @@
         {% endblock %}
     </head>
     <body>
-        {% block navbar %}{% endblock %}
+        {% block navbar %}{% include 'partials/_navbar.html.twig' %}{% endblock %}
         {% include 'blocks/flash.html.twig' %}
         {% block body %}{% endblock %}
     </body>
