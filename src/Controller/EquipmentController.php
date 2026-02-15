@@ -22,7 +22,30 @@ final class EquipmentController extends AbstractController
     #[Route('/equipment', name: 'equipment.index')]
     public function index(Request $request, EquipmentRepository $repository, PaginatorInterface $paginator): Response
     {
-        $qb = $repository->createQueryBuilder('e')->orderBy('e.id', 'DESC');
+        $q = trim((string) $request->query->get('q', ''));
+        $status = (string) $request->query->get('status', 'all'); // all|available|loaned
+
+        $qb = $repository->createQueryBuilder('e')
+            ->leftJoin('e.owner_club', 'owner')->addSelect('owner')
+            ->leftJoin('e.borrower_club', 'borrower')->addSelect('borrower')
+            ->orderBy('e.id', 'DESC');
+
+        // Status filter
+        if ($status === 'available') {
+            $qb->andWhere('e.borrower_club IS NULL');
+        } elseif ($status === 'loaned') {
+            $qb->andWhere('e.borrower_club IS NOT NULL');
+        } else {
+            $status = 'all';
+        }
+
+        // Search filter
+        if ($q !== '') {
+            $term = '%' . mb_strtolower($q) . '%';
+
+            $qb->andWhere('LOWER(owner.name) LIKE :term OR LOWER(borrower.name) LIKE :term OR CONCAT(e.id, \'\') LIKE :term')
+            ->setParameter('term', $term);
+        }
 
         $equipments = $paginator->paginate(
             $qb,
@@ -32,6 +55,8 @@ final class EquipmentController extends AbstractController
 
         return $this->render('equipment/index.html.twig', [
             'equipments' => $equipments,
+            'q' => $q,
+            'status' => $status,
         ]);
     }
 

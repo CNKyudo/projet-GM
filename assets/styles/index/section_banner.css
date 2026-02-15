@@ -1,0 +1,174 @@
+.split-banner{
+  /* Réglages */
+  --s: 80px;   /* “force” de la diagonale */
+  --t: 6px;    /* épaisseur de la barre */
+
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 50vh;          /* ou ce que tu veux */
+  overflow: hidden;
+  flex: none;
+  flex-shrink: 0;
+}
+
+/* Colonnes */
+.split-col{
+  position: relative;
+  flex-grow: 1;
+  flex: 1;
+  transition: all 300ms;
+}
+
+/* Au survol de la bannière, on “prépare” les 2 sections */
+.split-banner:hover .split-col{
+  flex-grow: 1;
+}
+
+/* Et celle hover s’agrandit */
+.split-banner .split-col:hover{
+  flex-grow: 1.2;
+}
+
+/* Wrapper image (clip) */
+.split-media{
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+.split-bg-materiel {
+  background-image: url('../pictures/materiel.jpg');
+}
+
+.split-bg-club {
+  background-image: url('../pictures/club.JPG');
+}
+
+/* Clip-path gauche/droite */
+.split-materiel-clip{
+  clip-path: polygon(0 0, 100% 0, calc(100% - var(--s)) 100%, 0 100%);
+}
+
+.split-chevauchement{
+  /* chevauchement pour éviter les gaps */
+  margin-left: calc(-1 * var(--s));
+  padding-left: var(--s);
+}
+
+.split-club-clip{
+  clip-path: polygon(var(--s) 0, 100% 0, 100% 100%, 0 100%);
+}
+
+/* Overlay sombre (comme avant) */
+.split-overlay{
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.40);
+  transition: background 300ms;
+}
+
+/* Tout s’assombrit quand on hover la bannière… */
+.split-banner:hover .split-overlay{
+  background: rgba(0,0,0,0.60);
+}
+
+/* … sauf la section hover */
+.split-col:hover .split-overlay{
+  background: rgba(0,0,0,0.10);
+}
+
+/* ✅ Barre diagonale parfaite, attachée à la couture */
+.split-separator{
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: var(--s);
+  pointer-events: none;
+  z-index: 30;
+}
+
+.split-separator::before{
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  /* vraie "bande" diagonale (parallélogramme), bords plats haut/bas */
+  clip-path: polygon(
+    calc(100% - var(--t)) 0,
+    100% 0,
+    var(--t) 100%,
+    0 100%
+  );
+
+  /* style plus clean */
+  background: rgba(255,255,255,0.65);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 0 14px rgba(255,255,255,0.25);
+}
+
+
+/* Contenu texte */
+.split-content{
+  position: relative;
+  z-index: 20;
+  height: 100%;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 10px;
+
+  color: var(--color-kyudo-transparent-white);
+
+  /* anim d’entrée */
+  transform: translateY(8px);
+  opacity: 0.92;
+  transition: transform 300ms ease, opacity 300ms ease;
+}
+
+/* Texte se “réveille” au hover de sa section */
+.split-col:hover .split-content{
+  transform: translateY(0);
+  opacity: 1;
+  color: var(--color-kyudo-white);
+  text-shadow: 0 0 50px var(--color-kyudo-royal-blue);
+}
+
+.split-kicker{
+  margin: 0;
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+.split-title{
+  margin: 0;
+  font-size: 34px;
+  line-height: 1.05;
+  font-weight: 700;
+}
+
+.split-cta{
+  display: inline-flex;
+  width: fit-content;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0.95;
+
+  transform: translateX(0);
+  transition: transform 300ms ease;
+}
+
+.split-col:hover .split-cta{
+  transform: translateX(6px);
+}
+
+/* Focus clavier accessible */
+.split-link:focus-visible{
+  outline: 3px solid rgba(255,255,255,0.85);
+  outline-offset: -3px;
+}

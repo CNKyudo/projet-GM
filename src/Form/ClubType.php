@@ -40,8 +40,7 @@ class ClubType extends AbstractType
                 'by_reference' => false,
             ])
             ->add('save', SubmitType::class, [
-                'label' => 'Enregistrer',
-                'attr' => ['class' => 'btn btn-primary'],
+                'label' => 'Enregistrer'
             ])
         ;
     }

@@ -2,17 +2,11 @@
 
 @import "./kyudo_graphic_charter/variables.css";
 
-.bg-login {
-  background-image: linear-gradient(rgba(255,255,255,0.6), rgba(255,255,255,0.6)), url('../pictures/slide1-1.jpg');
-  background-size: cover;
-  background-position: center;
-}
+@import "./page_backgrounds.css";
 
-.bg-home {
-  background-image: linear-gradient(rgba(255,255,255,0.6), rgba(255,255,255,0.6)), url('../pictures/slide1-1.jpg');
-  background-size: cover;
-  background-position: center;
-}
+@import "./index/section_banner.css";
+
+@import "./club_management/index.css";
 
 .h-screen-with-navbar {
   height: calc(100vh - 64px);
@@ -21,3 +15,4 @@
 .d-none {
     display: none;
 }
+
