@@ -17,7 +17,7 @@
 				</a>
 
 				<a href="{{ path('equipment.index') }}" class="px-3 py-1 rounded-md text-sm font-medium {{ current_route starts with 'equipment' ? 'bg-kyudo-blue text-(--color-kyudo-white) hover:bg-kyudo-royal-blue' : 'text-gray-700 hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }} ">
-					Equipements
+					Équipements
 				</a>
 
 				<a href="{{ path('club_index') }}" class="px-3 py-1 rounded-md text-sm font-medium {{ current_route starts with 'club_' ? 'bg-kyudo-blue text-(--color-kyudo-white) hover:bg-kyudo-royal-blue' : 'text-gray-700 hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }} ">
@@ -39,7 +39,7 @@
 						Bonjour
 						{{ app.user.email }}
 					</span>
-					<a href="{{ path('app_logout') }}" class="text-sm text-red-500 hover:text-red-600">
+					<a href="{{ path('app_logout') }}" class="px-3 py-1 rounded-md text-sm font-medium bg-kyudo-white text-red-600 hover:bg-red-600 hover:text-(--color-kyudo-white)">
 						Déconnexion
 					</a>
 				{% else %}
@@ -54,3 +54,4 @@
 		</div>
 	</div>
 </nav>
+
