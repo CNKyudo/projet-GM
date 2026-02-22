@@ -1,14 +1,13 @@
-/* default: show cards, hide table */
+@import '../kyudo_graphic_charter/variables.css';
+
 .view-switch .view-cards { display: block; }
 .view-switch .view-table { display: none; }
 
-/* when table is checked: swap */
 .view-switch:has(#view_table:checked) .view-cards { display: none; }
 .view-switch:has(#view_table:checked) .view-table { display: block; }
 
-/* optional: make selected tab look active */
 .view-switch:has(#view_cards:checked) label[for="view_cards"],
 .view-switch:has(#view_table:checked) label[for="view_table"]{
-  background: rgb(15 23 42); /* slate-900 */
-  color: white;
+  background: var(--color-kyudo-washed-blue);
+  color: var(--color-kyudo-white);
 }

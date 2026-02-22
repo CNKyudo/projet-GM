@@ -9,21 +9,21 @@
 
 			<div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
 				<div>
-					<div class="text-sm font-medium text-slate-500">Club</div>
-					<h1 class="mt-1 text-3xl font-semibold tracking-tight text-slate-900">
+					<div class="text-sm font-medium text-">Club</div>
+					<h1 class="mt-1 text-3xl font-semibold tracking-tight text-kyudo-gm-dark">
 						{{ club.name }}
 					</h1>
-					<p class="mt-1 text-slate-600">
+					<p class="mt-1 text-kyudo-gm-grey">
 						Informations du club de Kyūdō.
 					</p>
 				</div>
 
 				<div class="flex flex-wrap gap-2">
-					<a href="{{ path('club_index') }}" class="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-kyudo-white px-4 py-2.5 font-medium text-slate-800 hover:bg-slate-50">
+					<a href="{{ path('club_index') }}" class="inline-flex items-center justify-center rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)">
 						← Retour
 					</a>
 
-					<a href="{{ path('club_edit', {'id': club.id}) }}" class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-white shadow-sm hover:bg-kyudo-royal-blue focus:outline-none focus:ring-2 focus:ring-blue-200">
+					<a href="{{ path('club_edit', {'id': club.id}) }}" class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-(--color-kyudo-white) shadow-sm hover:bg-kyudo-royal-blue focus:outline-none focus:ring-2 focus:ring-kyudo-washed-blue">
 						Modifier
 					</a>
 				</div>
@@ -32,29 +32,29 @@
 			<div
 				class="mt-8 grid gap-6 lg:grid-cols-3">
 				{# --- Main details --- #}
-				<section class="lg:col-span-2 rounded-3xl border border-slate-200 bg-kyudo-white p-6 shadow-sm">
-					<h2 class="text-base font-semibold text-slate-900">Détails</h2>
+				<section class="lg:col-span-2 rounded-3xl border border-kyudo-gm-light-grey bg-kyudo-white p-6 shadow-sm">
+					<h2 class="text-base font-semibold text-kyudo-gm-dark">Détails</h2>
 
 					<dl class="mt-4 grid gap-4 sm:grid-cols-2">
-						<div class="rounded-2xl bg-slate-50 p-4">
-							<dt class="text-xs font-medium text-slate-500">ID</dt>
-							<dd class="mt-1 text-sm font-semibold text-slate-900">{{ club.id }}</dd>
+						<div class="rounded-2xl bg-kyudo-gm-light-grey p-4">
+							<dt class="text-xs font-medium text-">ID</dt>
+							<dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">{{ club.id }}</dd>
 						</div>
 
-						<div class="rounded-2xl bg-slate-50 p-4">
-							<dt class="text-xs font-medium text-slate-500">Président</dt>
-							<dd class="mt-1 text-sm font-semibold text-slate-900">
+						<div class="rounded-2xl bg-kyudo-gm-light-grey p-4">
+							<dt class="text-xs font-medium text-">Président</dt>
+							<dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
 								{{ club.president ?: '-' }}
 							</dd>
 						</div>
 
-						<div class="rounded-2xl bg-slate-50 p-4 sm:col-span-2">
-							<dt class="text-xs font-medium text-slate-500">Email</dt>
-							<dd class="mt-1 text-sm font-semibold text-slate-900">
+						<div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
+							<dt class="text-xs font-medium text-">Email</dt>
+							<dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
 								{% if club.email %}
 									<a class="text-blue-700 hover:underline" href="mailto:{{ club.email }}">{{ club.email }}</a>
 								{% else %}
-									<span class="text-slate-500">-</span>
+									<span class="text-">-</span>
 								{% endif %}
 							</dd>
 						</div>
@@ -62,14 +62,14 @@
 				</section>
 
 				{# --- Address card --- #}
-				<aside class="rounded-3xl border border-slate-200 bg-kyudo-white p-6 shadow-sm">
-					<h2 class="text-base font-semibold text-slate-900">Adresse</h2>
+				<aside class="rounded-3xl border border-kyudo-gm-light-grey bg-kyudo-white p-6 shadow-sm">
+					<h2 class="text-base font-semibold text-kyudo-gm-dark">Adresse</h2>
 
-					<div class="mt-4 rounded-2xl bg-slate-50 p-4 text-sm text-slate-800">
+					<div class="mt-4 rounded-2xl bg-kyudo-gm-light-grey p-4 text-sm text-kyudo-gm-dark">
 						{% if club.address %}
 							<div class="whitespace-pre-line leading-6">{{ club.address }}</div>
 						{% else %}
-							<div class="text-slate-500">-</div>
+							<div class="text-">-</div>
 						{% endif %}
 					</div>
 

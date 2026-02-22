@@ -42,8 +42,7 @@ class EquipmentFormType extends AbstractType
                 'choice_label' => 'email',
                 'placeholder' => '--- Aucun ---',
                 'required' => false,
-            ])
-            ->add('save', SubmitType::class, ['label' => 'Envoyer']);
+            ]);
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event): void {
             $form = $event->getForm();
@@ -53,7 +52,9 @@ class EquipmentFormType extends AbstractType
                 $form
                     ->add('equipment_type', EnumType::class, [
                         'class' => EquipmentType::class,
+                        'choice_value' => fn (?EquipmentType $type) => $type?->value,
                         'choice_label' => fn (EquipmentType $type) => $type->label(),
+                        'choice_attr' => fn (EquipmentType $type) => ['data-equipment-type' => $type->value],
                         'label' => 'Type d\'équipement',
                         'placeholder' => 'equipment.choose_type',
                         'translation_domain' => 'messages',
@@ -61,14 +62,10 @@ class EquipmentFormType extends AbstractType
                         'required' => true,
                     ])
                     ->add('glove_form', GloveFormType::class, [
-                        'attr' => [
-                            'disabled' => true,
-                        ],
+                        'disabled' => true,
                     ])
                     ->add('yumi_form', YumiFormType::class, [
-                        'attr' => [
-                            'disabled' => true,
-                        ],
+                        'disabled' => true,
                     ])
                 ;
             } elseif ($data instanceof Glove) {

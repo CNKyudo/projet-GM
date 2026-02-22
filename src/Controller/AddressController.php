@@ -48,11 +48,6 @@ class AddressController extends AbstractController
 
             $this->addFlash('success', 'Adresse créée.');
 
-            $referer = $request->headers->get('referer');
-            if ($referer) {
-                return $this->redirect($referer);
-            }
-
             return $this->redirectToRoute('address_index');
         }
 

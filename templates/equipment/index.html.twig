@@ -7,20 +7,20 @@
 {% set status = status|default(app.request.query.get('status') ?: 'all') %}
 
 {% block body %}
-	<div class="h-screen-with-navbar bg-kyudo-club pt-16 pb-10 px-6">
+	<div class="h-screen-with-navbar bg-kyudo-equipment pt-16 pb-10 px-6">
 		<div
 			class="mx-auto max-w-6xl rounded-3xl bg-kyudo-white shadow-xl p-8 md:p-12">
 
 			{# --- Header --- #}
 			<div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
 				<div>
-					<h1 class="text-3xl font-semibold tracking-tight text-slate-900">Équipements</h1>
-					<p class="mt-1 text-slate-600">
+					<h1 class="text-3xl font-semibold tracking-tight text-kyudo-gm-dark">Équipements</h1>
+					<p class="mt-1 text-kyudo-gm-grey">
 						Suivi des équipements : propriétaire, prêt, emprunteur.
 					</p>
 				</div>
 
-				<a href="{{ path('equipment.create') ?? '/equipment/create' }}" class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-white shadow-sm hover:bg-kyudo-royal-blue focus:outline-none focus:ring-2 focus:ring-blue-200">
+				<a href="{{ path('equipment.create') ?? '/equipment/create' }}" class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-(--color-kyudo-white) shadow-sm hover:bg-kyudo-royal-blue focus:outline-none focus:ring-2 focus:ring-kyudo-washed-blue">
 					+ Ajouter
 				</a>
 			</div>
@@ -28,43 +28,40 @@
 			<form method="get" class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 				<div class="flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
 					<div class="relative w-full sm:w-[420px]">
-						<input name="q" value="{{ q }}" class="w-full rounded-2xl border border-slate-200 bg-kyudo-white px-4 py-2.5 pr-10 text-slate-900 shadow-sm outline-none placeholder:text-slate-400 focus:border-slate-300 focus:ring-2 focus:ring-blue-200" placeholder="Rechercher (club propriétaire, emprunteur, id)…"/>
-						<span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">⌕</span>
+						<input name="q" value="{{ q }}" class="w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 pr-10 text-kyudo-gm-dark shadow-sm outline-none placeholder:text-kyudo-gm-grey focus:border-kyudo-gm-light-grey focus:ring-2 focus:ring-kyudo-washed-blue" placeholder="Rechercher (club propriétaire, emprunteur, id)…"/>
+						<span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-kyudo-gm-grey">⌕</span>
 					</div>
 
 					<input type="hidden" name="status" value="{{ status }}">
 
-					<button class="inline-flex items-center justify-center rounded-2xl bg-slate-900 px-4 py-2.5 font-medium text-white hover:bg-slate-800" type="submit">
+					<button class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-(--color-kyudo-white) hover:bg-kyudo-royal-blue" type="submit">
 						Rechercher
 					</button>
 
 					{% if q or status != 'all' %}
-						<a class="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-kyudo-white px-4 py-2.5 font-medium text-slate-800 hover:bg-slate-50" href="{{ path('equipment.index') }}">
+						<a class="inline-flex items-center justify-center rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)" href="{{ path('equipment.index') }}">
 							Réinitialiser
 						</a>
 					{% endif %}
 				</div>
 
 				<div class="flex flex-wrap gap-2">
-					<a href="{{ path('equipment.index', {'q': q, 'status': 'all'}) }}" class="rounded-full px-3 py-1 text-xs font-medium
-																																																																																				              {{ status == 'all' ? 'bg-slate-900 text-white' : 'bg-kyudo-white text-slate-700 ring-1 ring-slate-200' }}">
+					<a href="{{ path('equipment.index', {'q': q, 'status': 'all'}) }}" class="rounded-full px-3 py-1 text-xs font-medium {{ status == 'all' ? 'bg-kyudo-blue text-(--color-kyudo-white) hover:bg-kyudo-royal-blue' : 'bg-kyudo-white text-kyudo-gm-dark ring-1 ring-kyudo-gm-light-grey hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }}">
 						Tous
 					</a>
-					<a href="{{ path('equipment.index', {'q': q, 'status': 'available'}) }}" class="rounded-full px-3 py-1 text-xs font-medium
-																																																																																				              {{ status == 'available' ? 'bg-slate-900 text-white' : 'bg-kyudo-white text-slate-700 ring-1 ring-slate-200' }}">
+					<a href="{{ path('equipment.index', {'q': q, 'status': 'available'}) }}" class="rounded-full px-3 py-1 text-xs font-medium {{ status == 'available' ? 'bg-kyudo-blue text-(--color-kyudo-white) hover:bg-kyudo-royal-blue' : 'bg-kyudo-white text-kyudo-gm-dark ring-1 ring-kyudo-gm-light-grey hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }}">
 						Disponibles
 					</a>
-					<a href="{{ path('equipment.index', {'q': q, 'status': 'loaned'}) }}" class="rounded-full px-3 py-1 text-xs font-medium
-																																																																																				              {{ status == 'loaned' ? 'bg-slate-900 text-white' : 'bg-kyudo-white text-slate-700 ring-1 ring-slate-200' }}">
+					<a href="{{ path('equipment.index', {'q': q, 'status': 'loaned'}) }}" class="rounded-full px-3 py-1 text-xs font-medium {{ status == 'loaned' ? 'bg-kyudo-blue text-(--color-kyudo-white) hover:bg-kyudo-royal-blue' : 'bg-kyudo-white text-kyudo-gm-dark ring-1 ring-kyudo-gm-light-grey hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }}">
 						Prêtés
 					</a>
 				</div>
 			</form>
 
 			{# --- Table --- #}
-			<div class="mt-8 overflow-hidden rounded-3xl border border-slate-200 bg-kyudo-white shadow-sm">
+			<div class="mt-8 overflow-hidden rounded-3xl border border-kyudo-gm-light-grey bg-kyudo-white shadow-sm">
 				<table class="w-full text-left">
-					<thead class="bg-slate-50 text-sm text-slate-600">
+					<thead class="bg-kyudo-washed-blue text-sm text-(--color-kyudo-white)">
 						<tr>
 							<th class="px-5 py-4 font-medium">ID</th>
 							<th class="px-5 py-4 font-medium">Type</th>
@@ -79,19 +76,19 @@
 							{% set owner = equipment.ownerClub %}
 							{% set borrower = equipment.borrowerClub %}
 
-							<tr class="hover:bg-slate-50/60">
-								<td class="px-5 py-4 text-slate-600">{{ equipment.id }}</td>
+							<tr class="hover:bg-kyudo-gm-light-grey">
+								<td class="px-5 py-4 text-kyudo-gm-grey">{{ equipment.id }}</td>
 
 								<td class="px-5 py-4">
-									<div class="font-semibold text-slate-900">{{ equipment.typeName }}</div>
-									<div class="mt-0.5 text-xs text-slate-500">Kyūdō equipment</div>
+									<div class="font-semibold text-kyudo-gm-dark">{{ equipment.typeName }}</div>
+									<div class="mt-0.5 text-xs text-">Kyūdō equipment</div>
 								</td>
 
-								<td class="px-5 py-4 text-slate-800">
+								<td class="px-5 py-4 text-kyudo-gm-dark">
 									{% if owner %}
 										{{ owner.name }}
 									{% else %}
-										<span class="text-slate-500">—</span>
+										<span class="text-">—</span>
 									{% endif %}
 								</td>
 
@@ -110,10 +107,10 @@
 
 								<td class="px-5 py-4">
 									<div class="flex justify-end gap-2">
-										<a class="rounded-xl border border-slate-200 bg-kyudo-white px-3 py-2 font-medium text-slate-800 hover:bg-slate-50" href="/equipment/{{ equipment.id }}">
+										<a class="rounded-xl border border-kyudo-gm-light-grey bg-kyudo-white px-3 py-2 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)" href="/equipment/{{ equipment.id }}">
 											Voir
 										</a>
-										<a class="rounded-xl border border-slate-200 bg-kyudo-white px-3 py-2 font-medium text-slate-800 hover:bg-slate-50" href="/equipment/{{ equipment.id }}/edit">
+										<a class="rounded-xl border border-kyudo-gm-light-grey bg-kyudo-white px-3 py-2 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)" href="/equipment/{{ equipment.id }}/edit">
 											Modifier
 										</a>
 									</div>
@@ -122,10 +119,10 @@
 
 						{% else %}
 							<tr>
-								<td colspan="5" class="px-5 py-10 text-center text-slate-700">
+								<td colspan="5" class="px-5 py-10 text-center text-kyudo-gm-dark">
 									Aucun équipement trouvé
 									<div class="mt-3">
-										<a class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-white hover:bg-kyudo-royal-blue" href="{{ path('equipment.create') ?? '/equipment/create' }}">
+										<a class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-(--color-kyudo-white) hover:bg-kyudo-royal-blue" href="{{ path('equipment.create') ?? '/equipment/create' }}">
 											+ Ajouter un équipement
 										</a>
 									</div>
@@ -142,7 +139,7 @@
 				{{ knp_pagination_render(equipments) }}
 			</div>
 
-			<p class="mt-4 text-xs text-slate-500">
+			<p class="mt-4 text-xs text-">
 				Astuce : “Disponible” = pas d’emprunteur. “Prêté” = emprunteur renseigné.
 			</p>
 

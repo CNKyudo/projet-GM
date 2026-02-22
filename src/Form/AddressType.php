@@ -4,9 +4,11 @@ namespace App\Form;
 
 use App\Entity\Address;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -33,12 +35,32 @@ class AddressType extends AbstractType
                 'label' => 'Pays',
                 'required' => false,
             ]);
-        if ($options['is_edit']) {
-            $builder->add('save', SubmitType::class, [
-                'label' => 'Mettre à jour',
-                'attr' => ['class' => 'btn btn-primary'],
-            ]);
-        }
+
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($options): void {
+            if (($options['require_at_least_one_field'] ?? true) !== true) {
+                return;
+            }
+
+            $address = $event->getData();
+            if (!$address instanceof Address) {
+                return;
+            }
+
+            $values = [
+                $address->getStreetAddress(),
+                $address->getPostalCode(),
+                $address->getCity(),
+                $address->getCountry(),
+            ];
+
+            foreach ($values as $value) {
+                if (is_string($value) && trim($value) !== '') {
+                    return;
+                }
+            }
+
+            $event->getForm()->addError(new FormError('Veuillez renseigner au moins un champ d\'adresse.'));
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -46,6 +68,7 @@ class AddressType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Address::class,
             'is_edit' => false,
+            'require_at_least_one_field' => true,
         ]);
     }
 }

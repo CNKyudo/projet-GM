@@ -8,17 +8,17 @@
 	{% set q = app.request.query.get('q') %}
 	{% set view = app.request.query.get('view') ?: 'cards' %}
 
-	<div class="from-slate-100 to-slate-200 pt-16 pb-10 px-6 p-6 h-screen-with-navbar bg-kyudo-club">
+	<div class="from-slate-100 to-kyudo-gm-light-grey pt-16 pb-10 px-6 p-6 h-screen-with-navbar bg-kyudo-club">
 
 		<div class="mx-auto max-w-6xl rounded-3xl shadow-xl p-8 md:p-12 bg-kyudo-white">
 
 			<div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
 				<div>
-					<h1 class="text-3xl font-semibold tracking-tight text-slate-900">Clubs de Kyūdō</h1>
-					<p class="mt-1 text-slate-600">Répertoire des clubs (président, contact, actions).</p>
+					<h1 class="text-3xl font-semibold tracking-tight text-kyudo-gm-dark">Clubs de Kyūdō</h1>
+					<p class="mt-1 text-kyudo-gm-grey">Répertoire des clubs (président, contact, actions).</p>
 				</div>
 
-				<a class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-white shadow-sm hover:bg-kyudo-royal-blue focus:ring-2 focus:ring-blue-200" href="{{ path('club_new') }}">
+				<a class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-(--color-kyudo-white) shadow-sm hover:bg-kyudo-royal-blue focus:ring-2 focus:ring-kyudo-washed-blue" href="{{ path('club_new') }}">
 					+ Ajouter un club
 				</a>
 			</div>
@@ -27,18 +27,18 @@
 			<form method="get" class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 				<div class="flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
 					<div class="relative w-full sm:w-[420px]">
-						<input name="q" value="{{ q }}" placeholder="Rechercher (nom, président, email)…" class="w-full rounded-2xl border border-slate-200 bg-kyudo-white px-4 py-2.5 pr-10 text-slate-900 shadow-sm outline-none placeholder:text-slate-400 focus:border-slate-300 focus:ring-2 focus:ring-blue-200"/>
-						<span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">⌕</span>
+						<input name="q" value="{{ q }}" placeholder="Rechercher (nom, président, email)…" class="w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 pr-10 text-kyudo-gm-dark shadow-sm outline-none placeholder:text-kyudo-gm-grey focus:border-kyudo-gm-light-grey focus:ring-2 focus:ring-kyudo-washed-blue"/>
+						<span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-kyudo-gm-grey">⌕</span>
 					</div>
 
 					<input type="hidden" name="view" value="{{ view }}">
 
-					<button class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-white hover:bg-kyudo-royal-blue" type="submit">
+					<button class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-(--color-kyudo-white) hover:bg-kyudo-royal-blue" type="submit">
 						Rechercher
 					</button>
 
 					{% if q %}
-						<a class="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-kyudo-white px-4 py-2.5 font-medium text-slate-800 hover:bg-slate-50" href="{{ path(app.request.attributes.get('_route'), {'view': view}) }}">
+						<a class="inline-flex items-center justify-center rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 font-medium text-kyudo-gm-dark hover:bg-kyudo-royal-blue" href="{{ path(app.request.attributes.get('_route'), {'view': view}) }}">
 							Réinitialiser
 						</a>
 					{% endif %}
@@ -56,16 +56,12 @@
 
 				{# --- Toggle UI --- #}
 				<div class="flex justify-end">
-					<div class="rounded-2xl border border-slate-200 bg-kyudo-white p-1 shadow-sm">
-						<label for="view_toggle" class="inline-flex cursor-pointer select-none items-center rounded-xl px-3 py-2 text-sm font-medium
-																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																												               text-slate-700 hover:bg-slate-50
-																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																												               peer-checked:text-slate-400">
+					<div class="rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white p-1 shadow-sm">
+						<label for="view_toggle" class="inline-flex cursor-pointer select-none items-center rounded-xl px-3 py-2 text-sm font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white) peer-checked:bg-kyudo-washed-blue peer-checked:text-(--color-kyudo-white)">
 							⬚ Cartes
 						</label>
 
-						<label for="view_toggle" class="inline-flex cursor-pointer select-none items-center rounded-xl px-3 py-2 text-sm font-medium
-																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																												               text-slate-400 hover:bg-slate-50
-																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																												               peer-checked:bg-slate-900 peer-checked:text-white peer-checked:hover:bg-slate-800">
+						<label for="view_toggle" class="inline-flex cursor-pointer select-none items-center rounded-xl px-3 py-2 text-sm font-medium text-kyudo-gm-grey hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white) peer-checked:bg-kyudo-washed-blue peer-checked:text-(--color-kyudo-white)">
 							≡ Tableau
 						</label>
 					</div>
@@ -78,37 +74,37 @@
 							<article class="rounded-2xl border border-kyudo-washed-blue bg-kyudo-white p-4 shadow-sm transition hover:shadow-md">
 								<div class="flex items-start justify-between gap-3">
 									<div class="min-w-0">
-										<h2 class="truncate text-base font-semibold text-slate-900">{{ club.name }}</h2>
-										<p class="mt-1 text-xs text-slate-600">
+										<h2 class="truncate text-base font-semibold text-kyudo-gm-dark">{{ club.name }}</h2>
+										<p class="mt-1 text-xs text-kyudo-gm-grey">
 											Président :
 											{{ club.president ? club.president : '-' }}
 										</p>
-										<p class="mt-2 text-xs text-slate-700">
+										<p class="mt-2 text-xs text-kyudo-gm-dark">
 											{% if club.email %}
 												<a class="text-blue-700 hover:underline" href="mailto:{{ club.email }}">{{ club.email }}</a>
 											{% else %}
-												<span class="text-slate-500">-</span>
+												<span class="text-">-</span>
 											{% endif %}
 										</p>
 									</div>
 
-									<span class="shrink-0 rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-medium text-slate-700">
+									<span class="shrink-0 rounded-full bg-kyudo-washed-blue px-2.5 py-1 text-[11px] font-medium text-(--color-kyudo-white)">
 										#{{ club.id }}
 									</span>
 								</div>
 
 								<div class="mt-4 flex gap-2">
-									<a class="flex-1 rounded-xl border border-slate-200 px-3 py-2 text-center text-xs font-medium text-slate-800 hover:bg-slate-50" href="{{ path('club_show', {'id': club.id}) }}">
+									<a class="flex-1 rounded-xl border border-kyudo-gm-light-grey px-3 py-2 text-center text-xs font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)" href="{{ path('club_show', {'id': club.id}) }}">
 										Voir
 									</a>
-									<a class="flex-1 rounded-xl border border-slate-200 px-3 py-2 text-center text-xs font-medium text-slate-800 hover:bg-slate-50" href="{{ path('club_edit', {'id': club.id}) }}">
+									<a class="flex-1 rounded-xl border border-kyudo-gm-light-grey px-3 py-2 text-center text-xs font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)" href="{{ path('club_edit', {'id': club.id}) }}">
 										Modifier
 									</a>
 								</div>
 							</article>
 						{% else %}
-							<div class="sm:col-span-2 lg:col-span-4 rounded-2xl border border-dashed border-slate-300 bg-kyudo-white p-10 text-center">
-								<p class="text-slate-700">Aucun club trouvé</p>
+							<div class="sm:col-span-2 lg:col-span-4 rounded-2xl border border-dashed border-kyudo-gm-light-grey bg-kyudo-white p-10 text-center">
+								<p class="text-kyudo-gm-dark">Aucun club trouvé</p>
 							</div>
 						{% endfor %}
 					</div>
@@ -129,23 +125,23 @@
 							</thead>
 							<tbody class="divide-y divide-slate-100 text-sm">
 								{% for club in clubs %}
-									<tr class="hover:bg-slate-50/60">
-										<td class="px-5 py-4 text-slate-600">{{ club.id }}</td>
-										<td class="px-5 py-4 font-semibold text-slate-900">{{ club.name }}</td>
-										<td class="px-5 py-4 text-slate-700">{{ club.president ? club.president : '-' }}</td>
+									<tr class="hover:bg-kyudo-gm-light-grey">
+										<td class="px-5 py-4 text-kyudo-gm-grey">{{ club.id }}</td>
+										<td class="px-5 py-4 font-semibold text-kyudo-gm-dark">{{ club.name }}</td>
+										<td class="px-5 py-4 text-kyudo-gm-dark">{{ club.president ? club.president : '-' }}</td>
 										<td class="px-5 py-4">
 											{% if club.email %}
-												<a class="text-slate-700 hover:text-blue-700" href="mailto:{{ club.email }}">{{ club.email }}</a>
+												<a class="text-kyudo-gm-dark hover:text-blue-700" href="mailto:{{ club.email }}">{{ club.email }}</a>
 											{% else %}
-												<span class="text-slate-500">-</span>
+												<span class="text-">-</span>
 											{% endif %}
 										</td>
 										<td class="px-5 py-4">
 											<div class="flex justify-end gap-2">
-												<a class="rounded-xl border border-slate-200 bg-kyudo-white px-3 py-2 font-medium text-slate-800 hover:bg-slate-50" href="{{ path('club_show', {'id': club.id}) }}">
+												<a class="rounded-xl border border-kyudo-gm-light-grey bg-kyudo-white px-3 py-2 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)" href="{{ path('club_show', {'id': club.id}) }}">
 													Voir
 												</a>
-												<a class="rounded-xl border border-slate-200 bg-kyudo-white px-3 py-2 font-medium text-slate-800 hover:bg-slate-50" href="{{ path('club_edit', {'id': club.id}) }}">
+												<a class="rounded-xl border border-kyudo-gm-light-grey bg-kyudo-white px-3 py-2 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)" href="{{ path('club_edit', {'id': club.id}) }}">
 													Modifier
 												</a>
 											</div>
@@ -153,7 +149,7 @@
 									</tr>
 								{% else %}
 									<tr>
-										<td colspan="5" class="px-5 py-10 text-center text-slate-700">Aucun club trouvé</td>
+										<td colspan="5" class="px-5 py-10 text-center text-kyudo-gm-dark">Aucun club trouvé</td>
 									</tr>
 								{% endfor %}
 							</tbody>

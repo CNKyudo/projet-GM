@@ -38,18 +38,18 @@
                         </div>
                         <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
 
-                        <button class="w-full py-2 px-4 rounded-md bg-kyudo-royal-blue text-white font-semibold hover:bg-kyudo-blue transition-colors duration-200 shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-kyudo-royal-blue" type="submit">
+                        <button class="w-full py-2 px-4 rounded-md bg-kyudo-royal-blue text-(--color-kyudo-white) font-semibold hover:bg-kyudo-blue transition-colors duration-200 shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-kyudo-royal-blue" type="submit">
                             Se connecter
                         </button>
                     </form>
 
                     <div class="flex flex-col gap-4 mt-2">
                         <a href="{{ path('app_forgot_password_request') }}"
-                        class="w-full py-2 px-4 rounded-md bg-kyudo-gray text-kyudo-royal-blue font-semibold text-center hover:bg-kyudo-royal-blue hover:text-white transition-colors duration-200 shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-kyudo-royal-blue">
+                        class="w-full py-2 px-4 rounded-md bg-kyudo-gray text-kyudo-royal-blue font-semibold text-center hover:bg-kyudo-royal-blue hover:text-(--color-kyudo-white) transition-colors duration-200 shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-kyudo-royal-blue">
                             Mot de passe oublié ?
                         </a>
                         <a href="{{ path('app_register') }}"
-                        class="w-full py-2 px-4 rounded-md bg-kyudo-blue text-white font-semibold text-center hover:bg-kyudo-royal-blue transition-colors duration-200 shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-kyudo-blue">
+                        class="w-full py-2 px-4 rounded-md bg-kyudo-blue text-(--color-kyudo-white) font-semibold text-center hover:bg-kyudo-royal-blue transition-colors duration-200 shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-kyudo-blue">
                             Créer un compte
                         </a>
                     </div>

@@ -1,144 +1,36 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Modifier le club
-{% endblock %}
+{% block title %}Modifier le club{% endblock %}
 
 {% block body %}
-	<div class="h-screen-with-navbar bg-kyudo-club pt-16 pb-10 px-6">
-		<div class="mx-auto max-w-6xl rounded-3xl bg-kyudo-white shadow-xl p-8 md:p-12">
+  <div class="h-screen-with-navbar bg-kyudo-club pt-16 pb-10 px-6">
+    <div class="mx-auto max-w-6xl rounded-3xl bg-kyudo-white shadow-xl p-8 md:p-12">
 
-			<div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-				<div>
-					<h1 class="text-3xl font-semibold tracking-tight text-slate-900">
-						Modifier :
-						{{ club.name }}
-					</h1>
-					<p class="mt-1 text-slate-600">
-						Mettez à jour les informations du club.
-					</p>
-				</div>
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h1 class="text-3xl font-semibold tracking-tight text-kyudo-gm-dark">
+            Modifier : {{ club.name }}
+          </h1>
+          <p class="mt-1 text-kyudo-gm-grey">Mettez a jour les informations du club.</p>
+        </div>
 
-				<div class="flex flex-wrap gap-2">
-					<a href="{{ path('club_show', {'id': club.id}) }}" class="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-kyudo-white px-4 py-2.5 font-medium text-slate-800 hover:bg-slate-50">
-						Voir
-					</a>
-					<a href="{{ path('club_index') }}" class="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-kyudo-white px-4 py-2.5 font-medium text-slate-800 hover:bg-slate-50">
-						Retour à la liste
-					</a>
-				</div>
-			</div>
+        <div class="flex flex-wrap gap-2">
+          <a href="{{ path('club_show', {'id': club.id}) }}" class="inline-flex items-center justify-center rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)">
+            Voir
+          </a>
+          <a href="{{ path('club_index') }}" class="inline-flex items-center justify-center rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)">
+            Retour a la liste
+          </a>
+        </div>
+      </div>
 
-			<div class="mt-8">
-				{{ form_start(form, { attr: { class: 'space-y-8' } }) }}
-
-				{# --- Global errors --- #}
-				{% if form.vars.errors|length %}
-					<div class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-						{{ form_errors(form) }}
-					</div>
-				{% endif %}
-
-				{# --- Main info --- #}
-				<section class="space-y-4">
-					<div class="grid gap-4 sm:grid-cols-2">
-						<div class="sm:col-span-2">
-							<label class="mb-1 block text-sm font-medium text-slate-800">
-								{{ form.name.vars.label }}
-							</label>
-							{{ form_widget(form.name, {
-                attr: {
-                  class: 'w-full rounded-2xl border border-slate-200 bg-kyudo-white px-4 py-2.5 text-slate-900 shadow-sm outline-none placeholder:text-slate-400 focus:border-slate-300 focus:ring-2 focus:ring-blue-200'
-                }
-              }) }}
-							<div class="mt-1 text-sm text-red-600">{{ form_errors(form.name) }}</div>
-						</div>
-
-						<div>
-							<label class="mb-1 block text-sm font-medium text-slate-800">Président</label>
-							{{ form_widget(form.president, {
-                attr: {
-                  class: 'w-full rounded-2xl border border-slate-200 bg-kyudo-white px-4 py-2.5 text-slate-900 shadow-sm outline-none focus:border-slate-300 focus:ring-2 focus:ring-blue-200'
-                }
-              }) }}
-							<p class="mt-2 text-xs text-slate-500">Optionnel — sélectionnez un président si connu.</p>
-							<div class="mt-1 text-sm text-red-600">{{ form_errors(form.president) }}</div>
-						</div>
-
-						<div>
-							<label class="mb-1 block text-sm font-medium text-slate-800">
-								{{ form.email.vars.label }}
-							</label>
-							{{ form_widget(form.email, {
-                attr: {
-                  class: 'w-full rounded-2xl border border-slate-200 bg-kyudo-white px-4 py-2.5 text-slate-900 shadow-sm outline-none placeholder:text-slate-400 focus:border-slate-300 focus:ring-2 focus:ring-blue-200'
-                }
-              }) }}
-							<p class="mt-2 text-xs text-slate-500">Optionnel — email de contact du club.</p>
-							<div class="mt-1 text-sm text-red-600">{{ form_errors(form.email) }}</div>
-						</div>
-					</div>
-				</section>
-
-				{# --- Address --- #}
-				<section class="rounded-3xl border border-slate-200 bg-slate-50/70 p-6">
-					<div class="flex items-start justify-between gap-4">
-						<div>
-							<h2 class="text-sm font-semibold text-slate-900">Adresse</h2>
-							<p class="mt-1 text-sm text-slate-600">Optionnel — utile pour localiser le dojo.</p>
-						</div>
-						<span class="rounded-full bg-slate-200/60 px-3 py-1 text-xs font-medium text-slate-700">Optionnel</span>
-					</div>
-
-					<div class="mt-5 grid gap-4 sm:grid-cols-2">
-						{% if form.address.city is defined %}
-							<div>
-								<label class="mb-1 block text-sm font-medium text-slate-800">Ville</label>
-								{{ form_widget(form.address.city, { attr: { class: 'w-full rounded-2xl border border-slate-200 bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-blue-200' } }) }}
-								<div class="mt-1 text-sm text-red-600">{{ form_errors(form.address.city) }}</div>
-							</div>
-						{% endif %}
-
-						{% if form.address.country is defined %}
-							<div>
-								<label class="mb-1 block text-sm font-medium text-slate-800">Pays</label>
-								{{ form_widget(form.address.country, { attr: { class: 'w-full rounded-2xl border border-slate-200 bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-blue-200' } }) }}
-								<div class="mt-1 text-sm text-red-600">{{ form_errors(form.address.country) }}</div>
-							</div>
-						{% endif %}
-
-						{% if form.address.streetAddress is defined %}
-							<div>
-								<label class="mb-1 block text-sm font-medium text-slate-800">Rue</label>
-								{{ form_widget(form.address.streetAddress, { attr: { class: 'w-full rounded-2xl border border-slate-200 bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-blue-200' } }) }}
-								<div class="mt-1 text-sm text-red-600">{{ form_errors(form.address.streetAddress) }}</div>
-							</div>
-						{% endif %}
-
-						{% if form.address.postalCode is defined %}
-							<div>
-								<label class="mb-1 block text-sm font-medium text-slate-800">Code postal</label>
-								{{ form_widget(form.address.postalCode, { attr: { class: 'w-full rounded-2xl border border-slate-200 bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-blue-200' } }) }}
-								<div class="mt-1 text-sm text-red-600">{{ form_errors(form.address.postalCode) }}</div>
-							</div>
-						{% endif %}
-
-						{{ form_rest(form.address) }}
-					</div>
-				</section>
-
-				{# --- Actions --- #}
-				<div class="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
-					<a href="{{ path('club_show', {'id': club.id}) }}" class="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-kyudo-white px-4 py-2.5 font-medium text-slate-800 hover:bg-slate-50">
-						Annuler
-					</a>
-
-					<button type="submit" class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-5 py-2.5 font-medium text-white shadow-sm hover:bg-kyudo-royal-blue focus:outline-none focus:ring-2 focus:ring-blue-200">
-						Enregistrer
-					</button>
-				</div>
-
-				{{ form_end(form, { render_rest: false }) }}
-			</div>
-		</div>
-	</div>
+      <div class="mt-8">
+        {% include 'club/_form.html.twig' with {
+          form: form,
+          submit_label: 'Enregistrer',
+          cancel_path: path('club_show', {'id': club.id})
+        } %}
+      </div>
+    </div>
+  </div>
 {% endblock %}

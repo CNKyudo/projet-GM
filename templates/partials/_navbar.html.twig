@@ -12,19 +12,19 @@
 			{# --- Liens principaux --- #}
 			<div class="hidden md:flex items-center space-x-4">
 
-				<a href="{{ path('app_home') }}" class="px-3 py-1 rounded-md text-sm font-medium {{ current_route starts with 'app_home' ? 'bg-kyudo-blue text-white' : 'text-gray-700 hover:kyudo-washed-blue' }} ">
+				<a href="{{ path('app_home') }}" class="px-3 py-1 rounded-md text-sm font-medium {{ current_route starts with 'app_home' ? 'bg-kyudo-blue text-(--color-kyudo-white) hover:bg-kyudo-royal-blue' : 'text-gray-700 hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }} ">
 					Accueil
 				</a>
 
-				<a href="{{ path('equipment.index') }}" class="px-3 py-1 rounded-md text-sm font-medium {{ current_route starts with 'equipment' ? 'bg-kyudo-blue text-white' : 'text-gray-700 hover:kyudo-washed-blue' }} ">
+				<a href="{{ path('equipment.index') }}" class="px-3 py-1 rounded-md text-sm font-medium {{ current_route starts with 'equipment' ? 'bg-kyudo-blue text-(--color-kyudo-white) hover:bg-kyudo-royal-blue' : 'text-gray-700 hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }} ">
 					Equipements
 				</a>
 
-				<a href="{{ path('club_index') }}" class="px-3 py-1 rounded-md text-sm font-medium {{ current_route starts with 'club_' ? 'bg-kyudo-blue text-white' : 'text-gray-700 hover:kyudo-washed-blue' }} ">
+				<a href="{{ path('club_index') }}" class="px-3 py-1 rounded-md text-sm font-medium {{ current_route starts with 'club_' ? 'bg-kyudo-blue text-(--color-kyudo-white) hover:bg-kyudo-royal-blue' : 'text-gray-700 hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }} ">
 					Les Clubs
 				</a>
 
-				<a href="{{ path('address_index') }}" class=" px-3 py-1 rounded-md text-sm font-medium {{ current_route starts with 'address_' ? 'bg-kyudo-blue text-white' : 'text-gray-700 hover:kyudo-washed-blue' }} ">
+				<a href="{{ path('address_index') }}" class=" px-3 py-1 rounded-md text-sm font-medium {{ current_route starts with 'address_' ? 'bg-kyudo-blue text-(--color-kyudo-white) hover:bg-kyudo-royal-blue' : 'text-gray-700 hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }} ">
 					Adresses
 				</a>
 
@@ -46,7 +46,7 @@
 					<a href="{{ path('app_login') }}" class="text-sm hover:text-blue-600">
 						Connexion
 					</a>
-					<a href="{{ path('app_register') }}" class="text-sm text-white bg-kyudo-blue px-3 py-1 rounded hover:bg-kyudo-royal-blue">
+					<a href="{{ path('app_register') }}" class="text-sm text-(--color-kyudo-white) bg-kyudo-blue px-3 py-1 rounded hover:bg-kyudo-royal-blue">
 						Inscription
 					</a>
 				{% endif %}

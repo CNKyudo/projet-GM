@@ -1,9 +1,13 @@
 @import "tailwindcss";
 
 @theme {
-    --color-kyudo-white : rgb(255,255,255);
-    --color-kyudo-transparent-white : rgba(255,255,255, 0.8);
-    --color-kyudo-blue : rgb(0, 0, 72);
-    --color-kyudo-royal-blue : rgb(10, 0, 150);
-    --color-kyudo-washed-blue : rgb(62, 52, 123); /*device-cmyk(100, 90, 0, 0)*/
+    --color-kyudo-white :               rgb(255,255,255);
+    --color-kyudo-transparent-white :   rgba(255,255,255, 0.8);
+    --color-kyudo-blue :                rgb(0, 0, 72);
+    --color-kyudo-royal-blue :          rgb(10, 0, 150);
+    --color-kyudo-washed-blue :         rgb(62, 52, 123); /*device-cmyk(100, 90, 0, 0)*/
+
+    --color-kyudo-gm-dark :             rgb(30 41 59);
+    --color-kyudo-gm-grey :             rgb(100 116 139);
+    --color-kyudo-gm-light-grey :       rgb(226 232 240);
 }
