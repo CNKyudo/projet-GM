@@ -6,7 +6,7 @@
 
 {% block body %}
     <div class="flex flex-col md:flex-row h-screen bg-kyudo-white">
-        <div id="login_display" class="absolute inset-0 md:static md:flex-2 bg-kyudo-login bg-cover bg-center bg-kyudo-white"">
+        <div id="login_display" class="absolute inset-0 md:static md:flex-2 bg-kyudo-login bg-cover bg-center bg-kyudo-white">
             <div class="absolute inset-0 bg-black/40 bg-kyudo-login md:hidden"></div>
         </div>
         <div id="login_form" class="relative z-10 flex min-h-screen md:min-h-0 md:flex-1 justify-center p-8 md:bg-kyudo-royal-blue">
@@ -38,7 +38,7 @@
                         </div>
                         <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
 
-                        <button class="w-full py-2 px-4 rounded-md bg-kyudo-royal-blue text-(--color-kyudo-white) font-semibold hover:bg-kyudo-blue transition-colors duration-200 shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-kyudo-royal-blue" type="submit">
+                        <button class="w-full py-2 px-4 rounded-md bg-kyudo-royal-blue text-kyudo-white font-semibold hover:bg-kyudo-blue transition-colors duration-200 shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-kyudo-royal-blue" type="submit">
                             Se connecter
                         </button>
                     </form>
@@ -49,7 +49,7 @@
                             Mot de passe oublié ?
                         </a>
                         <a href="{{ path('app_register') }}"
-                        class="w-full py-2 px-4 rounded-md bg-kyudo-blue text-(--color-kyudo-white) font-semibold text-center hover:bg-kyudo-royal-blue transition-colors duration-200 shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-kyudo-blue">
+                        class="w-full py-2 px-4 rounded-md bg-kyudo-blue text-kyudo-white font-semibold text-center hover:bg-kyudo-royal-blue transition-colors duration-200 shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-kyudo-blue">
                             Créer un compte
                         </a>
                     </div>

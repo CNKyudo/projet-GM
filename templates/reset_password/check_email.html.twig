@@ -1,13 +1,44 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Email de réinitialisation de mot de passe envoyé{% endblock %}
+{% block title %}Email de réinitialisation envoyé{% endblock %}
 
 {% block navbar %}{% endblock %}
 
 {% block body %}
-    <p>
-        Si un compte associé à cette adresse email existe, un email vient d'être envoyé avec un lien que vous pouvez utiliser pour réinitialiser votre mot de passe.
-        Ce lien expirera dans {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.
-    </p>
-    <p>Si vous n'avez pas reçu d'email, regarder dans votre dossier spam ou bien <a href="{{ path('app_forgot_password_request') }}">essayez à nouveau</a>.</p>
+  <div class="flex flex-col md:flex-row h-screen bg-kyudo-white">
+    <div id="login_display" class="absolute inset-0 md:static md:flex-2 bg-kyudo-login bg-cover bg-center bg-kyudo-white">
+      <div class="absolute inset-0 bg-black/40 bg-kyudo-login md:hidden"></div>
+    </div>
+
+    <div id="login_form" class="relative z-10 flex min-h-screen md:min-h-0 md:flex-1 justify-center p-8 md:bg-kyudo-royal-blue">
+      <div class="column-1 w-full max-w-sm">
+        <a href="{{ path('app_login') }}">
+          <img class="block md:hidden relative w-full max-w-sm rounded-xl mt-6" src="{{ asset('pictures/FRANCE_KYUDO_LOGOTYPE_RVB_PRINCIPAL BLEU.png') }}" alt="France Kyudo">
+          <img class="hidden md:block relative w-full max-w-sm rounded-xl mt-6" src="{{ asset('pictures/FRANCE_KYUDO_LOGOTYPE_RVB_PRINCIPAL BLANC.png') }}" alt="France Kyudo">
+        </a>
+
+        <div class="relative w-full max-w-sm rounded-xl mt-2 bg-kyudo-white p-6 shadow-2xl">
+          <h1 class="text-2xl font-bold mb-4 text-center text-kyudo-royal-blue">Email envoyé</h1>
+
+          <p class="text-sm text-gray-700">
+            Si un compte associé a cette adresse email existe, un email vient d'etre envoyé avec un lien de réinitialisation.
+            Ce lien expirera dans {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.
+          </p>
+
+          <p class="mt-4 text-sm text-gray-700">
+            Si vous n'avez pas recu d'email, regardez dans les spams ou essayez a nouveau.
+          </p>
+
+          <div class="flex flex-col gap-3 mt-6">
+            <a href="{{ path('app_forgot_password_request') }}" class="w-full py-2 px-4 rounded-md bg-kyudo-royal-blue text-(--color-kyudo-white) font-semibold text-center hover:bg-kyudo-blue transition-colors duration-200 shadow">
+              Reessayer
+            </a>
+            <a href="{{ path('app_login') }}" class="w-full py-2 px-4 rounded-md bg-kyudo-gray text-kyudo-royal-blue font-semibold text-center hover:bg-kyudo-royal-blue hover:text-(--color-kyudo-white) transition-colors duration-200 shadow">
+              Retour a la connexion
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}
