@@ -70,7 +70,7 @@ class Club
         return $this->president;
     }
 
-    public function setPresident(User $president): static
+    public function setPresident(?User $president): static
     {
         $this->president = $president;
 

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\UserRole;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -88,7 +89,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        $roles[] = UserRole::USER->value;
 
         return array_values(array_unique($roles));
     }
@@ -132,10 +133,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->clubWhichImPresidentOf;
     }
 
-    public function setClubWhichImPresidentOf(Club $clubWhichImPresidentOf): static
+    public function setClubWhichImPresidentOf(?Club $clubWhichImPresidentOf): static
     {
-        // set the owning side of the relation if necessary
-        if ($clubWhichImPresidentOf->getPresident() !== $this) {
+        if (null !== $this->clubWhichImPresidentOf && $this->clubWhichImPresidentOf !== $clubWhichImPresidentOf) {
+            $this->clubWhichImPresidentOf->setPresident(null);
+        }
+
+        if (null !== $clubWhichImPresidentOf && $clubWhichImPresidentOf->getPresident() !== $this) {
             $clubWhichImPresidentOf->setPresident($this);
         }
 
