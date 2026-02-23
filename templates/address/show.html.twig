@@ -1,29 +1,76 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Détail adresse{% endblock %}
+{% block title %}Detail adresse{% endblock %}
 
 {% block body %}
-    <h1>Adresse #{{ address.id }}</h1>
+  <div class="h-screen-with-navbar bg-kyudo-club pt-16 pb-10 px-6">
+    <div class="mx-auto max-w-6xl rounded-3xl bg-kyudo-white shadow-xl p-8 md:p-12">
 
-    <dl class="row">
-        <dt class="col-sm-3">Rue</dt>
-        <dd class="col-sm-9">{{ address.streetAddress ?: '-' }}</dd>
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <div class="text-sm font-medium text-">Adresse</div>
+          <h1 class="mt-1 text-3xl font-semibold tracking-tight text-kyudo-gm-dark">#{{ address.id }}</h1>
+          <p class="mt-1 text-kyudo-gm-grey">Details de cette adresse.</p>
+        </div>
 
-        <dt class="col-sm-3">Code postal</dt>
-        <dd class="col-sm-9">{{ address.postalCode ?: '-' }}</dd>
+        <div class="flex flex-wrap gap-2">
+          <a
+            href="{{ path('address_index') }}"
+            class="inline-flex items-center justify-center rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)"
+          >
+            Retour
+          </a>
+          <a
+            href="{{ path('address_edit', {'id': address.id}) }}"
+            class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-(--color-kyudo-white) shadow-sm hover:bg-kyudo-royal-blue focus:outline-none focus:ring-2 focus:ring-kyudo-washed-blue"
+          >
+            Modifier
+          </a>
+        </div>
+      </div>
 
-        <dt class="col-sm-3">Ville</dt>
-        <dd class="col-sm-9">{{ address.city ?: '-' }}</dd>
+      <div class="mt-8 grid gap-6 lg:grid-cols-3">
+        <section class="lg:col-span-2 rounded-3xl border border-kyudo-gm-light-grey bg-kyudo-white p-6 shadow-sm">
+          <h2 class="text-base font-semibold text-kyudo-gm-dark">Details</h2>
 
-        <dt class="col-sm-3">Pays</dt>
-        <dd class="col-sm-9">{{ address.country ?: '-' }}</dd>
-    </dl>
+          <dl class="mt-4 grid gap-4 sm:grid-cols-2">
+            <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
+              <dt class="text-xs font-medium text-">Rue</dt>
+              <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">{{ address.streetAddress ?: '-' }}</dd>
+            </div>
 
-    <a class="btn btn-secondary" href="{{ path('address_index') }}">Retour</a>
-    <a class="btn btn-primary" href="{{ path('address_edit', {'id': address.id}) }}">Modifier</a>
+            <div class="rounded-2xl bg-kyudo-gm-light-grey p-4">
+              <dt class="text-xs font-medium text-">Code postal</dt>
+              <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">{{ address.postalCode ?: '-' }}</dd>
+            </div>
 
-    <form method="post" action="{{ path('address_delete', {'id': address.id}) }}" style="display:inline" onsubmit="return confirm('Supprimer cette adresse ?');">
-        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ address.id) }}">
-        <button class="btn btn-danger">Supprimer</button>
-    </form>
+            <div class="rounded-2xl bg-kyudo-gm-light-grey p-4">
+              <dt class="text-xs font-medium text-">Ville</dt>
+              <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">{{ address.city ?: '-' }}</dd>
+            </div>
+
+            <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
+              <dt class="text-xs font-medium text-">Pays</dt>
+              <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">{{ address.country ?: '-' }}</dd>
+            </div>
+          </dl>
+        </section>
+
+        <aside class="rounded-3xl border border-kyudo-gm-light-grey bg-kyudo-white p-6 shadow-sm">
+          <h2 class="text-base font-semibold text-kyudo-gm-dark">Actions</h2>
+          {# 
+          <p class="mt-2 text-sm text-kyudo-gm-grey">Supprimez cette adresse si elle n'est plus utilisee.</p>
+
+          <form class="mt-4" method="post" action="{{ path('address_delete', {'id': address.id}) }}" onsubmit="return confirm('Supprimer cette adresse ?');">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ address.id) }}">
+            <button type="submit" class="inline-flex w-full items-center justify-center rounded-2xl border border-red-200 bg-white px-4 py-2.5 font-medium text-red-700 hover:bg-red-50">
+              Supprimer
+            </button>
+          </form> 
+          #}
+        </aside>
+      </div>
+
+    </div>
+  </div>
 {% endblock %}

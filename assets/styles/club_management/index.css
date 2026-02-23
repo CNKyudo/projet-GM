@@ -1,0 +1,13 @@
+@import '../kyudo_graphic_charter/variables.css';
+
+.view-switch .view-cards { display: block; }
+.view-switch .view-table { display: none; }
+
+.view-switch:has(#view_table:checked) .view-cards { display: none; }
+.view-switch:has(#view_table:checked) .view-table { display: block; }
+
+.view-switch:has(#view_cards:checked) label[for="view_cards"],
+.view-switch:has(#view_table:checked) label[for="view_table"]{
+  background: var(--color-kyudo-washed-blue);
+  color: var(--color-kyudo-white);
+}

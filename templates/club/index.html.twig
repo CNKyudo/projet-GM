@@ -3,39 +3,185 @@
 {% block title %}Clubs{% endblock %}
 
 {% block body %}
-    <h1>Liste des clubs</h1>
+  {% set q = app.request.query.get('q') %}
+  {% set view = app.request.query.get('view') ?: 'cards' %}
 
-    <a class="btn btn-success mb-3" href="{{ path('club_new') }}">Créer un club</a>
+  <div class="from-slate-100 to-kyudo-gm-light-grey pt-16 pb-10 px-6 p-6 h-screen-with-navbar bg-kyudo-club">
+    <div class="mx-auto max-w-6xl rounded-3xl shadow-xl p-8 md:p-12 bg-kyudo-white">
 
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nom</th>
-                <th>Président</th>
-                <th>Email</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for club in clubs %}
-            <tr>
-                <td>{{ club.id }}</td>
-                <td>{{ club.name }}</td>
-                <td>{{ club.president ? club.president : '-' }}</td>
-                <td>{{ club.email ?: '-' }}</td>
-                <td>
-                    <a class="btn btn-sm btn-outline-primary" href="{{ path('club_show', {'id': club.id}) }}">Voir</a>
-                    <a class="btn btn-sm btn-outline-secondary" href="{{ path('club_edit', {'id': club.id}) }}">Modifier</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr><td colspan="5">Aucun club trouvé</td></tr>
-        {% endfor %}
-        </tbody>
-    </table>
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 class="text-3xl font-semibold tracking-tight text-kyudo-gm-dark">Clubs de Kyudo</h1>
+          <p class="mt-1 text-kyudo-gm-grey">Repertoire des clubs (president, contact, actions).</p>
+        </div>
 
-    <div class="d-flex justify-content-center mt-3">
-        {{ knp_pagination_render(clubs) }}
+        <a class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-(--color-kyudo-white) shadow-sm hover:bg-kyudo-royal-blue focus:ring-2 focus:ring-kyudo-washed-blue" href="{{ path('club_new') }}">
+          + Ajouter un club
+        </a>
+      </div>
+
+      <form method="get" class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+          <div class="relative w-full sm:w-[420px]">
+            <input name="q" value="{{ q }}" placeholder="Rechercher (nom, president, email)..." class="w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 pr-10 text-kyudo-gm-dark shadow-sm outline-none placeholder:text-kyudo-gm-grey focus:border-kyudo-gm-light-grey focus:ring-2 focus:ring-kyudo-washed-blue"/>
+            <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-kyudo-gm-grey">?</span>
+          </div>
+
+          <button class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-(--color-kyudo-white) hover:bg-kyudo-royal-blue" type="submit">
+            Rechercher
+          </button>
+
+          {% if q %}
+            <a class="inline-flex items-center justify-center rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 font-medium text-kyudo-gm-dark hover:bg-kyudo-royal-blue" href="{{ path(app.request.attributes.get('_route'), {'view': view}) }}">
+              Reinitialiser
+            </a>
+          {% endif %}
+        </div>
+      </form>
+
+      <div class="mt-4">
+        <div class="flex justify-end">
+          <div class="rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white p-1 shadow-sm">
+            <button
+              type="button"
+              id="club_view_cards_btn"
+              class="inline-flex select-none items-center rounded-xl px-3 py-2 text-sm font-medium transition-colors {{ view == 'cards' ? 'bg-kyudo-blue text-(--color-kyudo-white) hover:bg-kyudo-royal-blue' : 'text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }}"
+            >
+              Cartes
+            </button>
+
+            <button
+              type="button"
+              id="club_view_table_btn"
+              class="inline-flex select-none items-center rounded-xl px-3 py-2 text-sm font-medium transition-colors {{ view == 'table' ? 'bg-kyudo-blue text-(--color-kyudo-white) hover:bg-kyudo-royal-blue' : 'text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }}"
+            >
+              Tableau
+            </button>
+          </div>
+        </div>
+
+          <div id="club_view_cards" class="mt-6 {{ view == 'table' ? 'hidden' : '' }}">
+            <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {% for club in clubs %}
+                <article class="rounded-2xl border border-kyudo-washed-blue bg-kyudo-white p-4 shadow-sm transition hover:shadow-md">
+                  <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                      <h2 class="truncate text-base font-semibold text-kyudo-gm-dark">{{ club.name }}</h2>
+                      <p class="mt-1 text-xs text-kyudo-gm-grey">President : {{ club.president ? club.president : '-' }}</p>
+                      <p class="mt-2 text-xs text-kyudo-gm-dark">
+                        {% if club.email %}
+                          <a class="text-blue-700 hover:underline" href="mailto:{{ club.email }}">{{ club.email }}</a>
+                        {% else %}
+                          <span class="text-">-</span>
+                        {% endif %}
+                      </p>
+                    </div>
+
+                    <span class="shrink-0 rounded-full bg-kyudo-washed-blue px-2.5 py-1 text-[11px] font-medium text-(--color-kyudo-white)">
+                      #{{ club.id }}
+                    </span>
+                  </div>
+
+                  <div class="mt-4 flex gap-2">
+                    <a class="flex-1 rounded-xl border border-kyudo-gm-light-grey px-3 py-2 text-center text-xs font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)" href="{{ path('club_show', {'id': club.id}) }}">
+                      Voir
+                    </a>
+                    <a class="flex-1 rounded-xl border border-kyudo-gm-light-grey px-3 py-2 text-center text-xs font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)" href="{{ path('club_edit', {'id': club.id}) }}">
+                      Modifier
+                    </a>
+                  </div>
+                </article>
+              {% else %}
+                <div class="sm:col-span-2 lg:col-span-4 rounded-2xl border border-dashed border-kyudo-gm-light-grey bg-kyudo-white p-10 text-center">
+                  <p class="text-kyudo-gm-dark">Aucun club trouve</p>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div id="club_view_table" class="mt-6 {{ view == 'cards' ? 'hidden' : '' }}">
+            <div class="overflow-hidden rounded-3xl border-(length:2) border-kyudo-washed-blue bg-kyudo-white shadow-sm">
+              <table class="w-full text-left">
+                <thead class="bg-kyudo-washed-blue text-sm text-(--color-kyudo-white)">
+                  <tr>
+                    <th class="px-5 py-4">ID</th>
+                    <th class="px-5 py-4">Nom</th>
+                    <th class="px-5 py-4">President</th>
+                    <th class="px-5 py-4">Email</th>
+                    <th class="px-5 py-4 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 text-sm">
+                  {% for club in clubs %}
+                    <tr class="hover:bg-kyudo-gm-light-grey">
+                      <td class="px-5 py-4 text-kyudo-gm-grey">{{ club.id }}</td>
+                      <td class="px-5 py-4 font-semibold text-kyudo-gm-dark">{{ club.name }}</td>
+                      <td class="px-5 py-4 text-kyudo-gm-dark">{{ club.president ? club.president : '-' }}</td>
+                      <td class="px-5 py-4">
+                        {% if club.email %}
+                          <a class="text-kyudo-gm-dark hover:text-blue-700" href="mailto:{{ club.email }}">{{ club.email }}</a>
+                        {% else %}
+                          <span class="text-">-</span>
+                        {% endif %}
+                      </td>
+                      <td class="px-5 py-4">
+                        <div class="flex justify-end gap-2">
+                          <a class="rounded-xl border border-kyudo-gm-light-grey bg-kyudo-white px-3 py-2 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)" href="{{ path('club_show', {'id': club.id}) }}">
+                            Voir
+                          </a>
+                          <a class="rounded-xl border border-kyudo-gm-light-grey bg-kyudo-white px-3 py-2 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)" href="{{ path('club_edit', {'id': club.id}) }}">
+                            Modifier
+                          </a>
+                        </div>
+                      </td>
+                    </tr>
+                  {% else %}
+                    <tr>
+                      <td colspan="5" class="px-5 py-10 text-center text-kyudo-gm-dark">Aucun club trouve</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+      </div>
     </div>
+  </div>
+
+  <script>
+    (function () {
+      const cardsBtn = document.getElementById('club_view_cards_btn');
+      const tableBtn = document.getElementById('club_view_table_btn');
+      const cardsView = document.getElementById('club_view_cards');
+      const tableView = document.getElementById('club_view_table');
+
+      if (!cardsBtn || !tableBtn || !cardsView || !tableView) {
+        return;
+      }
+
+      function setView(view) {
+        const isCards = view === 'cards';
+        cardsView.classList.toggle('hidden', !isCards);
+        tableView.classList.toggle('hidden', isCards);
+
+        cardsBtn.classList.toggle('bg-kyudo-blue', isCards);
+        cardsBtn.classList.toggle('text-(--color-kyudo-white)', isCards);
+        cardsBtn.classList.toggle('hover:bg-kyudo-royal-blue', isCards);
+        cardsBtn.classList.toggle('text-kyudo-gm-dark', !isCards);
+        cardsBtn.classList.toggle('hover:bg-kyudo-washed-blue', !isCards);
+        cardsBtn.classList.toggle('hover:text-(--color-kyudo-white)', !isCards);
+
+        tableBtn.classList.toggle('bg-kyudo-blue', !isCards);
+        tableBtn.classList.toggle('text-(--color-kyudo-white)', !isCards);
+        tableBtn.classList.toggle('hover:bg-kyudo-royal-blue', !isCards);
+        tableBtn.classList.toggle('text-kyudo-gm-dark', isCards);
+        tableBtn.classList.toggle('hover:bg-kyudo-washed-blue', isCards);
+        tableBtn.classList.toggle('hover:text-(--color-kyudo-white)', isCards);
+      }
+
+      cardsBtn.addEventListener('click', function () { setView('cards'); });
+      tableBtn.addEventListener('click', function () { setView('table'); });
+      setView('{{ view == 'table' ? 'table' : 'cards' }}');
+    })();
+  </script>
 {% endblock %}

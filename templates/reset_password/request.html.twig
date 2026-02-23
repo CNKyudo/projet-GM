@@ -1,21 +1,55 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Réinitialisation de mot de passe{% endblock %}
+{% block title %}Reinitialisation de mot de passe{% endblock %}
+
+{% block navbar %}{% endblock %}
 
 {% block body %}
-    {% for flash_error in app.flashes('reset_password_error') %}
-        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
-    {% endfor %}
-    <h1>Réinitialisation de votre mot de passe</h1>
+  <div class="flex flex-col md:flex-row h-screen bg-kyudo-white">
+    <div id="login_display" class="absolute inset-0 md:static md:flex-2 bg-kyudo-login bg-cover bg-center bg-kyudo-white">
+      <div class="absolute inset-0 bg-black/40 bg-kyudo-login md:hidden"></div>
+    </div>
 
-    {{ form_start(requestForm) }}
-        {{ form_row(requestForm.email) }}
-        <div>
-            <small>
-                Renseignez l'adresse email associée à votre compte et nous vous enverrons un lien vous permettant de réinitialiser de mot de passe.
-            </small>
+    <div id="login_form" class="relative z-10 flex min-h-screen md:min-h-0 md:flex-1 justify-center p-8 md:bg-kyudo-royal-blue">
+      <div class="column-1 w-full max-w-sm">
+        <a href="{{ path('app_login') }}">
+          <img class="block md:hidden relative w-full max-w-sm rounded-xl mt-6" src="{{ asset('pictures/FRANCE_KYUDO_LOGOTYPE_RVB_PRINCIPAL BLEU.png') }}" alt="France Kyudo">
+          <img class="hidden md:block relative w-full max-w-sm rounded-xl mt-6" src="{{ asset('pictures/FRANCE_KYUDO_LOGOTYPE_RVB_PRINCIPAL BLANC.png') }}" alt="France Kyudo">
+        </a>
+
+        <div class="relative w-full max-w-sm rounded-xl mt-2 bg-kyudo-white p-6 shadow-2xl">
+          <h1 class="text-2xl font-bold mb-4 text-center text-kyudo-royal-blue">Mot de passe oublie</h1>
+
+          {% for flash_error in app.flashes('reset_password_error') %}
+            <div class="mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">
+              {{ flash_error }}
+            </div>
+          {% endfor %}
+
+          {{ form_start(requestForm) }}
+            <div class="mb-4">
+              {{ form_row(requestForm.email, {
+                attr: {
+                  class: 'block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-kyudo-royal-blue focus:border-kyudo-royal-blue'
+                }
+              }) }}
+            </div>
+
+            <p class="mb-4 text-sm text-gray-600">
+              Renseignez l'email associé a votre compte. Un lien de réinitialisation vous sera envoyé.
+            </p>
+
+            <div class="flex flex-col gap-3">
+              <button class="w-full py-2 px-4 rounded-md bg-kyudo-royal-blue text-(--color-kyudo-white) font-semibold hover:bg-kyudo-blue transition-colors duration-200 shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-kyudo-royal-blue" type="submit">
+                Envoyer le lien de réinitialisation
+              </button>
+              <a href="{{ path('app_login') }}" class="w-full py-2 px-4 rounded-md bg-kyudo-gray text-kyudo-royal-blue font-semibold text-center hover:bg-kyudo-royal-blue hover:text-(--color-kyudo-white) transition-colors duration-200 shadow">
+                Retour a la connexion
+              </a>
+            </div>
+          {{ form_end(requestForm) }}
         </div>
-
-        <button class="btn btn-primary">Envoyer le lien de réinitialisation</button>
-    {{ form_end(requestForm) }}
+      </div>
+    </div>
+  </div>
 {% endblock %}

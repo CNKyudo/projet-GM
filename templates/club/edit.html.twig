@@ -3,9 +3,34 @@
 {% block title %}Modifier le club{% endblock %}
 
 {% block body %}
-    <h1>Modifier : {{ club.name }}</h1>
+  <div class="h-screen-with-navbar bg-kyudo-club pt-16 pb-10 px-6">
+    <div class="mx-auto max-w-6xl rounded-3xl bg-kyudo-white shadow-xl p-8 md:p-12">
 
-    {{ form(form) }}
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h1 class="text-3xl font-semibold tracking-tight text-kyudo-gm-dark">
+            Modifier : {{ club.name }}
+          </h1>
+          <p class="mt-1 text-kyudo-gm-grey">Mettez a jour les informations du club.</p>
+        </div>
 
-    <a class="btn btn-secondary mt-3" href="{{ path('club_index') }}">Retour à la liste</a>
+        <div class="flex flex-wrap gap-2">
+          <a href="{{ path('club_show', {'id': club.id}) }}" class="inline-flex items-center justify-center rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)">
+            Voir
+          </a>
+          <a href="{{ path('club_index') }}" class="inline-flex items-center justify-center rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)">
+            Retour a la liste
+          </a>
+        </div>
+      </div>
+
+      <div class="mt-8">
+        {% include 'club/_form.html.twig' with {
+          form: form,
+          submit_label: 'Enregistrer',
+          cancel_path: path('club_show', {'id': club.id})
+        } %}
+      </div>
+    </div>
+  </div>
 {% endblock %}

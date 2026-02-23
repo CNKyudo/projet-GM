@@ -1,44 +1,96 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello EquipmentController!{% endblock %}
+{% block title %}Détails de l’équipement{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+  <div class="h-screen-with-navbar bg-kyudo-club pt-16 pb-10 px-6">
+    <div class="mx-auto max-w-6xl rounded-3xl bg-kyudo-white shadow-xl p-8 md:p-12">
 
-<div class="example-wrapper">
-    <h1>Détail de l'équipement</h1>
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <div class="text-sm font-medium text-">Équipement</div>
+          <h1 class="mt-1 text-3xl font-semibold tracking-tight text-kyudo-gm-dark">
+            #{{ equipment.id }} — {{ equipment.typeName }}
+          </h1>
+          <p class="mt-1 text-kyudo-gm-grey">Propriétaire et emprunteur actuel.</p>
+        </div>
 
-    <table border="1">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Type</th>
-            <th>Club Propriétaire</th>
-            <th>Club Emprunteur</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>{{ equipment.id }}</td>
-            <td>{{ equipment.typeName }}</td>
-            <td>
-            {% if equipment.ownerClub %}
-                {{ equipment.ownerClub.name }}
-            {% endif %}
-            </td>
-            <td>
-            {% if equipment.borrowerClub %}
-                {{ equipment.borrowerClub.name }}
-            {% endif %}
-            </td>
-            <td>
-            </td>
-        </tr>
-    </tbody>
-</table>
-</div>
+        <div class="flex flex-wrap gap-2">
+          <a
+            href="{{ path('equipment.index') }}"
+            class="inline-flex items-center justify-center rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)"
+          >
+            ← Retour
+          </a>
+          <a
+            href="{{ path('equipment.edit', {'id': equipment.id}) }}"
+            class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-(--color-kyudo-white) shadow-sm hover:bg-kyudo-royal-blue focus:outline-none focus:ring-2 focus:ring-kyudo-washed-blue"
+          >
+            Modifier
+          </a>
+        </div>
+      </div>
+
+      <div class="mt-8 grid gap-6 lg:grid-cols-3">
+        <section class="lg:col-span-2 rounded-3xl border border-kyudo-gm-light-grey bg-kyudo-white p-6 shadow-sm">
+          <h2 class="text-base font-semibold text-kyudo-gm-dark">Détails</h2>
+
+          <dl class="mt-4 grid gap-4 sm:grid-cols-2">
+            <div class="rounded-2xl bg-kyudo-gm-light-grey p-4">
+              <dt class="text-xs font-medium text-">ID</dt>
+              <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">{{ equipment.id }}</dd>
+            </div>
+
+            <div class="rounded-2xl bg-kyudo-gm-light-grey p-4">
+              <dt class="text-xs font-medium text-">Type</dt>
+              <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">{{ equipment.typeName }}</dd>
+            </div>
+
+            <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
+              <dt class="text-xs font-medium text-">Club propriétaire</dt>
+              <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
+                {{ equipment.ownerClub ? equipment.ownerClub.name : '-' }}
+              </dd>
+            </div>
+
+            <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
+              <dt class="text-xs font-medium text-">Statut</dt>
+              <dd class="mt-2">
+                {% if equipment.borrowerClub %}
+                  <span class="inline-flex items-center gap-2 rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-800">
+                    Prêté à <span class="font-semibold">{{ equipment.borrowerClub.name }}</span>
+                  </span>
+                {% else %}
+                  <span class="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-800">
+                    Disponible
+                  </span>
+                {% endif %}
+              </dd>
+            </div>
+          </dl>
+        </section>
+
+        <aside class="rounded-3xl border border-kyudo-gm-light-grey bg-kyudo-white p-6 shadow-sm">
+          <h2 class="text-base font-semibold text-kyudo-gm-dark">Emprunteur</h2>
+
+          <div class="mt-4 rounded-2xl bg-kyudo-gm-light-grey p-4 text-sm text-kyudo-gm-dark">
+            <div class="text-xs font-medium text-">Club emprunteur</div>
+            <div class="mt-1 font-semibold text-kyudo-gm-dark">
+              {{ equipment.borrowerClub ? equipment.borrowerClub.name : '-' }}
+            </div>
+
+            <div class="mt-4 text-xs font-medium text-">Emprunteur (personne)</div>
+            <div class="mt-1 font-semibold text-kyudo-gm-dark">
+              {{ equipment.borrowerUser ? equipment.borrowerUser : '-' }}
+            </div>
+          </div>
+
+          <p class="mt-3 text-xs text-">
+            L’emprunteur est optionnel. Si aucun club n’est renseigné, l’équipement est considéré disponible.
+          </p>
+        </aside>
+      </div>
+
+    </div>
+  </div>
 {% endblock %}

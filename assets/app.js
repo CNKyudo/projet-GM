@@ -1,4 +1,5 @@
 import './bootstrap.js';
+import './equipment_form.js';
 /*
  * Welcome to your app's main JavaScript file!
  *

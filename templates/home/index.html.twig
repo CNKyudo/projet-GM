@@ -1,20 +1,45 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HomeController!{% endblock %}
+{% block title %}Hello HomeController!
+{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background:#5418a1; padding: 2px 6px; }
-</style>
 
-<div class="example-wrapper">
-    <h1>France Kyudo 仏国弓道 フランス きゅうど</h1>
-    <div>
-        Bonjour {{ app.user.email }}
-    </div>
+	<div class="flex flex-col md:flex-row h-screen-with-navbar bg-kyudo-white">
+		<div id="login_display" class="absolute inset-0 md:static md:flex-2 bg-kyudo-home bg-cover bg-center bg-kyudo-white">
+			<div class="absolute inset-0 bg-black/40 bg-kyudo-home md:hidden"></div>
+		</div>
 
-    <a type="button" class="btn" href="/equipment"> Équipements </a>
-</div>
-<a href="{{ path("app_logout") }}">Se déconnecter</a>
+		<div class="split-banner group">
+
+			<a href="{{ path('equipment.index') }}" class="split-col split-materiel hover:flex-[1.2]">
+				<div class="split-media split-materiel-clip split-bg-materiel">
+					<div class="split-overlay"></div>
+				</div>
+				<div
+					class="split-content">
+					{# <p class="split-kicker"></p> #}
+					<h2 class="split-title">Équipements</h2>
+					{# <span class="split-cta"></span> #}
+				</div>
+			</a>
+
+			<a href="{{ path('club_index') }}" class="split-col split-chevauchement hover:flex-[1.2]">
+				<div class="split-separator"></div>
+				<div class="split-media split-club-clip split-bg-club">
+					<div class="split-overlay"></div>
+				</div>
+				<div
+					class="split-content">
+					{# <p class="split-kicker"></p> #}
+					<h2 class="split-title">Les Clubs</h2>
+					{# <span class="split-cta"></span> #}
+				</div>
+			</a>
+
+		</div>
+
+	</div>
+
+
 {% endblock %}

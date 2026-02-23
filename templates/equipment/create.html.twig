@@ -1,15 +1,30 @@
 {% extends 'base.html.twig' %}
 
-{% block title "Nouvel équipement" %}
+{% block title %}Nouvel équipement{% endblock %}
 
 {% block body %}
+  <div class="h-screen-with-navbar bg-kyudo-club pt-16 pb-10 px-6">
+    <div class="mx-auto max-w-6xl rounded-3xl bg-kyudo-white shadow-xl p-8 md:p-12">
 
-    <h1>Création</h1>
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h1 class="text-3xl font-semibold tracking-tight text-kyudo-gm-dark">Ajouter un équipement</h1>
+          <p class="mt-1 text-kyudo-gm-grey">Définissez le type, le club propriétaire et l’emprunteur actuel.</p>
+        </div>
 
-    {% include 'equipment/form.html.twig' %}
+        <a
+          href="{{ path('equipment.index') }}"
+          class="inline-flex items-center justify-center rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)"
+        >
+          ← Retour à la liste
+        </a>
+      </div>
 
+      <div class="mt-8">
+        {% include 'equipment/_form.html.twig' with { form: form, mode: 'create' } %}
+      </div>
+
+    </div>
+  </div>
 {% endblock %}
 
-{% block importmap %}
-    {{ importmap(['app', 'equipment_form']) }}
-{% endblock %}

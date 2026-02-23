@@ -3,9 +3,22 @@
 {% block title %}Nouveau club{% endblock %}
 
 {% block body %}
-    <h1>Créer un club</h1>
+  <div class="h-screen-with-navbar bg-kyudo-club pt-16 pb-10 px-6">
+    <div class="mx-auto max-w-6xl rounded-3xl bg-kyudo-white shadow-xl p-8 md:p-12">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <h1 class="text-3xl font-semibold tracking-tight text-kyudo-gm-dark">Creer un club</h1>
+          <p class="mt-1 text-kyudo-gm-grey">Ajoutez un club de Kyudo au repertoire.</p>
+        </div>
+      </div>
 
-    {{ form(form) }}
-
-    <a class="btn btn-secondary mt-3" href="{{ path('club_index') }}">Retour à la liste</a>
+      <div class="px-8 py-8">
+        {% include 'club/_form.html.twig' with {
+          form: form,
+          submit_label: 'Enregistrer',
+          cancel_path: path('club_index')
+        } %}
+      </div>
+    </div>
+  </div>
 {% endblock %}
