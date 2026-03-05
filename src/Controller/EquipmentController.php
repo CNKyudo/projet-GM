@@ -97,6 +97,14 @@ final class EquipmentController extends AbstractController
             $equipment->setBorrowerClub($borrowerClub);
             $equipment->setBorrowerUser($borrowerUser);
 
+            if ($equipment instanceof Glove && $form->has('glove_form')) {
+                $equipment->setNbFingers($form->get('glove_form')->get('nb_fingers')->getData());
+            }
+
+            if ($equipment instanceof Yumi && $form->has('yumi_form')) {
+                $equipment->setMaterial($form->get('yumi_form')->get('material')->getData());
+            }
+
             $em->persist($equipment);
             $em->flush();
 

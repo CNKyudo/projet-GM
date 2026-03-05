@@ -25,7 +25,7 @@
 
       <div>
         <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
-          {{ form.owner_club.vars.label|default('Club propriétaire') }}
+          {{ form.owner_club.vars.label|default('Propriétaire') }}
         </label>
         {{ form_widget(form.owner_club, {
           attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 text-kyudo-gm-dark shadow-sm outline-none focus:border-kyudo-gm-light-grey focus:ring-2 focus:ring-kyudo-washed-blue' }
@@ -46,7 +46,7 @@
 
       <div class="sm:col-span-2">
         <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
-          {{ form.borrower_user.vars.label|default('Emprunteur (personne)') }}
+          {{ form.borrower_user.vars.label|default('Emprunté par (personne)') }}
         </label>
         {{ form_widget(form.borrower_user, {
           attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 text-kyudo-gm-dark shadow-sm outline-none focus:border-kyudo-gm-light-grey focus:ring-2 focus:ring-kyudo-washed-blue' }
