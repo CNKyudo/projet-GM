@@ -9,7 +9,7 @@
 @import "./club_management/index.css";
 
 .h-screen-with-navbar {
-  height: calc(100vh - 64px);
+  min-height: calc(100vh - 64px);
 }
 
 .d-none {
