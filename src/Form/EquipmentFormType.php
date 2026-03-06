@@ -10,12 +10,11 @@ use App\Entity\Yumi;
 use App\Enum\EquipmentType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * @extends AbstractType<Equipment>
@@ -73,6 +72,25 @@ class EquipmentFormType extends AbstractType
             } elseif ($data instanceof Yumi) {
                 $form->add('yumi_form', YumiFormType::class);
             }
+        });
+
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event): void {
+            $form = $event->getForm();
+            $data = $event->getData();
+
+            if (!$form->has('equipment_type')) {
+                return;
+            }
+
+            $submittedType = is_array($data) ? ($data['equipment_type'] ?? null) : null;
+
+            $form->add('glove_form', GloveFormType::class, [
+                'disabled' => $submittedType !== EquipmentType::GLOVE->value,
+            ]);
+
+            $form->add('yumi_form', YumiFormType::class, [
+                'disabled' => $submittedType !== EquipmentType::YUMI->value,
+            ]);
         });
     }
 

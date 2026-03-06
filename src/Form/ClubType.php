@@ -9,7 +9,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -39,9 +38,6 @@ class ClubType extends AbstractType
                 'label' => false,
                 'by_reference' => false,
                 'require_at_least_one_field' => false,
-            ])
-            ->add('save', SubmitType::class, [
-                'label' => 'Enregistrer'
             ])
         ;
     }

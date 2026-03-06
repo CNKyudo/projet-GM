@@ -7,9 +7,9 @@
 {% set status = status|default(app.request.query.get('status') ?: 'all') %}
 
 {% block body %}
-	<div class="h-screen-with-navbar bg-kyudo-equipment pt-16 pb-10 px-6">
+	<div class="h-screen-with-navbar bg-kyudo-equipment pt-16 pb-10 px-4 sm:px-6">
 		<div
-			class="mx-auto max-w-6xl rounded-3xl bg-kyudo-white shadow-xl p-8 md:p-12">
+			class="mx-auto max-w-6xl rounded-3xl bg-kyudo-white shadow-xl p-5 sm:p-8 md:p-12">
 
 			{# --- Header --- #}
 			<div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -25,16 +25,16 @@
 				</a>
 			</div>
 
-			<form method="get" class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-				<div class="flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-					<div class="relative w-full sm:w-[420px]">
-						<input name="q" value="{{ q }}" class="w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 pr-10 text-kyudo-gm-dark shadow-sm outline-none placeholder:text-kyudo-gm-grey focus:border-kyudo-gm-light-grey focus:ring-2 focus:ring-kyudo-washed-blue" placeholder="Rechercher (club propriétaire, emprunteur, id)…"/>
+			<form method="get" class="mt-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+				<div class="flex w-full flex-col gap-2 md:flex-row md:items-center md:gap-3">
+					<div class="relative w-full md:w-[420px]">
+						<input name="q" value="{{ q }}" class="w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 pr-10 text-kyudo-gm-dark shadow-sm outline-none placeholder:text-kyudo-gm-grey focus:border-kyudo-gm-light-grey focus:ring-2 focus:ring-kyudo-washed-blue" placeholder="Rechercher (propriétaire, emprunteur, id)…"/>
 						<span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-kyudo-gm-grey">⌕</span>
 					</div>
 
 					<input type="hidden" name="status" value="{{ status }}">
 
-					<button class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-(--color-kyudo-white) hover:bg-kyudo-royal-blue" type="submit">
+					<button class="cursor-pointer inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-(--color-kyudo-white) hover:bg-kyudo-royal-blue" type="submit">
 						Rechercher
 					</button>
 
@@ -45,7 +45,7 @@
 					{% endif %}
 				</div>
 
-				<div class="flex flex-wrap gap-2">
+				<div class="flex w-full flex-wrap gap-2 md:w-auto md:justify-end">
 					<a href="{{ path('equipment.index', {'q': q, 'status': 'all'}) }}" class="rounded-full px-3 py-1 text-xs font-medium {{ status == 'all' ? 'bg-kyudo-blue text-(--color-kyudo-white) hover:bg-kyudo-royal-blue' : 'bg-kyudo-white text-kyudo-gm-dark ring-1 ring-kyudo-gm-light-grey hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }}">
 						Tous
 					</a>
@@ -59,7 +59,7 @@
 			</form>
 
 			{# --- Table --- #}
-			<div class="mt-8 overflow-hidden rounded-3xl border border-kyudo-gm-light-grey bg-kyudo-white shadow-sm">
+			<div class="mt-8 overflow-x-auto rounded-3xl border border-kyudo-gm-light-grey bg-kyudo-white shadow-sm">
 				<table class="w-full text-left">
 					<thead class="bg-kyudo-washed-blue text-sm text-(--color-kyudo-white)">
 						<tr>
@@ -146,3 +146,5 @@
 		</div>
 	</div>
 {% endblock %}
+
+

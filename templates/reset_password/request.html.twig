@@ -10,7 +10,7 @@
       <div class="absolute inset-0 bg-black/40 bg-kyudo-login md:hidden"></div>
     </div>
 
-    <div id="login_form" class="relative z-10 flex min-h-screen md:min-h-0 md:flex-1 justify-center p-8 md:bg-kyudo-royal-blue">
+    <div id="login_form" class="relative z-10 flex min-h-screen md:min-h-0 md:flex-1 justify-center p-6 md:p-8 md:bg-kyudo-royal-blue">
       <div class="column-1 w-full max-w-sm">
         <a href="{{ path('app_login') }}">
           <img class="block md:hidden relative w-full max-w-sm rounded-xl mt-6" src="{{ asset('pictures/FRANCE_KYUDO_LOGOTYPE_RVB_PRINCIPAL BLEU.png') }}" alt="France Kyudo">
@@ -40,10 +40,10 @@
             </p>
 
             <div class="flex flex-col gap-3">
-              <button class="w-full py-2 px-4 rounded-md bg-kyudo-royal-blue text-(--color-kyudo-white) font-semibold hover:bg-kyudo-blue transition-colors duration-200 shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-kyudo-royal-blue" type="submit">
+              <button class="cursor-pointer w-full py-2 px-4 rounded-md bg-kyudo-royal-blue text-(--color-kyudo-white) font-semibold hover:bg-kyudo-blue transition-colors duration-200 shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-kyudo-royal-blue" type="submit">
                 Envoyer le lien de réinitialisation
               </button>
-              <a href="{{ path('app_login') }}" class="w-full py-2 px-4 rounded-md bg-kyudo-gray text-kyudo-royal-blue font-semibold text-center hover:bg-kyudo-royal-blue hover:text-(--color-kyudo-white) transition-colors duration-200 shadow">
+              <a href="{{ path('app_login') }}" class="cursor-pointer w-full py-2 px-4 rounded-md bg-kyudo-gray text-kyudo-royal-blue font-semibold text-center hover:bg-kyudo-royal-blue hover:text-(--color-kyudo-white) transition-colors duration-200 shadow">
                 Retour a la connexion
               </a>
             </div>

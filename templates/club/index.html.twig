@@ -6,8 +6,8 @@
   {% set q = app.request.query.get('q') %}
   {% set view = app.request.query.get('view') ?: 'cards' %}
 
-  <div class="from-slate-100 to-kyudo-gm-light-grey pt-16 pb-10 px-6 p-6 h-screen-with-navbar bg-kyudo-club">
-    <div class="mx-auto max-w-6xl rounded-3xl shadow-xl p-8 md:p-12 bg-kyudo-white">
+  <div class="from-slate-100 to-kyudo-gm-light-grey pt-16 pb-10 px-4 sm:px-6 p-6 h-screen-with-navbar bg-kyudo-club">
+    <div class="mx-auto max-w-6xl rounded-3xl shadow-xl p-5 sm:p-8 md:p-12 bg-kyudo-white">
 
       <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
@@ -27,7 +27,7 @@
             <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-kyudo-gm-grey">?</span>
           </div>
 
-          <button class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-(--color-kyudo-white) hover:bg-kyudo-royal-blue" type="submit">
+          <button class="cursor-pointer inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-(--color-kyudo-white) hover:bg-kyudo-royal-blue" type="submit">
             Rechercher
           </button>
 
@@ -45,7 +45,7 @@
             <button
               type="button"
               id="club_view_cards_btn"
-              class="inline-flex select-none items-center rounded-xl px-3 py-2 text-sm font-medium transition-colors {{ view == 'cards' ? 'bg-kyudo-blue text-(--color-kyudo-white) hover:bg-kyudo-royal-blue' : 'text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }}"
+              class="cursor-pointer inline-flex select-none items-center rounded-xl px-3 py-2 text-sm font-medium transition-colors {{ view == 'cards' ? 'bg-kyudo-blue text-(--color-kyudo-white) hover:bg-kyudo-royal-blue' : 'text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }}"
             >
               Cartes
             </button>
@@ -53,7 +53,7 @@
             <button
               type="button"
               id="club_view_table_btn"
-              class="inline-flex select-none items-center rounded-xl px-3 py-2 text-sm font-medium transition-colors {{ view == 'table' ? 'bg-kyudo-blue text-(--color-kyudo-white) hover:bg-kyudo-royal-blue' : 'text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }}"
+              class="cursor-pointer inline-flex select-none items-center rounded-xl px-3 py-2 text-sm font-medium transition-colors {{ view == 'table' ? 'bg-kyudo-blue text-(--color-kyudo-white) hover:bg-kyudo-royal-blue' : 'text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }}"
             >
               Tableau
             </button>
@@ -100,7 +100,7 @@
           </div>
 
           <div id="club_view_table" class="mt-6 {{ view == 'cards' ? 'hidden' : '' }}">
-            <div class="overflow-hidden rounded-3xl border-(length:2) border-kyudo-washed-blue bg-kyudo-white shadow-sm">
+            <div class="overflow-x-auto rounded-3xl border-(length:2) border-kyudo-washed-blue bg-kyudo-white shadow-sm">
               <table class="w-full text-left">
                 <thead class="bg-kyudo-washed-blue text-sm text-(--color-kyudo-white)">
                   <tr>
@@ -185,3 +185,5 @@
     })();
   </script>
 {% endblock %}
+
+
