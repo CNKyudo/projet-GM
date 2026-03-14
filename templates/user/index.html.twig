@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Utilisateurs{% endblock %}
+
+{% block body %}
+    <div class="from-slate-100 to-kyudo-gm-light-grey pt-16 pb-10 px-4 sm:px-6 p-6 h-screen-with-navbar bg-kyudo-club">
+        <div class="mx-auto max-w-6xl rounded-3xl shadow-xl p-5 sm:p-8 md:p-12 bg-kyudo-white">
+
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                <h1 class="text-3xl font-semibold tracking-tight text-kyudo-gm-dark">Gestion des utilisateurs</h1>
+                </div>
+            </div>
+
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Email</th>
+                        <th>Rôles</th>
+                        <th>Club</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.roles|join(', ') }}</td>
+                        <td>{{ user.clubWhichImPresidentOf ? user.clubWhichImPresidentOf.name : '-' }}</td>
+                        <td>
+                            <a class="btn btn-sm btn-outline-secondary" href="{{ path('user_assign_club', {'id': user.id}) }}">Attribuer un club</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5">Aucun utilisateur trouvé</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+            <a class="btn btn-secondary" href="{{ path('app_home') }}">Retour</a>
+        </div>
+    </div>
+{% endblock %}

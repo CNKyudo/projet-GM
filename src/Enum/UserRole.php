@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Enum;
+
+enum UserRole: string
+{
+    case USER = 'ROLE_USER';
+    case MEMBER = 'ROLE_MEMBER';
+    case CLUB_PRESIDENT = 'ROLE_CLUB_PRESIDENT';
+    case EQUIPMENT_MANAGER_CLUB = 'ROLE_EQUIPMENT_MANAGER_CLUB';
+    case EQUIPMENT_MANAGER_CTK = 'ROLE_EQUIPMENT_MANAGER_CTK';
+    case EQUIPMENT_MANAGER_CN = 'ROLE_EQUIPMENT_MANAGER_CN';
+    case ADMIN = 'ROLE_ADMIN';
+
+    /**
+     * @return array<string, int>
+     */
+    public static function levels(): array
+    {
+        return [
+            self::USER->value => 100,
+            self::MEMBER->value => 200,
+            self::CLUB_PRESIDENT->value => 300,
+            self::EQUIPMENT_MANAGER_CLUB->value => 400,
+            self::EQUIPMENT_MANAGER_CTK->value => 500,
+            self::EQUIPMENT_MANAGER_CN->value => 600,
+            self::ADMIN->value => 700,
+        ];
+    }
+}

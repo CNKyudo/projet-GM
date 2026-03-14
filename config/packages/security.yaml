@@ -1,4 +1,14 @@
 security:
+    role_hierarchy:
+        ROLE_MEMBER: ROLE_USER
+        ROLE_CLUB_PRESIDENT: ROLE_MEMBER
+        ROLE_EQUIPMENT_MANAGER: ROLE_MEMBER
+        ROLE_EQUIPMENT_MANAGER_CTK: ROLE_EQUIPMENT_MANAGER
+        ROLE_EQUIPMENT_MANAGER_CN: ROLE_EQUIPMENT_MANAGER_CTK
+        ROLE_ADMIN:
+            - ROLE_CLUB_PRESIDENT
+            - ROLE_EQUIPMENT_MANAGER_CN
+
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'

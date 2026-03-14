@@ -37,9 +37,30 @@
 				</div>
 			</a>
 
+			{# <a href="{{ path('user_change_password') }}" class="split-col split-chevauchement hover:flex-[1.2]">
+							<div class="split-separator"></div>
+							<div class="split-media split-club-clip split-bg-club">
+								<div class="split-overlay"></div>
+							</div>
+							<div class="split-content">
+								<h2 class="split-title">Modifier mon mot de passe</h2>
+							</div>
+						</a> #}
+
+			{% if is_granted('ROLE_ADMIN') %}
+				<a href="{{ path('user_index') }}" class="split-col split-chevauchement hover:flex-[1.2]">
+					<div class="split-separator"></div>
+					<div class="split-media split-club-clip split-bg-club">
+						<div class="split-overlay"></div>
+					</div>
+					<div class="split-content">
+						<h2 class="split-title">Gestion des utilisateurs</h2>
+					</div>
+				</a>
+			{% endif %}
+
 		</div>
 
 	</div>
-
-
+	<a href="{{ path("app_logout") }}">Se déconnecter</a>
 {% endblock %}
