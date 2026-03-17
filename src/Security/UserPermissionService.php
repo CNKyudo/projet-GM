@@ -64,7 +64,7 @@ final class UserPermissionService
 
     public function canViewEquipmentFromOtherClub(User $user): bool
     {
-      // @todo EQUIPMENT_MANAGER_CLUB can View equipement only if the the CTKyudo
+        // @todo EQUIPMENT_MANAGER_CLUB can View equipement only if the the CTKyudo
         return $this->hasAnyRole($user, UserRole::MEMBER, UserRole::CLUB_PRESIDENT, UserRole::EQUIPMENT_MANAGER_CLUB, UserRole::ADMIN);
     }
 

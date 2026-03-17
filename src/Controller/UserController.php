@@ -6,7 +6,6 @@ use App\Entity\User;
 use App\Form\ChangePasswordFormType;
 use App\Form\UserClubAssignType;
 use App\Repository\UserRepository;
-use App\Security\UserPermissionService;
 use App\Security\Voter\UserPermissionVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,7 +17,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class UserController extends AbstractController
 {
-
     #[Route('/profile/password', name: 'user_change_password', methods: ['GET', 'POST'])]
     #[IsGranted(UserPermissionVoter::EDIT_OWN_ACCOUNT_INFORMATION)]
     public function changePassword(

@@ -7,6 +7,9 @@ use App\Security\UserPermissionService;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
+/**
+ * @extends Voter<string, mixed>
+ */
 final class UserPermissionVoter extends Voter
 {
     public const ACCESS_USER_MANAGEMENT = 'ACCESS_USER_MANAGEMENT';
@@ -82,7 +85,7 @@ final class UserPermissionVoter extends Voter
         }
 
         $method = self::METHOD_BY_ATTRIBUTE[$attribute] ?? null;
-        if ($method === null || !\method_exists($this->userPermissionService, $method)) {
+        if (null === $method || !\method_exists($this->userPermissionService, $method)) {
             return false;
         }
 

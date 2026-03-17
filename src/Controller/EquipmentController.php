@@ -31,17 +31,17 @@ final class EquipmentController extends AbstractController
             ->orderBy('e.id', 'DESC');
 
         // Status filter
-        if ($status === 'available') {
+        if ('available' === $status) {
             $qb->andWhere('e.borrower_club IS NULL');
-        } elseif ($status === 'loaned') {
+        } elseif ('loaned' === $status) {
             $qb->andWhere('e.borrower_club IS NOT NULL');
         } else {
             $status = 'all';
         }
 
         // Search filter
-        if ($q !== '') {
-            $term = '%' . mb_strtolower($q) . '%';
+        if ('' !== $q) {
+            $term = '%'.mb_strtolower($q).'%';
 
             $qb->andWhere('LOWER(owner.name) LIKE :term OR LOWER(borrower.name) LIKE :term OR CONCAT(e.id, \'\') LIKE :term')
             ->setParameter('term', $term);
