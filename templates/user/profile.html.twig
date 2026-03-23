@@ -1,0 +1,117 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon profil{% endblock %}
+
+{% block body %}
+    <div class="h-screen-with-navbar bg-kyudo-club px-4 pb-10 pt-16 sm:px-6">
+        <div class="mx-auto max-w-6xl rounded-[32px] bg-white/95 p-6 shadow-2xl ring-1 ring-black/5 backdrop-blur sm:p-8 md:p-10">
+            <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                <div class="max-w-2xl">
+                    <h1 class="text-3xl font-semibold tracking-tight text-kyudo-gm-dark sm:text-4xl">Mon profil</h1>
+                    <p class="mt-3 text-sm leading-6 text-gray-600 sm:text-base">
+                        Consultez les informations de votre compte, vos droits et vos emprunts, puis modifiez votre email ou votre mot de passe depuis le meme espace.
+                    </p>
+                </div>
+
+                <div class="flex flex-col gap-3 sm:flex-row">
+                    <a class="btn btn-primary" href="{{ path('user_profile_edit') }}">Modifier mes informations</a>
+                    <a class="btn btn-secondary" href="{{ path('user_change_password') }}">Modifier mon mot de passe</a>
+                </div>
+            </div>
+
+            <div class="mt-8 grid gap-6 xl:grid-cols-[1.7fr_1fr]">
+                <div class="space-y-6">
+                    <section class="rounded-3xl border border-kyudo-gm-light-grey bg-white p-6 shadow-sm">
+                        <h2 class="text-xl font-semibold text-kyudo-gm-dark">Informations du compte</h2>
+                        <dl class="mt-5 grid gap-4 sm:grid-cols-2">
+                            <div class="rounded-2xl bg-slate-50 p-4">
+                                <dt class="text-sm font-medium text-gray-500">Email</dt>
+                                <dd class="mt-2 break-all text-base font-semibold text-gray-900">{{ user.email }}</dd>
+                            </div>
+                            <div class="rounded-2xl bg-slate-50 p-4">
+                                <dt class="text-sm font-medium text-gray-500">Identifiant</dt>
+                                <dd class="mt-2 text-base font-semibold text-gray-900">#{{ user.id }}</dd>
+                            </div>
+                            <div class="rounded-2xl bg-slate-50 p-4 sm:col-span-2">
+                                <dt class="text-sm font-medium text-gray-500">Roles</dt>
+                                <dd class="mt-3 flex flex-wrap gap-2">
+                                    {% for roleLabel in roleLabels %}
+                                        <span class="rounded-full bg-kyudo-washed-blue px-3 py-1 text-sm font-medium text-white">{{ roleLabel }}</span>
+                                    {% else %}
+                                        <span class="text-sm text-gray-500">Aucun role attribue.</span>
+                                    {% endfor %}
+                                </dd>
+                            </div>
+                        </dl>
+                    </section>
+
+                    <section class="rounded-3xl border border-kyudo-gm-light-grey bg-white p-6 shadow-sm">
+                        <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                            <div>
+                                <h2 class="text-xl font-semibold text-kyudo-gm-dark">Mes emprunts</h2>
+                                <p class="mt-2 text-sm text-gray-600">
+                                    {{ user.borrowedEquipments|length }} equipement{{ user.borrowedEquipments|length > 1 ? 's' : '' }} associe{{ user.borrowedEquipments|length > 1 ? 's' : '' }} a votre compte.
+                                </p>
+                            </div>
+                            <a class="text-sm font-medium text-kyudo-royal-blue underline" href="{{ path('equipment.index') }}">Voir tous les equipements</a>
+                        </div>
+
+                        {% if user.borrowedEquipments|length > 0 %}
+                            <div class="mt-5 grid gap-3 sm:grid-cols-2">
+                                {% for equipment in user.borrowedEquipments %}
+                                    <a href="{{ path('equipment.show', {'id': equipment.id}) }}" class="rounded-2xl border border-kyudo-gm-light-grey p-4 transition hover:border-kyudo-washed-blue hover:bg-slate-50">
+                                        <p class="text-xs font-semibold uppercase tracking-[0.24em] text-gray-500">{{ equipment.typeName }}</p>
+                                        <p class="mt-2 text-base font-semibold text-gray-900">Equipement #{{ equipment.id }}</p>
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="mt-5 rounded-2xl bg-slate-50 p-5 text-sm text-gray-600">
+                                Aucun equipement ne vous est actuellement attribue.
+                            </div>
+                        {% endif %}
+                    </section>
+                </div>
+
+                <div class="space-y-6">
+                    <section class="rounded-3xl border border-kyudo-gm-light-grey bg-slate-50 p-6 shadow-sm">
+                        <h2 class="text-xl font-semibold text-kyudo-gm-dark">Actions rapides</h2>
+                        <div class="mt-5 flex flex-col gap-3">
+                            <a class="rounded-2xl border border-kyudo-royal-blue px-4 py-3 text-sm font-medium text-kyudo-royal-blue transition hover:bg-kyudo-royal-blue hover:text-white" href="{{ path('user_profile_edit') }}">
+                                Modifier mon email
+                            </a>
+                            <a class="rounded-2xl border border-gray-300 px-4 py-3 text-sm font-medium text-gray-700 transition hover:border-kyudo-washed-blue hover:bg-kyudo-washed-blue hover:text-white" href="{{ path('user_change_password') }}">
+                                Changer mon mot de passe
+                            </a>
+                            {% if is_granted('ACCESS_USER_MANAGEMENT') %}
+                                <a class="rounded-2xl border border-gray-300 px-4 py-3 text-sm font-medium text-gray-700 transition hover:border-kyudo-gm-dark hover:bg-kyudo-gm-dark hover:text-white" href="{{ path('user_index') }}">
+                                    Gerer les utilisateurs
+                                </a>
+                            {% endif %}
+                        </div>
+                    </section>
+
+                    <section class="rounded-3xl border border-kyudo-gm-light-grey bg-white p-6 shadow-sm">
+                        <h2 class="text-xl font-semibold text-kyudo-gm-dark">Club</h2>
+                        {% if user.clubWhichImPresidentOf %}
+                            <p class="mt-3 text-sm text-gray-600">Vous etes actuellement president de club.</p>
+                            <div class="mt-4 rounded-2xl bg-slate-50 p-4">
+                                <p class="text-base font-semibold text-gray-900">{{ user.clubWhichImPresidentOf.name }}</p>
+                                {% if user.clubWhichImPresidentOf.email %}
+                                    <p class="mt-1 text-sm text-gray-600">{{ user.clubWhichImPresidentOf.email }}</p>
+                                {% endif %}
+                            </div>
+                            <a class="mt-4 inline-flex text-sm font-medium text-kyudo-royal-blue underline" href="{{ path('club_show', {'id': user.clubWhichImPresidentOf.id}) }}">
+                                Voir le club
+                            </a>
+                        {% else %}
+                            <div class="mt-4 rounded-2xl bg-slate-50 p-4 text-sm text-gray-600">
+                                Aucun club en presidence n'est actuellement associe a votre compte.
+                            </div>
+                        {% endif %}
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

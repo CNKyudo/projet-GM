@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Attribuer un club{% endblock %}
+{% block title %}Modifier mon profil{% endblock %}
 
 {% block body %}
     {% set defaultFieldClass = 'block w-full rounded-xl border border-gray-300 px-3 py-2 focus:border-kyudo-royal-blue focus:outline-none focus:ring-2 focus:ring-kyudo-royal-blue' %}
@@ -10,9 +10,9 @@
         <div class="mx-auto max-w-5xl rounded-[32px] bg-white/95 p-6 shadow-2xl ring-1 ring-black/5 backdrop-blur sm:p-8 md:p-10">
             <div class="grid gap-6 lg:grid-cols-[1.3fr_0.9fr]">
                 <section class="rounded-3xl border border-kyudo-gm-light-grey bg-white p-6 shadow-sm">
-                    <h1 class="text-3xl font-semibold tracking-tight text-kyudo-gm-dark">Attribuer un club</h1>
+                    <h1 class="text-3xl font-semibold tracking-tight text-kyudo-gm-dark">Modifier mon profil</h1>
                     <p class="mt-3 max-w-2xl text-sm leading-6 text-gray-600">
-                        Associez un club a <span class="font-semibold text-gray-900">{{ targetUser.email }}</span> pour mettre a jour son rattachement administrateur.
+                        Mettez a jour les informations visibles dans votre espace personnel. Pour des raisons de securite, le changement de mot de passe reste sur un ecran dedie.
                     </p>
 
                     <div class="mt-8 max-w-2xl">
@@ -20,26 +20,26 @@
                             {% if form.vars.errors|length %}
                                 {% include 'partials/_alert.html.twig' with {
                                     type: 'error',
-                                    title: 'Le rattachement ne peut pas etre enregistre pour le moment.',
+                                    title: 'Les informations saisies doivent etre corrigees.',
                                     errors: form.vars.errors,
                                     class: 'mb-5'
                                 } only %}
                             {% endif %}
 
                             <div>
-                                <label for="{{ form.clubWhichImPresidentOf.vars.id }}" class="mb-1 block text-sm font-medium text-gray-700">
-                                    {{ form.clubWhichImPresidentOf.vars.label|default('Club') }}
+                                <label for="{{ form.email.vars.id }}" class="mb-1 block text-sm font-medium text-gray-700">
+                                    {{ form.email.vars.label|default('Adresse email') }}
                                 </label>
-                                {{ form_widget(form.clubWhichImPresidentOf, {
+                                {{ form_widget(form.email, {
                                     attr: {
-                                        class: form.clubWhichImPresidentOf.vars.errors|length ? invalidFieldClass : defaultFieldClass
+                                        class: form.email.vars.errors|length ? invalidFieldClass : defaultFieldClass
                                     }
                                 }) }}
-                                {% if form.clubWhichImPresidentOf.vars.errors|length %}
+                                {% if form.email.vars.errors|length %}
                                     {% include 'partials/_alert.html.twig' with {
                                         type: 'error',
                                         label: 'Champ invalide',
-                                        errors: form.clubWhichImPresidentOf.vars.errors,
+                                        errors: form.email.vars.errors,
                                         class: 'mt-3'
                                     } only %}
                                 {% endif %}
@@ -47,37 +47,33 @@
 
                             <div class="mt-6 flex flex-col gap-3 sm:flex-row">
                                 <button type="submit" class="btn btn-primary">Enregistrer</button>
-                                <a class="btn btn-secondary" href="{{ path('user_index') }}">Retour a la liste</a>
+                                <a class="btn btn-secondary" href="{{ path('user_profile') }}">Retour au profil</a>
                             </div>
                         {{ form_end(form) }}
                     </div>
                 </section>
 
                 <aside class="rounded-3xl border border-kyudo-gm-light-grey bg-slate-50 p-6 shadow-sm">
-                    <h2 class="text-xl font-semibold text-kyudo-gm-dark">Resume utilisateur</h2>
-
+                    <h2 class="text-xl font-semibold text-kyudo-gm-dark">Compte actuel</h2>
                     <div class="mt-4 rounded-2xl bg-white p-4 shadow-sm">
-                        <p class="text-sm font-medium text-gray-500">Compte</p>
-                        <p class="mt-2 break-all text-base font-semibold text-gray-900">{{ targetUser.email }}</p>
-                        <p class="mt-1 text-sm text-gray-500">ID #{{ targetUser.id }}</p>
+                        <p class="text-sm font-medium text-gray-500">Email actuel</p>
+                        <p class="mt-2 break-all text-base font-semibold text-gray-900">{{ app.user.email }}</p>
                     </div>
 
                     <div class="mt-4 rounded-2xl bg-white p-4 shadow-sm">
-                        <p class="text-sm font-medium text-gray-500">Roles</p>
-                        <div class="mt-3 flex flex-wrap gap-2">
-                            {% for roleLabel in roleLabels %}
-                                <span class="rounded-full bg-kyudo-washed-blue px-3 py-1 text-xs font-semibold text-white">{{ roleLabel }}</span>
-                            {% else %}
-                                <span class="text-sm text-gray-500">Aucun role</span>
-                            {% endfor %}
-                        </div>
-                    </div>
-
-                    <div class="mt-4 rounded-2xl bg-white p-4 shadow-sm">
-                        <p class="text-sm font-medium text-gray-500">Club actuel</p>
-                        <p class="mt-2 text-base font-semibold text-gray-900">
-                            {{ targetUser.clubWhichImPresidentOf ? targetUser.clubWhichImPresidentOf.name : 'Aucun club attribue' }}
+                        <p class="text-sm font-medium text-gray-500">Besoin d'une autre action ?</p>
+                        <p class="mt-2 text-sm leading-6 text-gray-600">
+                            Vous pouvez aussi modifier votre mot de passe ou revenir a la vue complete de votre profil.
                         </p>
+                    </div>
+
+                    <div class="mt-5 flex flex-col gap-3">
+                        <a class="rounded-2xl border border-gray-300 px-4 py-3 text-sm font-medium text-gray-700 transition hover:border-kyudo-washed-blue hover:bg-kyudo-washed-blue hover:text-white" href="{{ path('user_change_password') }}">
+                            Modifier mon mot de passe
+                        </a>
+                        <a class="rounded-2xl border border-gray-300 px-4 py-3 text-sm font-medium text-gray-700 transition hover:border-kyudo-gm-dark hover:bg-kyudo-gm-dark hover:text-white" href="{{ path('user_profile') }}">
+                            Revenir au profil
+                        </a>
                     </div>
                 </aside>
             </div>

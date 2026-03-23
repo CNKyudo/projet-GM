@@ -18,7 +18,12 @@
                 <div class="relative w-full max-w-sm rounded-xl mt-2 bg-kyudo-white backdrop-blur md:backdrop-blur-0 p-6 shadow-2xl">
                     <form method="post">
                         {% if error %}
-                            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                            {% include 'partials/_alert.html.twig' with {
+                                type: 'error',
+                                title: 'Connexion impossible',
+                                message: error.messageKey|trans(error.messageData, 'security'),
+                                class: 'mb-4'
+                            } only %}
                         {% endif %}
 
                         {% if app.user %}
@@ -30,11 +35,11 @@
                         <h1 class="text-2xl font-bold mb-6 text-center text-kyudo-royal-blue">Entrez vos informations de connexion</h1>
                         <div class="mb-4">
                             <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                            <input type="email" value="{{ last_username }}" name="_username" id="username" class="block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-kyudo-royal-blue focus:border-kyudo-royal-blue" autocomplete="email" required autofocus>
+                            <input type="email" value="{{ last_username }}" name="_username" id="username" class="block w-full rounded-md border {{ error ? 'border-red-300 bg-red-50/40 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-kyudo-royal-blue focus:ring-kyudo-royal-blue' }} px-3 py-2 focus:outline-none focus:ring-2" autocomplete="email" required autofocus>
                         </div>
                         <div class="mb-4">
                             <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Mot de passe</label>
-                            <input type="password" name="_password" id="password" class="block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-kyudo-royal-blue focus:border-kyudo-royal-blue" autocomplete="current-password" required>
+                            <input type="password" name="_password" id="password" class="block w-full rounded-md border {{ error ? 'border-red-300 bg-red-50/40 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-kyudo-royal-blue focus:ring-kyudo-royal-blue' }} px-3 py-2 focus:outline-none focus:ring-2" autocomplete="current-password" required>
                         </div>
                         <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
 
