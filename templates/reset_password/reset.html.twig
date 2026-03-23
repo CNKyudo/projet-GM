@@ -27,7 +27,7 @@
 						Definissez un nouveau mot de passe fort pour finaliser la reinitialisation de votre compte.
 					</p>
 
-					<div class="mt-6 rounded-2xl bg-slate-50 p-4 text-sm leading-6 text-kyudo-gm-grey">
+					<div class="mt-6 rounded-2xl bg-kyudo-gm-light-grey p-4 text-sm leading-6 text-kyudo-gm-grey">
 						Choisissez un mot de passe long, unique et difficile a deviner.
 					</div>
 
@@ -62,12 +62,12 @@
 						</div>
 
 						<div class="mt-6 flex flex-col gap-3">
-								<button class="btn btn-primary w-full" type="submit">
-									Reinitialiser le mot de passe
-								</button>
-								<a href="{{ path('app_login') }}" class="btn btn-secondary w-full">
-									Retour a la connexion
-								</a>
+							<button class="btn btn-primary w-full" type="submit">
+								Reinitialiser le mot de passe
+							</button>
+							<a href="{{ path('app_login') }}" class="btn btn-secondary w-full">
+								Retour a la connexion
+							</a>
 						</div>
 						{{ form_end(resetForm) }}
 					</div>

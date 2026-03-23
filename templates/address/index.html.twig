@@ -30,7 +30,7 @@
 							<th class="px-5 py-4 font-medium text-right">Actions</th>
 						</tr>
 					</thead>
-					<tbody class="divide-y divide-slate-100 text-sm">
+					<tbody class="divide-y divide-kyudo-gm-light-grey text-sm">
 						{% for address in addresses %}
 							<tr class="hover:bg-kyudo-gm-light-grey">
 								<td class="px-5 py-4 text-kyudo-gm-grey">{{ address.id }}</td>
@@ -47,13 +47,13 @@
 											Modifier
 										</a>
 										{#                     
-										                    <form method="post" action="{{ path('address_delete', {'id': address.id}) }}" onsubmit="return confirm('Supprimer cette adresse ?');">
-										                      <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ address.id) }}">
-										                      <button type="submit" class="rounded-xl border border-red-200 bg-kyudo-white px-3 py-2 font-medium text-red-700 hover:bg-red-50">
-										                        Supprimer
-										                      </button>
-										                    </form> 
-										                    #}
+																				                    <form method="post" action="{{ path('address_delete', {'id': address.id}) }}" onsubmit="return confirm('Supprimer cette adresse ?');">
+																				                      <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ address.id) }}">
+																				                      <button type="submit" class="rounded-xl border border-red-200 bg-kyudo-white px-3 py-2 font-medium text-red-700 hover:bg-red-50">
+																				                        Supprimer
+																				                      </button>
+																				                    </form> 
+																				                    #}
 									</div>
 								</td>
 							</tr>

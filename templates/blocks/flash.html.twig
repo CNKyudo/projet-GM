@@ -40,8 +40,8 @@
 <div id="flash_toasts" class="pointer-events-none flex w-[min(92vw,26rem)] flex-col gap-3" style="position: fixed; top: 5rem; right: 1rem; z-index: 9999;">
 	{% for type, messages in app.flashes %}
 		{% set variant = palette[type]|default({
-      shell: 'border-slate-200 bg-kyudo-white/95 text-slate-900',
-      badge: 'bg-slate-100 text-slate-700',
+      shell: 'border-kyudo-gm-light-grey bg-kyudo-white/95 text-kyudo-gm-dark',
+      badge: 'bg-kyudo-gm-light-grey text-kyudo-gm-grey',
       icon: 'i',
       title: 'Message'
     }) %}

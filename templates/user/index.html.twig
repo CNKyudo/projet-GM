@@ -15,7 +15,7 @@
 				</div>
 
 				<div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-					<div class="rounded-2xl bg-slate-50 px-4 py-3 text-sm font-medium text-kyudo-gm-grey">
+					<div class="rounded-2xl bg-kyudo-gm-light-grey px-4 py-3 text-sm font-medium text-kyudo-gm-grey">
 						{{ users|length }}
 						utilisateur{{ users|length > 1 ? 's' : '' }}
 					</div>
@@ -26,7 +26,7 @@
 			<div class="mt-8 overflow-hidden rounded-3xl border border-kyudo-gm-light-grey bg-kyudo-white shadow-sm">
 				<div class="overflow-x-auto">
 					<table class="min-w-full divide-y divide-kyudo-gm-light-grey">
-						<thead class="bg-slate-50">
+						<thead class="bg-kyudo-gm-light-grey">
 							<tr class="text-left text-sm font-semibold text-kyudo-gm-grey">
 								<th class="px-5 py-4">Utilisateur</th>
 								<th class="px-5 py-4">Roles</th>
@@ -53,7 +53,7 @@
 									</td>
 									<td class="px-5 py-4">
 										{% if user.clubWhichImPresidentOf %}
-											<div class="rounded-2xl bg-slate-50 p-3">
+											<div class="rounded-2xl bg-kyudo-gm-light-grey p-3">
 												<div class="font-medium text-kyudo-gm-dark">{{ user.clubWhichImPresidentOf.name }}</div>
 												<div class="mt-1 text-sm text-kyudo-gm-grey">President du club</div>
 											</div>

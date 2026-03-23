@@ -27,7 +27,7 @@
 						Renseignez l'email associe a votre compte. Un lien de reinitialisation vous sera envoye.
 					</p>
 
-					<div class="mt-6 rounded-2xl bg-slate-50 p-4">
+					<div class="mt-6 rounded-2xl bg-kyudo-gm-light-grey p-4">
 						<p class="text-sm font-medium text-kyudo-gm-grey">Besoin d'aide ?</p>
 						<p class="mt-2 text-sm leading-6 text-kyudo-gm-grey">
 							Si vous ne recevez rien, pensez a verifier vos spams ou a confirmer que l'adresse email saisie est bien celle utilisee lors de votre inscription.
@@ -65,12 +65,12 @@
 						</div>
 
 						<div class="mt-6 flex flex-col gap-3">
-								<button class="btn btn-primary w-full" type="submit">
-									Envoyer le lien de reinitialisation
-								</button>
-								<a href="{{ path('app_login') }}" class="btn btn-secondary w-full">
-									Retour a la connexion
-								</a>
+							<button class="btn btn-primary w-full" type="submit">
+								Envoyer le lien de reinitialisation
+							</button>
+							<a href="{{ path('app_login') }}" class="btn btn-secondary w-full">
+								Retour a la connexion
+							</a>
 						</div>
 						{{ form_end(requestForm) }}
 					</div>
