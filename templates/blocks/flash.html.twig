@@ -37,74 +37,61 @@
   }
 } %}
 
-<div
-  id="flash_toasts"
-  class="pointer-events-none flex w-[min(92vw,26rem)] flex-col gap-3"
-  style="position: fixed; top: 5rem; right: 1rem; z-index: 9999;"
->
-  {% for type, messages in app.flashes %}
-    {% set variant = palette[type]|default({
-      shell: 'border-slate-200 bg-white/95 text-slate-900',
+<div id="flash_toasts" class="pointer-events-none flex w-[min(92vw,26rem)] flex-col gap-3" style="position: fixed; top: 5rem; right: 1rem; z-index: 9999;">
+	{% for type, messages in app.flashes %}
+		{% set variant = palette[type]|default({
+      shell: 'border-slate-200 bg-kyudo-white/95 text-slate-900',
       badge: 'bg-slate-100 text-slate-700',
       icon: 'i',
       title: 'Message'
     }) %}
-    {% for message in messages %}
-      <div
-        class="flash-toast pointer-events-auto overflow-hidden rounded-2xl border shadow-xl ring-1 ring-black/5 backdrop-blur transition duration-300 {{ variant.shell }}"
-        role="{{ type in ['error', 'danger', 'warning', 'reset_password_error'] ? 'alert' : 'status' }}"
-        aria-live="polite"
-      >
-        <div class="h-1 w-full {{ variant.badge }}"></div>
-        <div class="flex items-start gap-3 px-4 py-4">
-          <span class="inline-flex h-8 min-w-8 items-center justify-center rounded-full px-2 text-xs font-bold {{ variant.badge }}">
-            {{ variant.icon }}
-          </span>
-          <div class="min-w-0 flex-1">
-            <p class="text-[0.7rem] font-semibold uppercase tracking-[0.18em] opacity-80">{{ variant.title }}</p>
-            <p class="mt-1 text-sm font-medium leading-6">{{ message }}</p>
-          </div>
-          <button
-            type="button"
-            class="cursor-pointer rounded-full p-2 text-xs font-semibold opacity-60 transition hover:bg-black/5 hover:opacity-100"
-            data-flash-dismiss
-            aria-label="Fermer"
-          >
-            x
-          </button>
-        </div>
-      </div>
-    {% endfor %}
-  {% endfor %}
+		{% for message in messages %}
+			<div class="flash-toast pointer-events-auto overflow-hidden rounded-2xl border shadow-xl ring-1 ring-black/5 backdrop-blur transition duration-300 {{ variant.shell }}" role="{{ type in ['error', 'danger', 'warning', 'reset_password_error'] ? 'alert' : 'status' }}" aria-live="polite">
+				<div class="h-1 w-full {{ variant.badge }}"></div>
+				<div class="flex items-start gap-3 px-4 py-4">
+					<span class="inline-flex h-8 min-w-8 items-center justify-center rounded-full px-2 text-xs font-bold {{ variant.badge }}">
+						{{ variant.icon }}
+					</span>
+					<div class="min-w-0 flex-1">
+						<p class="text-[0.7rem] font-semibold uppercase tracking-[0.18em] opacity-80">{{ variant.title }}</p>
+						<p class="mt-1 text-sm font-medium leading-6">{{ message }}</p>
+					</div>
+					<button type="button" class="cursor-pointer rounded-full p-2 text-xs font-semibold opacity-60 transition hover:bg-black/5 hover:opacity-100" data-flash-dismiss aria-label="Fermer">
+						x
+					</button>
+				</div>
+			</div>
+		{% endfor %}
+	{% endfor %}
 </div>
 
 <script>
-  (function () {
-    const toasts = document.querySelectorAll('#flash_toasts .flash-toast');
+	(function () {
+const toasts = document.querySelectorAll('#flash_toasts .flash-toast');
 
-    function hideToast(toast) {
-      if (!toast || toast.dataset.closing === '1') {
-        return;
-      }
+function hideToast(toast) {
+if (! toast || toast.dataset.closing === '1') {
+return;
+}
 
-      toast.dataset.closing = '1';
-      toast.classList.add('opacity-0', 'translate-x-2');
-      setTimeout(function () {
-        toast.remove();
-      }, 280);
-    }
+toast.dataset.closing = '1';
+toast.classList.add('opacity-0', 'translate-x-2');
+setTimeout(function () {
+toast.remove();
+}, 280);
+}
 
-    toasts.forEach(function (toast) {
-      const dismiss = toast.querySelector('[data-flash-dismiss]');
-      if (dismiss) {
-        dismiss.addEventListener('click', function () {
-          hideToast(toast);
-        });
-      }
+toasts.forEach(function (toast) {
+const dismiss = toast.querySelector('[data-flash-dismiss]');
+if (dismiss) {
+dismiss.addEventListener('click', function () {
+hideToast(toast);
+});
+}
 
-      setTimeout(function () {
-        hideToast(toast);
-      }, 4200);
-    });
-  })();
+setTimeout(function () {
+hideToast(toast);
+}, 4200);
+});
+})();
 </script>

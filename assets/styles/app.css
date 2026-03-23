@@ -12,6 +12,54 @@
   min-height: calc(100vh - 64px);
 }
 
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 1px solid transparent;
+  border-radius: 1rem;
+  padding: 0.625rem 1rem;
+  cursor: pointer;
+  font-weight: 500;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  transition:
+    background-color 200ms ease,
+    color 200ms ease,
+    border-color 200ms ease,
+    box-shadow 200ms ease;
+}
+
+.btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-kyudo-washed-blue);
+}
+
+.btn-primary {
+  background: var(--color-kyudo-blue);
+  color: var(--color-kyudo-white);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.12);
+}
+
+.btn-primary:hover {
+  background: var(--color-kyudo-royal-blue);
+}
+
+.btn-secondary {
+  border: 1px solid var(--color-kyudo-gm-light-grey);
+  background: var(--color-kyudo-white);
+  color: var(--color-kyudo-gm-dark);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+}
+
+.btn-secondary:hover {
+  border-color: var(--color-kyudo-washed-blue);
+  background: var(--color-kyudo-washed-blue);
+  color: var(--color-kyudo-white);
+}
+
 .d-none {
     display: none !important;
 }
