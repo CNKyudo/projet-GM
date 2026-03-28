@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\AddressRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: AddressRepository::class)]
 class Address
@@ -16,11 +17,13 @@ class Address
     #[ORM\Column(length: 1023, nullable: true)]
     private ?string $street_address = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $postal_code = null;
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Le code postal est obligatoire.')]
+    private string $postal_code = '';
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $city = null;
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'La ville est obligatoire.')]
+    private string $city = '';
 
     #[ORM\Column(length: 1023, nullable: true)]
     private ?string $country = null;
@@ -42,24 +45,24 @@ class Address
         return $this;
     }
 
-    public function getPostalCode(): ?string
+    public function getPostalCode(): string
     {
         return $this->postal_code;
     }
 
-    public function setPostalCode(?string $postal_code): static
+    public function setPostalCode(string $postal_code): static
     {
         $this->postal_code = $postal_code;
 
         return $this;
     }
 
-    public function getCity(): ?string
+    public function getCity(): string
     {
         return $this->city;
     }
 
-    public function setCity(?string $city): static
+    public function setCity(string $city): static
     {
         $this->city = $city;
 
