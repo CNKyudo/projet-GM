@@ -23,29 +23,16 @@ final class EquipmentController extends AbstractController
     public function index(Request $request, EquipmentRepository $repository, PaginatorInterface $paginator): Response
     {
         $q = trim((string) $request->query->get('q', ''));
-        $status = (string) $request->query->get('status', 'all'); // all|available|loaned
+        $equipmentType = (string) $request->query->get('equipmentType', '');
+        $equipmentTypeObj = EquipmentType::tryFrom($equipmentType);
+        $status = (string) $request->query->get('status', 'all');
 
-        $qb = $repository->createQueryBuilder('e')
-            ->leftJoin('e.owner_club', 'owner')->addSelect('owner')
-            ->leftJoin('e.borrower_club', 'borrower')->addSelect('borrower')
-            ->orderBy('e.id', 'DESC');
-
-        // Status filter
-        if ('available' === $status) {
-            $qb->andWhere('e.borrower_club IS NULL');
-        } elseif ('loaned' === $status) {
-            $qb->andWhere('e.borrower_club IS NOT NULL');
-        } else {
+        // Valider status
+        if (!in_array($status, ['all', 'available', 'loaned'], true)) {
             $status = 'all';
         }
 
-        // Search filter
-        if ('' !== $q) {
-            $term = '%'.mb_strtolower($q).'%';
-
-            $qb->andWhere('LOWER(owner.name) LIKE :term OR LOWER(borrower.name) LIKE :term OR CONCAT(e.id, \'\') LIKE :term')
-            ->setParameter('term', $term);
-        }
+        $qb = $repository->findBySearchStrategy($q, $equipmentTypeObj, $status);
 
         $equipments = $paginator->paginate(
             $qb,
@@ -56,6 +43,7 @@ final class EquipmentController extends AbstractController
         return $this->render('equipment/index.html.twig', [
             'equipments' => $equipments,
             'q' => $q,
+            'equipmentType' => $equipmentType,
             'status' => $status,
         ]);
     }

@@ -4,6 +4,7 @@
 {% endblock %}
 
 {% set q = q|default(app.request.query.get('q')) %}
+{% set equipmentType = equipmentType|default(app.request.query.get('equipmentType') ?: '') %}
 {% set status = status|default(app.request.query.get('status') ?: 'all') %}
 
 {% block body %}
@@ -26,10 +27,17 @@
 
 			<form method="get" class="mt-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
 				<div class="flex w-full flex-col gap-2 md:flex-row md:items-center md:gap-3">
+					<select name="equipmentType" class="w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 text-kyudo-gm-dark shadow-sm outline-none focus:border-kyudo-gm-light-grey focus:ring-2 focus:ring-kyudo-washed-blue md:w-auto">
+						<option value="">-- Aucun filtre --</option>
+						<option value="yumi" {% if equipmentType == 'yumi' %}selected{% endif %}>Arc (Yumi)</option>
+						<option value="glove" {% if equipmentType == 'glove' %}selected{% endif %}>Gant (Glove)</option>
+					</select>
+					
 					<div class="relative w-full md:w-[420px]">
 						<input name="q" value="{{ q }}" class="w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 pr-10 text-kyudo-gm-dark shadow-sm outline-none placeholder:text-kyudo-gm-grey focus:border-kyudo-gm-light-grey focus:ring-2 focus:ring-kyudo-washed-blue" placeholder="Rechercher (propriétaire, emprunteur, id)..."/>
 						<span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-kyudo-gm-grey">?</span>
 					</div>
+
 
 					<input type="hidden" name="status" value="{{ status }}">
 
@@ -37,7 +45,7 @@
 						Rechercher
 					</button>
 
-					{% if q or status != 'all' %}
+					{% if q or equipmentType or status != 'all' %}
 						<a class="inline-flex items-center justify-center rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)" href="{{ path('equipment.index') }}">
 							Réinitialiser
 						</a>
@@ -45,13 +53,13 @@
 				</div>
 
 				<div class="flex w-full flex-wrap gap-2 md:w-auto md:justify-end">
-					<a href="{{ path('equipment.index', {'q': q, 'status': 'all'}) }}" class="rounded-full px-3 py-1 text-xs font-medium {{ status == 'all' ? 'bg-kyudo-blue text-(--color-kyudo-white) hover:bg-kyudo-royal-blue' : 'bg-kyudo-white text-kyudo-gm-dark ring-1 ring-kyudo-gm-light-grey hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }}">
+					<a href="{{ path('equipment.index', {'q': q, 'equipmentType': equipmentType, 'status': 'all'}) }}" class="rounded-full px-3 py-1 text-xs font-medium {{ status == 'all' ? 'bg-kyudo-blue text-(--color-kyudo-white) hover:bg-kyudo-royal-blue' : 'bg-kyudo-white text-kyudo-gm-dark ring-1 ring-kyudo-gm-light-grey hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }}">
 						Tous
 					</a>
-					<a href="{{ path('equipment.index', {'q': q, 'status': 'available'}) }}" class="rounded-full px-3 py-1 text-xs font-medium {{ status == 'available' ? 'bg-kyudo-blue text-(--color-kyudo-white) hover:bg-kyudo-royal-blue' : 'bg-kyudo-white text-kyudo-gm-dark ring-1 ring-kyudo-gm-light-grey hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }}">
+					<a href="{{ path('equipment.index', {'q': q, 'equipmentType': equipmentType, 'status': 'available'}) }}" class="rounded-full px-3 py-1 text-xs font-medium {{ status == 'available' ? 'bg-kyudo-blue text-(--color-kyudo-white) hover:bg-kyudo-royal-blue' : 'bg-kyudo-white text-kyudo-gm-dark ring-1 ring-kyudo-gm-light-grey hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }}">
 						Disponibles
 					</a>
-					<a href="{{ path('equipment.index', {'q': q, 'status': 'loaned'}) }}" class="rounded-full px-3 py-1 text-xs font-medium {{ status == 'loaned' ? 'bg-kyudo-blue text-(--color-kyudo-white) hover:bg-kyudo-royal-blue' : 'bg-kyudo-white text-kyudo-gm-dark ring-1 ring-kyudo-gm-light-grey hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }}">
+					<a href="{{ path('equipment.index', {'q': q, 'equipmentType': equipmentType, 'status': 'loaned'}) }}" class="rounded-full px-3 py-1 text-xs font-medium {{ status == 'loaned' ? 'bg-kyudo-blue text-(--color-kyudo-white) hover:bg-kyudo-royal-blue' : 'bg-kyudo-white text-kyudo-gm-dark ring-1 ring-kyudo-gm-light-grey hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }}">
 						Prêtés
 					</a>
 				</div>
