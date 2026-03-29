@@ -12,7 +12,6 @@
 		<div
 			class="mx-auto max-w-6xl rounded-3xl bg-kyudo-white shadow-xl p-5 sm:p-8 md:p-12">
 
-			{# --- Header --- #}
 			<div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
 				<div>
 					<h1 class="text-3xl font-semibold tracking-tight text-kyudo-gm-dark">Équipements</h1>
@@ -35,8 +34,8 @@
 					</select>
 					
 					<div class="relative w-full md:w-[420px]">
-						<input name="q" value="{{ q }}" class="w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 pr-10 text-kyudo-gm-dark shadow-sm outline-none placeholder:text-kyudo-gm-grey focus:border-kyudo-gm-light-grey focus:ring-2 focus:ring-kyudo-washed-blue" placeholder="Rechercher (propriétaire, emprunteur, id)…"/>
-						<span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-kyudo-gm-grey">⌕</span>
+						<input name="q" value="{{ q }}" class="w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 pr-10 text-kyudo-gm-dark shadow-sm outline-none placeholder:text-kyudo-gm-grey focus:border-kyudo-gm-light-grey focus:ring-2 focus:ring-kyudo-washed-blue" placeholder="Rechercher (propriétaire, emprunteur, id)..."/>
+						<span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-kyudo-gm-grey">?</span>
 					</div>
 
 
@@ -66,7 +65,6 @@
 				</div>
 			</form>
 
-			{# --- Table --- #}
 			<div class="mt-8 overflow-x-auto rounded-3xl border border-kyudo-gm-light-grey bg-kyudo-white shadow-sm">
 				<table class="w-full text-left">
 					<thead class="bg-kyudo-washed-blue text-sm text-(--color-kyudo-white)">
@@ -79,7 +77,7 @@
 						</tr>
 					</thead>
 
-					<tbody class="divide-y divide-slate-100 text-sm">
+					<tbody class="divide-y divide-kyudo-gm-light-grey text-sm">
 						{% for equipment in equipments %}
 							{% set owner = equipment.ownerClub %}
 							{% set borrower = equipment.borrowerClub %}
@@ -89,14 +87,14 @@
 
 								<td class="px-5 py-4">
 									<div class="font-semibold text-kyudo-gm-dark">{{ equipment.typeName }}</div>
-									<div class="mt-0.5 text-xs text-">Kyūdō equipment</div>
+									<div class="mt-0.5 text-xs text-">Équipement de Kyudo</div>
 								</td>
 
 								<td class="px-5 py-4 text-kyudo-gm-dark">
 									{% if owner %}
 										{{ owner.name }}
 									{% else %}
-										<span class="text-">—</span>
+										<span class="text-">-</span>
 									{% endif %}
 								</td>
 
@@ -148,11 +146,9 @@
 			</div>
 
 			<p class="mt-4 text-xs text-">
-				Astuce : “Disponible” = pas d’emprunteur. “Prêté” = emprunteur renseigné.
+				Astuce : "Disponible" = pas d'emprunteur. "Prêté" = emprunteur renseigné.
 			</p>
 
 		</div>
 	</div>
 {% endblock %}
-
-

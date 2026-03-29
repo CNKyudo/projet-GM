@@ -15,13 +15,14 @@
 			{% block importmap %}
 				{{ importmap('app') }}
 			{% endblock %}
+			<script type="module" data-turbo-track="reload">import 'flash_toasts';</script>
 		{% endblock %}
 	</head>
 	<body>
 		{% block navbar %}
 			{% include 'partials/_navbar.html.twig' %}
 		{% endblock %}
-		{% include 'blocks/flash.html.twig' %}
+		{% include 'partials/_flash.html.twig' %}
 		{% block body %}{% endblock %}
 	</body>
 </html>

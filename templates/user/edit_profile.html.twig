@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier mon profil
+{% endblock %}
+
+{% block body %}
+	{% set defaultFieldClass = 'block w-full rounded-xl border border-gray-300 px-3 py-2 focus:border-kyudo-royal-blue focus:outline-none focus:ring-2 focus:ring-kyudo-royal-blue' %}
+	{% set invalidFieldClass = 'block w-full rounded-xl border border-red-300 bg-red-50/40 px-3 py-2 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500' %}
+
+	<div class="h-screen-with-navbar bg-kyudo-club px-4 pb-10 pt-16 sm:px-6">
+		<div class="mx-auto max-w-5xl rounded-[32px] bg-kyudo-white/95 p-6 shadow-2xl ring-1 ring-black/5 backdrop-blur sm:p-8 md:p-10">
+			<div class="grid gap-6 lg:grid-cols-[1.3fr_0.9fr]">
+				<section class="rounded-3xl border border-kyudo-gm-light-grey bg-kyudo-white p-6 shadow-sm">
+					<h1 class="text-3xl font-semibold tracking-tight text-kyudo-gm-dark">Modifier mon profil</h1>
+					<p class="mt-3 max-w-2xl text-sm leading-6 text-kyudo-gm-grey">
+						Mettez à jour les informations visibles dans votre espace personnel. Pour des raisons de sécurité, le changement de mot de passe reste sur un écran dédié.
+					</p>
+
+					<div class="mt-8 max-w-2xl">
+						{{ form_start(form) }}
+						{% if form.vars.errors|length %}
+							{% include 'partials/_alert.html.twig' with {
+                                    type: 'error',
+                                    title: 'Les informations saisies doivent être corrigées.',
+                                    errors: form.vars.errors,
+                                    class: 'mb-5'
+                                } only %}
+						{% endif %}
+
+						<div>
+							<label for="{{ form.email.vars.id }}" class="mb-1 block text-sm font-medium text-kyudo-gm-grey">
+								{{ form.email.vars.label|default('Adresse email') }}
+							</label>
+							{{ form_widget(form.email, {
+                                    attr: {
+                                        class: form.email.vars.errors|length ? invalidFieldClass : defaultFieldClass
+                                    }
+                                }) }}
+							{% if form.email.vars.errors|length %}
+								{% include 'partials/_alert.html.twig' with {
+                                        type: 'error',
+                                        label: 'Champ invalide',
+                                        errors: form.email.vars.errors,
+                                        class: 'mt-3'
+                                    } only %}
+							{% endif %}
+						</div>
+
+						<div class="mt-6 flex flex-col gap-3 sm:flex-row">
+							<button type="submit" class="btn btn-primary">Enregistrer</button>
+							<a class="btn btn-secondary" data-history-back href="{{ path('user_profile') }}">Retour au profil</a>
+						</div>
+						{{ form_end(form) }}
+					</div>
+				</section>
+
+				<aside class="rounded-3xl border border-kyudo-gm-light-grey bg-kyudo-gm-light-grey p-6 shadow-sm">
+					<h2 class="text-xl font-semibold text-kyudo-gm-dark">Compte actuel</h2>
+					<div class="mt-4 rounded-2xl bg-kyudo-white p-4 shadow-sm">
+						<p class="text-sm font-medium text-kyudo-gm-grey">Email actuel</p>
+						<p class="mt-2 break-all text-base font-semibold text-kyudo-gm-dark">{{ app.user.email }}</p>
+					</div>
+
+					<div class="mt-4 rounded-2xl bg-kyudo-white p-4 shadow-sm">
+						<p class="text-sm font-medium text-kyudo-gm-grey">Besoin d'une autre action ?</p>
+						<p class="mt-2 text-sm leading-6 text-kyudo-gm-grey">
+							Vous pouvez aussi modifier votre mot de passe ou revenir à la vue complète de votre profil.
+						</p>
+					</div>
+
+					<div class="mt-5 flex flex-col gap-3">
+						<a class="rounded-2xl border border-gray-300 px-4 py-3 text-sm font-medium text-kyudo-gm-grey transition hover:border-kyudo-washed-blue hover:bg-kyudo-washed-blue hover:text-white" href="{{ path('user_change_password') }}">
+							Modifier mon mot de passe
+						</a>
+						<a class="rounded-2xl border border-gray-300 px-4 py-3 text-sm font-medium text-kyudo-gm-grey transition hover:border-kyudo-gm-dark hover:bg-kyudo-gm-dark hover:text-white" data-history-back href="{{ path('user_profile') }}">
+							Revenir au profil
+						</a>
+					</div>
+				</aside>
+			</div>
+		</div>
+	</div>
+{% endblock %}

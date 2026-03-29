@@ -27,4 +27,17 @@ enum UserRole: string
             self::ADMIN->value => 700,
         ];
     }
+
+    public function label(): string
+    {
+        return match ($this) {
+            self::USER => 'Utilisateur',
+            self::MEMBER => 'Membre',
+            self::CLUB_PRESIDENT => 'Président de club',
+            self::EQUIPMENT_MANAGER_CLUB => 'Responsable matériel club',
+            self::EQUIPMENT_MANAGER_CTK => 'Responsable matériel CTK',
+            self::EQUIPMENT_MANAGER_CN => 'Responsable matériel national',
+            self::ADMIN => 'Administrateur',
+        };
+    }
 }

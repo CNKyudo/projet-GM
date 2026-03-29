@@ -1,6 +1,6 @@
 {# equipment/form.html.twig #}
 
-{{ form_start(form, { attr: { class: 'space-y-8' } }) }}
+{{ form_start(form, { attr: { class: 'space-y-8', 'data-equipment-form-root': '1' } }) }}
 
   {% if form.vars.errors|length %}
     <div class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
@@ -14,7 +14,7 @@
       {% if form.equipment_type is defined %}
         <div class="sm:col-span-2">
           <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
-            {{ form.equipment_type.vars.label|default('Type d’équipement') }}
+            {{ form.equipment_type.vars.label|default("Type d'équipement") }}
           </label>
           {{ form_widget(form.equipment_type, {
             attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 text-kyudo-gm-dark shadow-sm outline-none focus:border-kyudo-gm-light-grey focus:ring-2 focus:ring-kyudo-washed-blue', 'data-equipment-type-selector': '1' }
@@ -40,7 +40,7 @@
         {{ form_widget(form.borrower_club, {
           attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 text-kyudo-gm-dark shadow-sm outline-none focus:border-kyudo-gm-light-grey focus:ring-2 focus:ring-kyudo-washed-blue' }
         }) }}
-        <p class="mt-2 text-xs text-">Optionnel — si vide, l’équipement est considéré disponible.</p>
+        <p class="mt-2 text-xs text-">Optionnel - si vide, l'équipement est considéré disponible.</p>
         <div class="mt-1 text-sm text-red-600">{{ form_errors(form.borrower_club) }}</div>
       </div>
 
@@ -56,7 +56,6 @@
     </div>
   </section>
 
-  {# Specific fields by type #}
   <section class="rounded-3xl border border-kyudo-gm-light-grey bg-kyudo-gm-light-grey p-6">
     <div class="flex items-start justify-between gap-4">
       <div>
@@ -67,7 +66,7 @@
 
     <div class="mt-5 grid gap-4 sm:grid-cols-2">
 
-      <div id="glove_form_section"
+      <div id="glove_form_section" data-equipment-form-section="glove"
         {% if (form.equipment_type is defined and form.equipment_type.vars.value != 'glove') or form.glove_form is not defined %}
             class="hidden"
         {% endif %}
@@ -91,7 +90,7 @@
         {% endif %}
       </div>
 
-      <div id="yumi_form_section"
+      <div id="yumi_form_section" data-equipment-form-section="yumi"
         {% if (form.equipment_type is defined and form.equipment_type.vars.value != 'yumi') or form.yumi_form is not defined %}
             class="hidden"
         {% endif %}
@@ -126,12 +125,12 @@
     </div>
   </section>
 
-  {# render remaining hidden fields (csrf, etc.) #}
   {{ form_rest(form) }}
 
   <div class="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
     <a
       href="{{ path('equipment.index') }}"
+      data-history-back
       class="inline-flex items-center justify-center rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)"
     >
       Annuler
@@ -146,62 +145,3 @@
   </div>
 
 {{ form_end(form) }}
-
-{% if form.equipment_type is defined %}
-  <script>
-    (function () {
-      const typeField = document.getElementById('{{ form.equipment_type.vars.id }}');
-      const gloveSection = document.getElementById('glove_form_section');
-      const yumiSection = document.getElementById('yumi_form_section');
-
-      if (!typeField) {
-        return;
-      }
-
-      function setEnabled(section, enabled) {
-        if (!section) {
-          return;
-        }
-
-        section.classList.toggle('hidden', !enabled);
-        section.classList.toggle('d-none', !enabled);
-        section.querySelectorAll('input, select').forEach(function (element) {
-          element.disabled = !enabled;
-        });
-      }
-
-      function normalizeType() {
-        const option = typeField.options[typeField.selectedIndex];
-        const values = [
-          typeField.value,
-          option ? option.value : '',
-          option ? option.textContent : '',
-          option ? option.getAttribute('data-equipment-type') : '',
-        ].map(function (value) {
-          return String(value || '').toLowerCase();
-        });
-
-        if (values.some(function (value) { return value.includes('glove'); })) {
-          return 'glove';
-        }
-
-        if (values.some(function (value) { return value.includes('yumi'); })) {
-          return 'yumi';
-        }
-
-        return '';
-      }
-
-      function refreshSections() {
-        const type = normalizeType();
-        setEnabled(gloveSection, type === 'glove');
-        setEnabled(yumiSection, type === 'yumi');
-      }
-
-      refreshSections();
-      typeField.addEventListener('change', refreshSections);
-      document.addEventListener('turbo:load', refreshSections);
-    })();
-  </script>
-{% endif %}
-

@@ -1,0 +1,73 @@
+{% set palette = {
+    success: {
+        shell: 'border-emerald-200 bg-emerald-50 text-emerald-950',
+        badge: 'bg-emerald-100 text-emerald-700',
+        icon: 'OK',
+        label: 'Succès'
+    },
+    error: {
+        shell: 'border-red-200 bg-red-50 text-red-950',
+        badge: 'bg-red-100 text-red-700',
+        icon: '!',
+        label: 'Erreur'
+    },
+    danger: {
+        shell: 'border-red-200 bg-red-50 text-red-950',
+        badge: 'bg-red-100 text-red-700',
+        icon: '!',
+        label: 'Erreur'
+    },
+    warning: {
+        shell: 'border-amber-200 bg-amber-50 text-amber-950',
+        badge: 'bg-amber-100 text-amber-700',
+        icon: '!',
+        label: 'Attention'
+    },
+    info: {
+        shell: 'border-blue-200 bg-blue-50 text-blue-950',
+        badge: 'bg-blue-100 text-blue-700',
+        icon: 'i',
+        label: 'Information'
+    }
+} %}
+{% set variant = palette[type|default('info')]|default(palette.info) %}
+{% set has_error_objects = errors is defined and errors|length > 0 %}
+{% set has_messages = messages is defined and messages|length > 0 %}
+
+<div class="rounded-2xl border px-4 py-4 shadow-sm {{ variant.shell }} {{ class|default('') }}">
+    <div class="flex items-start gap-3">
+        <span class="mt-0.5 inline-flex h-7 min-w-7 items-center justify-center rounded-full px-2 text-xs font-bold {{ variant.badge }}">
+            {{ icon|default(variant.icon) }}
+        </span>
+
+        <div class="min-w-0">
+            <p class="text-[0.7rem] font-semibold uppercase tracking-[0.18em] opacity-80">
+                {{ label|default(variant.label) }}
+            </p>
+
+            {% if title is defined and title %}
+                <p class="mt-1 text-sm font-semibold">{{ title }}</p>
+            {% endif %}
+
+            {% if message is defined and message %}
+                <p class="mt-1 text-sm leading-6">{{ message }}</p>
+            {% endif %}
+
+            {% if has_messages %}
+                <ul class="mt-2 space-y-1 text-sm leading-6">
+                    {% for currentMessage in messages %}
+                        <li>{{ currentMessage }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            {% if has_error_objects %}
+                <ul class="mt-2 space-y-1 text-sm leading-6">
+                    {% for error in errors %}
+                        <li>{{ error.message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+</div>

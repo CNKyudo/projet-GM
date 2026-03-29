@@ -1,85 +1,75 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Adresses{% endblock %}
-
-{% block body %}
-  <div class="h-screen-with-navbar bg-kyudo-equipment pt-16 pb-10 px-4 sm:px-6">
-    <div class="mx-auto max-w-6xl rounded-3xl bg-kyudo-white shadow-xl p-5 sm:p-8 md:p-12">
-
-      <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 class="text-3xl font-semibold tracking-tight text-kyudo-gm-dark">Adresses</h1>
-          <p class="mt-1 text-kyudo-gm-grey">Gestion des adresses utilisees par les clubs.</p>
-        </div>
-
-        <a
-          href="{{ path('address_new') }}"
-          class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-(--color-kyudo-white) shadow-sm hover:bg-kyudo-royal-blue focus:outline-none focus:ring-2 focus:ring-kyudo-washed-blue"
-        >
-          + Ajouter
-        </a>
-      </div>
-
-      <div class="mt-8 overflow-x-auto rounded-3xl border border-kyudo-gm-light-grey bg-kyudo-white shadow-sm">
-        <table class="w-full text-left">
-          <thead class="bg-kyudo-washed-blue text-sm text-(--color-kyudo-white)">
-            <tr>
-              <th class="px-5 py-4 font-medium">ID</th>
-              <th class="px-5 py-4 font-medium">Rue</th>
-              <th class="px-5 py-4 font-medium">Code postal</th>
-              <th class="px-5 py-4 font-medium">Ville</th>
-              <th class="px-5 py-4 font-medium">Pays</th>
-              <th class="px-5 py-4 font-medium text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100 text-sm">
-            {% for address in addresses %}
-              <tr class="hover:bg-kyudo-gm-light-grey">
-                <td class="px-5 py-4 text-kyudo-gm-grey">{{ address.id }}</td>
-                <td class="px-5 py-4 text-kyudo-gm-dark">{{ address.streetAddress ?: '-' }}</td>
-                <td class="px-5 py-4 text-kyudo-gm-dark">{{ address.postalCode ?: '-' }}</td>
-                <td class="px-5 py-4 text-kyudo-gm-dark">{{ address.city ?: '-' }}</td>
-                <td class="px-5 py-4 text-kyudo-gm-dark">{{ address.country ?: '-' }}</td>
-                <td class="px-5 py-4">
-                  <div class="flex justify-end gap-2">
-                    <a
-                      href="{{ path('address_show', {'id': address.id}) }}"
-                      class="rounded-xl border border-kyudo-gm-light-grey bg-kyudo-white px-3 py-2 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)"
-                    >
-                      Voir
-                    </a>
-                    <a
-                      href="{{ path('address_edit', {'id': address.id}) }}"
-                      class="rounded-xl border border-kyudo-gm-light-grey bg-kyudo-white px-3 py-2 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)"
-                    >
-                      Modifier
-                    </a>
-                    {#                     
-                    <form method="post" action="{{ path('address_delete', {'id': address.id}) }}" onsubmit="return confirm('Supprimer cette adresse ?');">
-                      <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ address.id) }}">
-                      <button type="submit" class="rounded-xl border border-red-200 bg-white px-3 py-2 font-medium text-red-700 hover:bg-red-50">
-                        Supprimer
-                      </button>
-                    </form> 
-                    #}
-                  </div>
-                </td>
-              </tr>
-            {% else %}
-              <tr>
-                <td colspan="6" class="px-5 py-10 text-center text-kyudo-gm-dark">Aucune adresse trouvee</td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-
-      <div class="mt-6 flex justify-center">
-        {{ knp_pagination_render(addresses) }}
-      </div>
-
-    </div>
-  </div>
+{% block title %}Adresses
 {% endblock %}
 
+{% block body %}
+	<div class="h-screen-with-navbar bg-kyudo-equipment pt-16 pb-10 px-4 sm:px-6">
+		<div class="mx-auto max-w-6xl rounded-3xl bg-kyudo-white shadow-xl p-5 sm:p-8 md:p-12">
 
+			<div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+				<div>
+					<h1 class="text-3xl font-semibold tracking-tight text-kyudo-gm-dark">Adresses</h1>
+					<p class="mt-1 text-kyudo-gm-grey">Gestion des adresses utilisées par les clubs.</p>
+				</div>
+
+				<a href="{{ path('address_new') }}" class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-(--color-kyudo-white) shadow-sm hover:bg-kyudo-royal-blue focus:outline-none focus:ring-2 focus:ring-kyudo-washed-blue">
+					+ Ajouter
+				</a>
+			</div>
+
+			<div class="mt-8 overflow-x-auto rounded-3xl border border-kyudo-gm-light-grey bg-kyudo-white shadow-sm">
+				<table class="w-full text-left">
+					<thead class="bg-kyudo-washed-blue text-sm text-(--color-kyudo-white)">
+						<tr>
+							<th class="px-5 py-4 font-medium">ID</th>
+							<th class="px-5 py-4 font-medium">Rue</th>
+							<th class="px-5 py-4 font-medium">Code postal</th>
+							<th class="px-5 py-4 font-medium">Ville</th>
+							<th class="px-5 py-4 font-medium">Pays</th>
+							<th class="px-5 py-4 font-medium text-right">Actions</th>
+						</tr>
+					</thead>
+					<tbody class="divide-y divide-kyudo-gm-light-grey text-sm">
+						{% for address in addresses %}
+							<tr class="hover:bg-kyudo-gm-light-grey">
+								<td class="px-5 py-4 text-kyudo-gm-grey">{{ address.id }}</td>
+								<td class="px-5 py-4 text-kyudo-gm-dark">{{ address.streetAddress ?: '-' }}</td>
+								<td class="px-5 py-4 text-kyudo-gm-dark">{{ address.postalCode ?: '-' }}</td>
+								<td class="px-5 py-4 text-kyudo-gm-dark">{{ address.city ?: '-' }}</td>
+								<td class="px-5 py-4 text-kyudo-gm-dark">{{ address.country ?: '-' }}</td>
+								<td class="px-5 py-4">
+									<div class="flex justify-end gap-2">
+										<a href="{{ path('address_show', {'id': address.id}) }}" class="rounded-xl border border-kyudo-gm-light-grey bg-kyudo-white px-3 py-2 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)">
+											Voir
+										</a>
+										<a href="{{ path('address_edit', {'id': address.id}) }}" class="rounded-xl border border-kyudo-gm-light-grey bg-kyudo-white px-3 py-2 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)">
+											Modifier
+										</a>
+										{#                     
+																				                    <form method="post" action="{{ path('address_delete', {'id': address.id}) }}" onsubmit="return confirm('Supprimer cette adresse ?');">
+																				                      <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ address.id) }}">
+																				                      <button type="submit" class="rounded-xl border border-red-200 bg-kyudo-white px-3 py-2 font-medium text-red-700 hover:bg-red-50">
+																				                        Supprimer
+																				                      </button>
+																				                    </form> 
+																				                    #}
+									</div>
+								</td>
+							</tr>
+						{% else %}
+							<tr>
+								<td colspan="6" class="px-5 py-10 text-center text-kyudo-gm-dark">Aucune adresse trouvée</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+
+			<div class="mt-6 flex justify-center">
+				{{ knp_pagination_render(addresses) }}
+			</div>
+
+		</div>
+	</div>
+{% endblock %}

@@ -86,11 +86,16 @@ final class EquipmentController extends AbstractController
             $equipment->setBorrowerUser($borrowerUser);
 
             if ($equipment instanceof Glove && $form->has('glove_form')) {
-                $equipment->setNbFingers($form->get('glove_form')->get('nb_fingers')->getData());
+                $gloveForm = $form->get('glove_form');
+                $equipment->setNbFingers($gloveForm->get('nb_fingers')->getData());
+                $equipment->setSize($gloveForm->get('size')->getData());
             }
 
             if ($equipment instanceof Yumi && $form->has('yumi_form')) {
-                $equipment->setMaterial($form->get('yumi_form')->get('material')->getData());
+                $yumiForm = $form->get('yumi_form');
+                $equipment->setMaterial($yumiForm->get('material')->getData());
+                $equipment->setStrength($yumiForm->get('strength')->getData());
+                $equipment->setLength($yumiForm->get('length')->getData());
             }
 
             $em->persist($equipment);
@@ -123,4 +128,5 @@ final class EquipmentController extends AbstractController
             'form' => $form,
         ]);
     }
+
 }

@@ -1,8 +1,32 @@
-import {disableFormSection, enableFormSection} from "./form_utils.js";
+function enableFormSection(section) {
+    if (!section) {
+        return
+    }
 
-function getEquipmentTypeSelect() {
-    return document.querySelector('[data-equipment-type-selector="1"]')
-        || document.querySelector('select[name$="[equipment_type]"]')
+    section.classList.remove('d-none')
+    section.classList.remove('hidden')
+    section.querySelectorAll('input, select')
+        .forEach(function (element) {
+            element.disabled = false
+        })
+}
+
+function disableFormSection(section) {
+    if (!section) {
+        return
+    }
+
+    section.classList.add('d-none')
+    section.classList.add('hidden')
+    section.querySelectorAll('input, select')
+        .forEach(function (element) {
+            element.disabled = true
+        })
+}
+
+function getEquipmentTypeSelect(root) {
+    return root.querySelector('[data-equipment-type-selector="1"]')
+        || root.querySelector('select[name$="[equipment_type]"]')
 }
 
 function normalizeEquipmentType(selectElement) {
@@ -52,37 +76,46 @@ function updateEquipmentSections(selectElement, gloveSection, yumiSection) {
     disableFormSection(yumiSection)
 }
 
-function initEquipmentForm() {
-    const gloveFormSection = document.getElementById('glove_form_section')
-    const yumiFormSection = document.getElementById('yumi_form_section')
-    const equipmentType = getEquipmentTypeSelect()
+function initEquipmentForm(root) {
+    const equipmentType = getEquipmentTypeSelect(root)
 
     if (!equipmentType) {
         return
     }
 
-    if (equipmentType.dataset.equipmentFormInit === '1') {
+    const gloveFormSection = root.querySelector('[data-equipment-form-section="glove"]')
+        || root.querySelector('#glove_form_section')
+    const yumiFormSection = root.querySelector('[data-equipment-form-section="yumi"]')
+        || root.querySelector('#yumi_form_section')
+    const refreshSections = function () {
         updateEquipmentSections(equipmentType, gloveFormSection, yumiFormSection)
-        return
     }
 
-    updateEquipmentSections(equipmentType, gloveFormSection, yumiFormSection)
+    if (root.dataset.equipmentFormInit !== '1') {
+        equipmentType.addEventListener('change', refreshSections)
+        root.dataset.equipmentFormInit = '1'
+    }
 
-    equipmentType.dataset.equipmentFormInit = '1'
+    refreshSections()
 }
 
-document.addEventListener('change', function (event) {
-    const equipmentType = getEquipmentTypeSelect()
-    const gloveFormSection = document.getElementById('glove_form_section')
-    const yumiFormSection = document.getElementById('yumi_form_section')
+export function initEquipmentForms() {
+    const roots = document.querySelectorAll('[data-equipment-form-root]')
 
-    if (!equipmentType || event.target !== equipmentType) {
+    if (!roots.length) {
+        initEquipmentForm(document)
         return
     }
 
-    updateEquipmentSections(equipmentType, gloveFormSection, yumiFormSection)
-})
+    roots.forEach(function (root) {
+        initEquipmentForm(root)
+    })
+}
 
-initEquipmentForm()
-document.addEventListener('DOMContentLoaded', initEquipmentForm)
-document.addEventListener('turbo:load', initEquipmentForm)
+document.addEventListener('turbo:load', initEquipmentForms)
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initEquipmentForms, { once: true })
+} else {
+    initEquipmentForms()
+}

@@ -2,6 +2,11 @@
 
 {% block title %}Nouvel équipement{% endblock %}
 
+{% block javascripts %}
+  {{ parent() }}
+  <script type="module" data-turbo-track="reload">import 'equipment_form';</script>
+{% endblock %}
+
 {% block body %}
   <div class="h-screen-with-navbar bg-kyudo-equipment pt-16 pb-10 px-4 sm:px-6">
     <div class="mx-auto max-w-6xl rounded-3xl bg-kyudo-white shadow-xl p-5 sm:p-8 md:p-12">
@@ -9,14 +14,15 @@
       <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 class="text-3xl font-semibold tracking-tight text-kyudo-gm-dark">Ajouter un équipement</h1>
-          <p class="mt-1 text-kyudo-gm-grey">Définissez le type, le propriétaire et l’emprunteur actuel.</p>
+          <p class="mt-1 text-kyudo-gm-grey">Définissez le type, le propriétaire et l'emprunteur actuel.</p>
         </div>
 
         <a
           href="{{ path('equipment.index') }}"
+          data-history-back
           class="inline-flex items-center justify-center rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)"
         >
-          ← Retour à la liste
+          Retour à la liste
         </a>
       </div>
 
@@ -27,5 +33,3 @@
     </div>
   </div>
 {% endblock %}
-
-

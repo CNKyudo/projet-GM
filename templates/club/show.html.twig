@@ -4,6 +4,8 @@
 {% endblock %}
 
 {% block body %}
+	{% set requestedReturnTo = app.request.query.get('return_to') %}
+	{% set backHref = requestedReturnTo and requestedReturnTo starts with '/' ? requestedReturnTo : path('club_index') %}
 	<div class="h-screen-with-navbar bg-kyudo-club pt-16 pb-10 px-4 sm:px-6">
 		<div class="mx-auto max-w-6xl rounded-3xl bg-kyudo-white shadow-xl p-5 sm:p-8 md:p-12">
 
@@ -14,13 +16,13 @@
 						{{ club.name }}
 					</h1>
 					<p class="mt-1 text-kyudo-gm-grey">
-						Informations du club de Kyūdō.
+						Informations du club de Kyudo.
 					</p>
 				</div>
 
 				<div class="flex flex-wrap gap-2">
-					<a href="{{ path('club_index') }}" class="inline-flex items-center justify-center rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)">
-						← Retour
+					<a href="{{ backHref }}" class="inline-flex items-center justify-center rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)" data-history-back>
+						Retour
 					</a>
 
 					<a href="{{ path('club_edit', {'id': club.id}) }}" class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-(--color-kyudo-white) shadow-sm hover:bg-kyudo-royal-blue focus:outline-none focus:ring-2 focus:ring-kyudo-washed-blue">
@@ -29,9 +31,7 @@
 				</div>
 			</div>
 
-			<div
-				class="mt-8 grid gap-6 lg:grid-cols-3">
-				{# --- Main details --- #}
+			<div class="mt-8 grid gap-6 lg:grid-cols-3">
 				<section class="lg:col-span-2 rounded-3xl border border-kyudo-gm-light-grey bg-kyudo-white p-6 shadow-sm">
 					<h2 class="text-base font-semibold text-kyudo-gm-dark">Détails</h2>
 
@@ -61,7 +61,6 @@
 					</dl>
 				</section>
 
-				{# --- Address card --- #}
 				<aside class="rounded-3xl border border-kyudo-gm-light-grey bg-kyudo-white p-6 shadow-sm">
 					<h2 class="text-base font-semibold text-kyudo-gm-dark">Adresse</h2>
 
@@ -72,13 +71,9 @@
 							<div class="text-">-</div>
 						{% endif %}
 					</div>
-
-					{# TODO : Able to select an already existing address ? #}
-
 				</aside>
 			</div>
 
 		</div>
 	</div>
 {% endblock %}
-

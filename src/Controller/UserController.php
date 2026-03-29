@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Enum\UserRole;
 use App\Form\ChangePasswordFormType;
 use App\Form\UserClubAssignType;
+use App\Form\UserProfileType;
 use App\Repository\UserRepository;
 use App\Security\Voter\UserPermissionVoter;
 use Doctrine\ORM\EntityManagerInterface;
@@ -17,6 +19,38 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class UserController extends AbstractController
 {
+    #[Route('/profile', name: 'user_profile', methods: ['GET'])]
+    #[IsGranted(UserPermissionVoter::EDIT_OWN_ACCOUNT_INFORMATION)]
+    public function profile(): Response
+    {
+        $user = $this->getAuthenticatedUser();
+
+        return $this->render('user/profile.html.twig', [
+            'user' => $user,
+            'roleLabels' => $this->mapRoleLabels($user->getRoles()),
+        ]);
+    }
+
+    #[Route('/profile/edit', name: 'user_profile_edit', methods: ['GET', 'POST'])]
+    #[IsGranted(UserPermissionVoter::EDIT_OWN_ACCOUNT_INFORMATION)]
+    public function editProfile(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $user = $this->getAuthenticatedUser();
+        $form = $this->createForm(UserProfileType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+            $this->addFlash('success', 'Vos informations ont bien été mises à jour.');
+
+            return $this->redirectToRoute('user_profile');
+        }
+
+        return $this->render('user/edit_profile.html.twig', [
+            'form' => $form,
+        ]);
+    }
+
     #[Route('/profile/password', name: 'user_change_password', methods: ['GET', 'POST'])]
     #[IsGranted(UserPermissionVoter::EDIT_OWN_ACCOUNT_INFORMATION)]
     public function changePassword(
@@ -24,12 +58,7 @@ final class UserController extends AbstractController
         UserPasswordHasherInterface $passwordHasher,
         EntityManagerInterface $entityManager,
     ): Response {
-        $user = $this->getUser();
-
-        if (!$user instanceof User) {
-            throw $this->createAccessDeniedException('Vous devez être connecté.');
-        }
-
+        $user = $this->getAuthenticatedUser();
         $form = $this->createForm(ChangePasswordFormType::class);
         $form->handleRequest($request);
 
@@ -42,7 +71,7 @@ final class UserController extends AbstractController
 
             $this->addFlash('success', 'Votre mot de passe a bien été modifié.');
 
-            return $this->redirectToRoute('app_home');
+            return $this->redirectToRoute('user_profile');
         }
 
         return $this->render('user/change_password.html.twig', [
@@ -54,8 +83,16 @@ final class UserController extends AbstractController
     #[IsGranted(UserPermissionVoter::ACCESS_USER_MANAGEMENT)]
     public function index(UserRepository $userRepository): Response
     {
+        $users = $userRepository->findBy([], ['email' => 'ASC']);
+        $roleLabelsByUserId = [];
+
+        foreach ($users as $listedUser) {
+            $roleLabelsByUserId[(int) $listedUser->getId()] = $this->mapRoleLabels($listedUser->getRoles());
+        }
+
         return $this->render('user/index.html.twig', [
-            'users' => $userRepository->findBy([], ['email' => 'ASC']),
+            'users' => $users,
+            'roleLabelsByUserId' => $roleLabelsByUserId,
         ]);
     }
 
@@ -76,6 +113,31 @@ final class UserController extends AbstractController
         return $this->render('user/assign_club.html.twig', [
             'targetUser' => $targetUser,
             'form' => $form,
+            'roleLabels' => $this->mapRoleLabels($targetUser->getRoles()),
         ]);
+    }
+
+    /**
+     * @param list<string> $roles
+     *
+     * @return list<string>
+     */
+    private function mapRoleLabels(array $roles): array
+    {
+        return array_map(
+            static fn (string $role): string => UserRole::tryFrom($role)?->label() ?? $role,
+            $roles,
+        );
+    }
+
+    private function getAuthenticatedUser(): User
+    {
+        $user = $this->getUser();
+
+        if (!$user instanceof User) {
+            throw $this->createAccessDeniedException('Vous devez être connecté.');
+        }
+
+        return $user;
     }
 }
