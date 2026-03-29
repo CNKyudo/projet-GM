@@ -26,6 +26,22 @@ class GloveFormType extends AbstractType
                     ]),
                 ],
                 'required' => true,
+            ])
+            ->add('size', IntegerType::class, [
+                'label' => 'Taille',
+                'constraints' => [
+                    new Range([
+                        'min' => 3,
+                        'max' => 11,
+                        'notInRangeMessage' => 'La taille doit être entre 3 et 11',
+                    ]),
+                ],
+                'required' => false,
+                'attr' => [
+                    'min' => 3,
+                    'max' => 11,
+                    'placeholder' => 'Entre 3 et 11',
+                ],
             ]);
     }
 
