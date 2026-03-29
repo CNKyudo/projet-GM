@@ -33,10 +33,10 @@ enum UserRole: string
         return match ($this) {
             self::USER => 'Utilisateur',
             self::MEMBER => 'Membre',
-            self::CLUB_PRESIDENT => 'President de club',
-            self::EQUIPMENT_MANAGER_CLUB => 'Responsable materiel club',
-            self::EQUIPMENT_MANAGER_CTK => 'Responsable materiel CTK',
-            self::EQUIPMENT_MANAGER_CN => 'Responsable materiel national',
+            self::CLUB_PRESIDENT => 'Président de club',
+            self::EQUIPMENT_MANAGER_CLUB => 'Responsable matériel club',
+            self::EQUIPMENT_MANAGER_CTK => 'Responsable matériel CTK',
+            self::EQUIPMENT_MANAGER_CN => 'Responsable matériel national',
             self::ADMIN => 'Administrateur',
         };
     }

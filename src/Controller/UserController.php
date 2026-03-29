@@ -41,7 +41,7 @@ final class UserController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
-            $this->addFlash('success', 'Vos informations ont bien ete mises a jour.');
+            $this->addFlash('success', 'Vos informations ont bien été mises à jour.');
 
             return $this->redirectToRoute('user_profile');
         }
@@ -69,7 +69,7 @@ final class UserController extends AbstractController
             $user->setPassword($passwordHasher->hashPassword($user, $plainPassword));
             $entityManager->flush();
 
-            $this->addFlash('success', 'Votre mot de passe a bien ete modifie.');
+            $this->addFlash('success', 'Votre mot de passe a bien été modifié.');
 
             return $this->redirectToRoute('user_profile');
         }
@@ -105,7 +105,7 @@ final class UserController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
-            $this->addFlash('success', 'Club mis a jour pour cet utilisateur.');
+            $this->addFlash('success', 'Club mis à jour pour cet utilisateur.');
 
             return $this->redirectToRoute('user_index');
         }
@@ -135,7 +135,7 @@ final class UserController extends AbstractController
         $user = $this->getUser();
 
         if (!$user instanceof User) {
-            throw $this->createAccessDeniedException('Vous devez etre connecte.');
+            throw $this->createAccessDeniedException('Vous devez être connecté.');
         }
 
         return $user;

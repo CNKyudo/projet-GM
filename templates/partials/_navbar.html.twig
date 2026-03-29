@@ -14,7 +14,7 @@
 					Accueil
 				</a>
 				<a href="{{ path('equipment.index') }}" class="rounded-md px-3 py-1 text-sm font-medium {{ current_route starts with 'equipment' ? 'bg-kyudo-blue text-(--color-kyudo-white) hover:bg-kyudo-royal-blue' : 'text-kyudo-gm-grey hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }}">
-					Equipements
+					Équipements
 				</a>
 				<a href="{{ path('club_index') }}" class="rounded-md px-3 py-1 text-sm font-medium {{ current_route starts with 'club_' ? 'bg-kyudo-blue text-(--color-kyudo-white) hover:bg-kyudo-royal-blue' : 'text-kyudo-gm-grey hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }}">
 					Clubs
@@ -32,7 +32,7 @@
 						Mon profil
 					</a>
 					<a href="{{ path('app_logout') }}" class="rounded-md bg-kyudo-white px-3 py-1 text-sm font-medium text-red-600 hover:bg-red-600 hover:text-(--color-kyudo-white)">
-						Deconnexion
+						Déconnexion
 					</a>
 				{% else %}
 					<a href="{{ path('app_login') }}" class="text-sm text-kyudo-gm-grey hover:text-kyudo-royal-blue">Connexion</a>
@@ -48,7 +48,7 @@
 		<div id="navbar_mobile_menu" class="hidden border-t border-kyudo-gm-light-grey pb-4 pt-3 md:hidden">
 			<div class="flex flex-col gap-2">
 				<a href="{{ path('app_home') }}" class="rounded-md px-3 py-2 text-sm font-medium {{ current_route starts with 'app_home' ? 'bg-kyudo-blue text-(--color-kyudo-white)' : 'text-kyudo-gm-grey hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }}">Accueil</a>
-				<a href="{{ path('equipment.index') }}" class="rounded-md px-3 py-2 text-sm font-medium {{ current_route starts with 'equipment' ? 'bg-kyudo-blue text-(--color-kyudo-white)' : 'text-kyudo-gm-grey hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }}">Equipements</a>
+				<a href="{{ path('equipment.index') }}" class="rounded-md px-3 py-2 text-sm font-medium {{ current_route starts with 'equipment' ? 'bg-kyudo-blue text-(--color-kyudo-white)' : 'text-kyudo-gm-grey hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }}">Équipements</a>
 				<a href="{{ path('club_index') }}" class="rounded-md px-3 py-2 text-sm font-medium {{ current_route starts with 'club_' ? 'bg-kyudo-blue text-(--color-kyudo-white)' : 'text-kyudo-gm-grey hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }}">Clubs</a>
 				<a href="{{ path('address_index') }}" class="rounded-md px-3 py-2 text-sm font-medium {{ current_route starts with 'address_' ? 'bg-kyudo-blue text-(--color-kyudo-white)' : 'text-kyudo-gm-grey hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }}">Adresses</a>
 			</div>
@@ -58,7 +58,7 @@
 					<div class="px-3 pb-2 text-sm text-kyudo-gm-grey">Bonjour
 						{{ app.user.email }}</div>
 					<a href="{{ path('user_profile') }}" class="mx-3 mb-2 inline-flex rounded-md px-3 py-2 text-sm font-medium {{ is_profile_route ? 'bg-kyudo-blue text-(--color-kyudo-white)' : 'border border-kyudo-gm-light-grey text-kyudo-gm-grey hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }}">Mon profil</a>
-					<a href="{{ path('app_logout') }}" class="mx-3 inline-flex rounded-md bg-kyudo-white px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-600 hover:text-(--color-kyudo-white)">Deconnexion</a>
+					<a href="{{ path('app_logout') }}" class="mx-3 inline-flex rounded-md bg-kyudo-white px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-600 hover:text-(--color-kyudo-white)">Déconnexion</a>
 				{% else %}
 					<div class="flex gap-2 px-3">
 						<a href="{{ path('app_login') }}" class="rounded-md border border-kyudo-gm-light-grey px-3 py-2 text-sm text-kyudo-gm-grey">Connexion</a>
@@ -69,20 +69,4 @@
 		</div>
 	</div>
 
-	<script>
-		(function () {
-const button = document.getElementById('navbar_mobile_toggle');
-const menu = document.getElementById('navbar_mobile_menu');
-
-if (! button || ! menu) {
-return;
-}
-
-button.addEventListener('click', function () {
-const isOpen = ! menu.classList.contains('hidden');
-menu.classList.toggle('hidden', isOpen);
-button.setAttribute('aria-expanded', String(! isOpen));
-});
-})();
-	</script>
 </nav>

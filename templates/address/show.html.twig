@@ -11,11 +11,11 @@
 				<div>
 					<div class="text-sm font-medium text-">Adresse</div>
 					<h1 class="mt-1 text-3xl font-semibold tracking-tight text-kyudo-gm-dark">#{{ address.id }}</h1>
-					<p class="mt-1 text-kyudo-gm-grey">Details de cette adresse.</p>
+					<p class="mt-1 text-kyudo-gm-grey">Détails de cette adresse.</p>
 				</div>
 
 				<div class="flex flex-wrap gap-2">
-					<a href="{{ path('address_index') }}" class="inline-flex items-center justify-center rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)">
+					<a href="{{ path('address_index') }}" class="inline-flex items-center justify-center rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)" data-history-back>
 						Retour
 					</a>
 					<a href="{{ path('address_edit', {'id': address.id}) }}" class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-(--color-kyudo-white) shadow-sm hover:bg-kyudo-royal-blue focus:outline-none focus:ring-2 focus:ring-kyudo-washed-blue">
@@ -26,7 +26,7 @@
 
 			<div class="mt-8 grid gap-6 lg:grid-cols-3">
 				<section class="lg:col-span-2 rounded-3xl border border-kyudo-gm-light-grey bg-kyudo-white p-6 shadow-sm">
-					<h2 class="text-base font-semibold text-kyudo-gm-dark">Details</h2>
+					<h2 class="text-base font-semibold text-kyudo-gm-dark">Détails</h2>
 
 					<dl class="mt-4 grid gap-4 sm:grid-cols-2">
 						<div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">

@@ -1,11 +1,7 @@
 import './bootstrap.js';
+import './history_back.js';
+import './navbar_mobile.js';
+import './flash_toasts.js';
+import './club_index.js';
 import './equipment_form.js';
-/*
- * Welcome to your app's main JavaScript file!
- *
- * This file will be included onto the page via the importmap() Twig function,
- * which should already be in your base.html.twig.
- */
 import './styles/app.css';
-
-console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');

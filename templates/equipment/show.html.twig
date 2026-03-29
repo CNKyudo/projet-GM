@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Details de l'equipement{% endblock %}
+{% block title %}Détails de l'équipement{% endblock %}
 
 {% block body %}
   <div class="h-screen-with-navbar bg-kyudo-equipment pt-16 pb-10 px-4 sm:px-6">
@@ -8,16 +8,17 @@
 
       <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <div class="text-sm font-medium text-">Equipement</div>
+          <div class="text-sm font-medium text-">Équipement</div>
           <h1 class="mt-1 text-3xl font-semibold tracking-tight text-kyudo-gm-dark">
             #{{ equipment.id }} - {{ equipment.typeName }}
           </h1>
-          <p class="mt-1 text-kyudo-gm-grey">Proprietaire et emprunteur actuel.</p>
+          <p class="mt-1 text-kyudo-gm-grey">Propriétaire et emprunteur actuel.</p>
         </div>
 
         <div class="flex flex-wrap gap-2">
           <a
             href="{{ path('equipment.index') }}"
+            data-history-back
             class="inline-flex items-center justify-center rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)"
           >
             Retour
@@ -33,7 +34,7 @@
 
       <div class="mt-8 grid gap-6 lg:grid-cols-3">
         <section class="lg:col-span-2 rounded-3xl border border-kyudo-gm-light-grey bg-kyudo-white p-6 shadow-sm">
-          <h2 class="text-base font-semibold text-kyudo-gm-dark">Details</h2>
+          <h2 class="text-base font-semibold text-kyudo-gm-dark">Détails</h2>
 
           <dl class="mt-4 grid gap-4 sm:grid-cols-2">
             <div class="rounded-2xl bg-kyudo-gm-light-grey p-4">
@@ -47,7 +48,7 @@
             </div>
 
             <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
-              <dt class="text-xs font-medium text-">Proprietaire</dt>
+              <dt class="text-xs font-medium text-">Propriétaire</dt>
               <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
                 {{ equipment.ownerClub ? equipment.ownerClub.name : '-' }}
               </dd>
@@ -68,7 +69,7 @@
               </div>
             {% elseif equipment.typeName == 'yumi' %}
               <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
-                <dt class="text-xs font-medium text-">Materiau</dt>
+                <dt class="text-xs font-medium text-">Matériau</dt>
                 <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
                   {{ equipment.material ?: '-' }}
                 </dd>
@@ -92,7 +93,7 @@
               <dd class="mt-2">
                 {% if equipment.borrowerClub %}
                   <span class="inline-flex items-center gap-2 rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-800">
-                    Prete a <span class="font-semibold">{{ equipment.borrowerClub.name }}</span>
+                    Prêté à <span class="font-semibold">{{ equipment.borrowerClub.name }}</span>
                   </span>
                 {% else %}
                   <span class="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-800">
@@ -120,7 +121,7 @@
           </div>
 
           <p class="mt-3 text-xs text-">
-            L'emprunteur est optionnel. Si aucun club n'est renseigne, l'equipement est considere disponible.
+            L'emprunteur est optionnel. Si aucun club n'est renseigné, l'équipement est considéré disponible.
           </p>
         </aside>
       </div>

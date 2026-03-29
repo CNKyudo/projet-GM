@@ -3,7 +3,7 @@
     shell: 'border-emerald-200 bg-emerald-50/95 text-emerald-950',
     badge: 'bg-emerald-100 text-emerald-700',
     icon: 'OK',
-    title: 'Succes'
+    title: 'Succès'
   },
   error: {
     shell: 'border-red-200 bg-red-50/95 text-red-950',
@@ -64,34 +64,3 @@
 		{% endfor %}
 	{% endfor %}
 </div>
-
-<script>
-	(function () {
-const toasts = document.querySelectorAll('#flash_toasts .flash-toast');
-
-function hideToast(toast) {
-if (! toast || toast.dataset.closing === '1') {
-return;
-}
-
-toast.dataset.closing = '1';
-toast.classList.add('opacity-0', 'translate-x-2');
-setTimeout(function () {
-toast.remove();
-}, 280);
-}
-
-toasts.forEach(function (toast) {
-const dismiss = toast.querySelector('[data-flash-dismiss]');
-if (dismiss) {
-dismiss.addEventListener('click', function () {
-hideToast(toast);
-});
-}
-
-setTimeout(function () {
-hideToast(toast);
-}, 4200);
-});
-})();
-</script>
