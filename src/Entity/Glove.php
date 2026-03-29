@@ -12,6 +12,9 @@ class Glove extends Equipment
     #[ORM\Column(nullable: true)]
     private ?int $nb_fingers = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $size = null;
+
     public static function getType(): EquipmentType
     {
         return EquipmentType::GLOVE;
@@ -25,6 +28,18 @@ class Glove extends Equipment
     public function setNbFingers(?int $nb_fingers): static
     {
         $this->nb_fingers = $nb_fingers;
+
+        return $this;
+    }
+
+    public function getSize(): ?int
+    {
+        return $this->size;
+    }
+
+    public function setSize(?int $size): static
+    {
+        $this->size = $size;
 
         return $this;
     }

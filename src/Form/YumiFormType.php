@@ -3,7 +3,9 @@
 namespace App\Form;
 
 use App\Entity\Yumi;
+use App\Enum\YumiLength;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -19,6 +21,19 @@ class YumiFormType extends AbstractType
             ->add('material', TextType::class, [
                 'label' => 'Matériau',
                 'required' => true,
+            ])
+            ->add('strength', IntegerType::class, [
+                'label' => 'Force (kg)',
+                'required' => true,
+                'attr' => [
+                    'min' => 0,
+                    'placeholder' => 'Force en kg',
+                ],
+            ])
+            ->add('length', null, [
+                'label' => 'Taille',
+                'required' => false,
+                'choices' => YumiLength::cases(),
             ]);
     }
 
