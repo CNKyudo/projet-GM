@@ -63,7 +63,7 @@
 						{% if user.borrowedEquipments|length > 0 %}
 							<div class="mt-5 grid gap-3 sm:grid-cols-2">
 								{% for equipment in user.borrowedEquipments %}
-									<a href="{{ path('equipment.show', {'id': equipment.id}) }}" class="rounded-2xl border border-kyudo-gm-light-grey p-4 transition hover:border-kyudo-washed-blue hover:bg-kyudo-gm-light-grey">
+									<a href="{{ path('equipment.show', {'id': equipment.id, 'return_to': app.request.requestUri}) }}" class="rounded-2xl border border-kyudo-gm-light-grey p-4 transition hover:border-kyudo-washed-blue hover:bg-kyudo-gm-light-grey">
 										<p class="text-xs font-semibold uppercase tracking-[0.24em] text-kyudo-gm-grey">{{ equipment.typeName }}</p>
 										<p class="mt-2 text-base font-semibold text-kyudo-gm-dark">Équipement #{{ equipment.id }}</p>
 									</a>
@@ -99,7 +99,7 @@
 						<h2 class="text-xl font-semibold text-kyudo-gm-dark">Club</h2>
 						{% if user.clubWhichImPresidentOf %}
 							<p class="mt-3 text-sm text-kyudo-gm-grey">Vous êtes actuellement président de club.</p>
-							<a href="{{ path('club_show', {'id': user.clubWhichImPresidentOf.id}) }}" class="mt-4 block rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white p-4 transition hover:border-kyudo-washed-blue hover:bg-kyudo-gm-light-grey">
+							<a href="{{ path('club_show', {'id': user.clubWhichImPresidentOf.id, 'return_to': app.request.requestUri}) }}" class="mt-4 block rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white p-4 transition hover:border-kyudo-washed-blue hover:bg-kyudo-gm-light-grey">
 								<p class="text-base font-semibold text-kyudo-gm-dark">{{ user.clubWhichImPresidentOf.name }}</p>
 								{% if user.clubWhichImPresidentOf.email %}
 									<p class="mt-1 text-sm text-kyudo-gm-grey">{{ user.clubWhichImPresidentOf.email }}</p>

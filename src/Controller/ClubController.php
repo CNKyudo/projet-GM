@@ -51,7 +51,7 @@ class ClubController extends AbstractController
                 $this->addPresidentAlreadyAssignedError($form);
 
                 return $this->render('club/new.html.twig', [
-                    'form' => $form->createView(),
+                    'form' => $form,
                 ]);
             }
 
@@ -61,7 +61,7 @@ class ClubController extends AbstractController
         }
 
         return $this->render('club/new.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
@@ -87,7 +87,7 @@ class ClubController extends AbstractController
 
                 return $this->render('club/edit.html.twig', [
                     'club' => $club,
-                    'form' => $form->createView(),
+                    'form' => $form,
                 ]);
             }
 
@@ -98,7 +98,7 @@ class ClubController extends AbstractController
 
         return $this->render('club/edit.html.twig', [
             'club' => $club,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 

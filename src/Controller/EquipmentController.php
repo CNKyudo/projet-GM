@@ -72,7 +72,7 @@ final class EquipmentController extends AbstractController
                 $this->addFlash('error', 'Type d\'équipement non trouvé !');
 
                 return $this->render('equipment/create.html.twig', [
-                    'form' => $form->createView(),
+                    'form' => $form,
                 ]);
             }
 
@@ -107,7 +107,7 @@ final class EquipmentController extends AbstractController
         }
 
         return $this->render('equipment/create.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
@@ -125,7 +125,7 @@ final class EquipmentController extends AbstractController
 
         return $this->render('equipment/edit.html.twig', [
             'equipments' => $equipment,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 

@@ -21,15 +21,8 @@ function currentUrl() {
     return window.location.pathname + window.location.search + window.location.hash
 }
 
-function updateNavigationState() {
-    const url = currentUrl()
-    const lastUrl = readFromSession(currentPageKey)
-
-    if (lastUrl && lastUrl !== url) {
-        writeToSession(previousPageKey, lastUrl)
-    }
-
-    writeToSession(currentPageKey, url)
+function updateCurrentPage() {
+    writeToSession(currentPageKey, currentUrl())
 }
 
 function previousUrl() {
@@ -45,20 +38,65 @@ function eventTargetElement(event) {
     return event.target && event.target.parentElement ? event.target.parentElement : null
 }
 
-function handleHistoryBackClick(event) {
+function isPlainLeftClick(event) {
+    return event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey
+}
+
+function eventLink(event, selector = 'a[href]') {
     const target = eventTargetElement(event)
+    return target ? target.closest(selector) : null
+}
 
-    if (!target) {
+function isTrackableLink(link) {
+    if (!link || link.hasAttribute('data-history-back')) {
+        return false
+    }
+
+    if (link.target && link.target !== '_self') {
+        return false
+    }
+
+    if (link.hasAttribute('download')) {
+        return false
+    }
+
+    const href = link.getAttribute('href')
+
+    if (!href || href.startsWith('#')) {
+        return false
+    }
+
+    try {
+        const url = new URL(link.href, window.location.origin)
+
+        if (url.origin !== window.location.origin) {
+            return false
+        }
+
+        return url.pathname + url.search + url.hash !== currentUrl()
+    } catch (error) {
+        return false
+    }
+}
+
+function rememberPreviousPage(event) {
+    if (event.defaultPrevented || !isPlainLeftClick(event)) {
         return
     }
 
-    const link = target.closest('a[data-history-back]')
+    const link = eventLink(event)
 
-    if (!link || event.defaultPrevented || event.button !== 0) {
+    if (!isTrackableLink(link)) {
         return
     }
 
-    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+    writeToSession(previousPageKey, currentUrl())
+}
+
+function handleHistoryBackClick(event) {
+    const link = eventLink(event, 'a[data-history-back]')
+
+    if (!link || event.defaultPrevented || !isPlainLeftClick(event)) {
         return
     }
 
@@ -73,19 +111,26 @@ function handleHistoryBackClick(event) {
     }
 
     event.preventDefault()
+
+    if (window.history.length > 1) {
+        window.history.back()
+        return
+    }
+
     window.location.assign(url)
 }
 
 if (!window.__kyudoHistoryBackInitialized) {
     window.__kyudoHistoryBackInitialized = true
 
-    document.addEventListener('click', handleHistoryBackClick)
-    document.addEventListener('turbo:load', updateNavigationState)
-    window.addEventListener('pageshow', updateNavigationState)
+    document.addEventListener('click', rememberPreviousPage, true)
+    document.addEventListener('click', handleHistoryBackClick, true)
+    document.addEventListener('turbo:load', updateCurrentPage)
+    window.addEventListener('pageshow', updateCurrentPage)
 
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', updateNavigationState, { once: true })
+        document.addEventListener('DOMContentLoaded', updateCurrentPage, { once: true })
     } else {
-        updateNavigationState()
+        updateCurrentPage()
     }
 }
