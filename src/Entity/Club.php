@@ -7,8 +7,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: ClubRepository::class)]
+#[UniqueEntity(fields: ['president'], errorPath: 'president', message: 'Cet utilisateur est déjà président d\'un club.')]
 class Club
 {
     use TimestampableEntity;

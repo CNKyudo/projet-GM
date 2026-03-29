@@ -1,6 +1,6 @@
 {# equipment/form.html.twig #}
 
-{{ form_start(form, { attr: { class: 'space-y-8' } }) }}
+{{ form_start(form, { attr: { class: 'space-y-8', 'data-equipment-form-root': '1' } }) }}
 
   {% if form.vars.errors|length %}
     <div class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
@@ -66,7 +66,7 @@
 
     <div class="mt-5 grid gap-4 sm:grid-cols-2">
 
-      <div id="glove_form_section"
+      <div id="glove_form_section" data-equipment-form-section="glove"
         {% if (form.equipment_type is defined and form.equipment_type.vars.value != 'glove') or form.glove_form is not defined %}
             class="hidden"
         {% endif %}
@@ -90,7 +90,7 @@
         {% endif %}
       </div>
 
-      <div id="yumi_form_section"
+      <div id="yumi_form_section" data-equipment-form-section="yumi"
         {% if (form.equipment_type is defined and form.equipment_type.vars.value != 'yumi') or form.yumi_form is not defined %}
             class="hidden"
         {% endif %}

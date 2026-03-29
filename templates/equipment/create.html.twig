@@ -2,6 +2,11 @@
 
 {% block title %}Nouvel équipement{% endblock %}
 
+{% block javascripts %}
+  {{ parent() }}
+  <script type="module" data-turbo-track="reload">import 'equipment_form';</script>
+{% endblock %}
+
 {% block body %}
   <div class="h-screen-with-navbar bg-kyudo-equipment pt-16 pb-10 px-4 sm:px-6">
     <div class="mx-auto max-w-6xl rounded-3xl bg-kyudo-white shadow-xl p-5 sm:p-8 md:p-12">

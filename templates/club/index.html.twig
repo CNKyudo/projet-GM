@@ -3,6 +3,11 @@
 {% block title %}Clubs
 {% endblock %}
 
+{% block javascripts %}
+	{{ parent() }}
+	<script type="module" data-turbo-track="reload">import 'club_index';</script>
+{% endblock %}
+
 {% block body %}
 	{% set q = app.request.query.get('q') %}
 	{% set view = app.request.query.get('view') ?: 'cards' %}

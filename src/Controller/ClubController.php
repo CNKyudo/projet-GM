@@ -5,8 +5,11 @@ namespace App\Controller;
 use App\Entity\Club;
 use App\Form\ClubType;
 use App\Repository\ClubRepository;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -41,8 +44,16 @@ class ClubController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em->persist($club);
-            $em->flush();
+            try {
+                $em->persist($club);
+                $em->flush();
+            } catch (UniqueConstraintViolationException) {
+                $this->addPresidentAlreadyAssignedError($form);
+
+                return $this->render('club/new.html.twig', [
+                    'form' => $form->createView(),
+                ]);
+            }
 
             $this->addFlash('success', 'Club créé.');
 
@@ -69,7 +80,16 @@ class ClubController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em->flush();
+            try {
+                $em->flush();
+            } catch (UniqueConstraintViolationException) {
+                $this->addPresidentAlreadyAssignedError($form);
+
+                return $this->render('club/edit.html.twig', [
+                    'club' => $club,
+                    'form' => $form->createView(),
+                ]);
+            }
 
             $this->addFlash('success', 'Club mis à jour.');
 
@@ -93,5 +113,18 @@ class ClubController extends AbstractController
         }
 
         return $this->redirectToRoute('club_index');
+    }
+
+    private function addPresidentAlreadyAssignedError(FormInterface $form): void
+    {
+        $message = 'Cet utilisateur est déjà président d\'un club.';
+
+        if ($form->has('president')) {
+            $form->get('president')->addError(new FormError($message));
+
+            return;
+        }
+
+        $form->addError(new FormError($message));
     }
 }

@@ -31,7 +31,7 @@ function setClubView(root, view) {
     root.dataset.currentView = isCards ? 'cards' : 'table'
 }
 
-function initClubViewSwitchers() {
+export function initClubViewSwitchers() {
     document.querySelectorAll('[data-club-view-switcher]').forEach(function (root) {
         const cardsButton = root.querySelector('[data-club-view-button="cards"]')
         const tableButton = root.querySelector('[data-club-view-button="table"]')

@@ -20,6 +20,14 @@ return [
         'path' => './assets/equipment_form.js',
         'entrypoint' => true,
     ],
+    'club_index' => [
+        'path' => './assets/club_index.js',
+        'entrypoint' => true,
+    ],
+    'flash_toasts' => [
+        'path' => './assets/flash_toasts.js',
+        'entrypoint' => true,
+    ],
     '@hotwired/stimulus' => [
         'version' => '3.2.2',
     ],
