@@ -25,11 +25,11 @@ class AddressType extends AbstractType
             ])
             ->add('postalCode', TextType::class, [
                 'label' => 'Code postal',
-                'required' => false,
+                'required' => true,
             ])
             ->add('city', TextType::class, [
                 'label' => 'Ville',
-                'required' => false,
+                'required' => true,
             ])
             ->add('country', TextType::class, [
                 'label' => 'Pays',

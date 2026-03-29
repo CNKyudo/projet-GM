@@ -5,12 +5,18 @@ namespace App\Entity;
 use App\Enum\EquipmentType;
 use App\Repository\GloveRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation\Versioned;
 
 #[ORM\Entity(repositoryClass: GloveRepository::class)]
 class Glove extends Equipment
 {
     #[ORM\Column(nullable: true)]
+    #[Versioned]
     private ?int $nb_fingers = null;
+
+    #[ORM\Column(nullable: true)]
+    #[Versioned]
+    private ?int $size = null;
 
     public static function getType(): EquipmentType
     {
@@ -25,6 +31,18 @@ class Glove extends Equipment
     public function setNbFingers(?int $nb_fingers): static
     {
         $this->nb_fingers = $nb_fingers;
+
+        return $this;
+    }
+
+    public function getSize(): ?int
+    {
+        return $this->size;
+    }
+
+    public function setSize(?int $size): static
+    {
+        $this->size = $size;
 
         return $this;
     }

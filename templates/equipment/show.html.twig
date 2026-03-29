@@ -60,11 +60,29 @@
                   {{ equipment.nbFingers is not null ? equipment.nbFingers : '-' }}
                 </dd>
               </div>
+              <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
+                <dt class="text-xs font-medium text-">Taille</dt>
+                <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
+                  {{ equipment.size is not null ? equipment.size : '-' }}
+                </dd>
+              </div>
             {% elseif equipment.typeName == 'yumi' %}
               <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
                 <dt class="text-xs font-medium text-">Materiau</dt>
                 <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
                   {{ equipment.material ?: '-' }}
+                </dd>
+              </div>
+              <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
+                <dt class="text-xs font-medium text-">Force (kg)</dt>
+                <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
+                  {{ equipment.strength ?: '-' }}
+                </dd>
+              </div>
+              <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
+                <dt class="text-xs font-medium text-">Taille</dt>
+                <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
+                  {{ equipment.length.value ?: '-' }}
                 </dd>
               </div>
             {% endif %}

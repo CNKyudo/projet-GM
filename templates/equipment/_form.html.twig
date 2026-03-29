@@ -80,6 +80,14 @@
             attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
           }) }}
           <div class="mt-1 text-sm text-red-600">{{ form_errors(form.glove_form.nb_fingers) }}</div>
+
+          <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
+            {{ form.glove_form.size.vars.label|default('Taille') }}
+          </label>
+          {{ form_widget(form.glove_form.size, {
+            attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
+          }) }}
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.glove_form.size) }}</div>
         {% endif %}
       </div>
 
@@ -96,6 +104,22 @@
             attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
           }) }}
           <div class="mt-1 text-sm text-red-600">{{ form_errors(form.yumi_form.material) }}</div>
+
+          <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
+            {{ form.yumi_form.strength.vars.label|default('Force') }}
+          </label>
+          {{ form_widget(form.yumi_form.strength, {
+            attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
+          }) }}
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.yumi_form.strength) }}</div>
+
+          <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
+            {{ form.yumi_form.length.vars.label|default('Taille') }}
+          </label>
+          {{ form_widget(form.yumi_form.length, {
+            attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
+          }) }}
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.yumi_form.length) }}</div>
         {% endif %}
       </div>
 
