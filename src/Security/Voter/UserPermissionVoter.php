@@ -36,6 +36,10 @@ final class UserPermissionVoter extends Voter
     public const SET_ANOTHER_BORROWER_FOR_OWN_CLUB_EQUIPMENT = 'SET_ANOTHER_BORROWER_FOR_OWN_CLUB_EQUIPMENT';
     public const SET_ANOTHER_BORROWER_FOR_OTHER_CLUB_EQUIPMENT = 'SET_ANOTHER_BORROWER_FOR_OTHER_CLUB_EQUIPMENT';
     public const EDIT_OWN_ACCOUNT_INFORMATION = 'EDIT_OWN_ACCOUNT_INFORMATION';
+    public const CREATE_QRCODE = 'CREATE_QRCODE';
+    public const EDIT_QRCODE = 'EDIT_QRCODE';
+    public const DELETE_QRCODE = 'DELETE_QRCODE';
+    public const VIEW_QRCODE = 'VIEW_QRCODE';
 
     /**
      * @var array<string, string>
@@ -65,6 +69,10 @@ final class UserPermissionVoter extends Voter
         self::SET_ANOTHER_BORROWER_FOR_OWN_CLUB_EQUIPMENT => 'canSetAnotherBorrowerForOwnClubEquipment',
         self::SET_ANOTHER_BORROWER_FOR_OTHER_CLUB_EQUIPMENT => 'canSetAnotherBorrowerForOtherClubEquipment',
         self::EDIT_OWN_ACCOUNT_INFORMATION => 'canEditOwnAccountInformation',
+        self::CREATE_QRCODE => 'canCreateQRCode',
+        self::EDIT_QRCODE => 'canEditQRCode',
+        self::DELETE_QRCODE => 'canDeleteQRCode',
+        self::VIEW_QRCODE => 'canViewQRCode',
     ];
 
     public function __construct(

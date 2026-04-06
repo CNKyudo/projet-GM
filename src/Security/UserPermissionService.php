@@ -128,6 +128,45 @@ final class UserPermissionService
         return $this->hasAtLeastRole($user, UserRole::USER);
     }
 
+    public function canCreateQRCode(User $user): bool
+    {
+        return $this->hasAnyRole(
+            $user,
+            UserRole::CLUB_PRESIDENT,
+            UserRole::EQUIPMENT_MANAGER_CLUB,
+            UserRole::EQUIPMENT_MANAGER_CTK,
+            UserRole::EQUIPMENT_MANAGER_CN,
+            UserRole::ADMIN
+        );
+    }
+
+    public function canEditQRCode(User $user): bool
+    {
+        return $this->hasAnyRole(
+            $user,
+            UserRole::CLUB_PRESIDENT,
+            UserRole::EQUIPMENT_MANAGER_CLUB,
+            UserRole::EQUIPMENT_MANAGER_CTK,
+            UserRole::EQUIPMENT_MANAGER_CN,
+            UserRole::ADMIN
+        );
+    }
+
+    public function canDeleteQRCode(User $user): bool
+    {
+        return $this->hasAnyRole(
+            $user,
+            UserRole::EQUIPMENT_MANAGER_CTK,
+            UserRole::EQUIPMENT_MANAGER_CN,
+            UserRole::ADMIN
+        );
+    }
+
+    public function canViewQRCode(User $user): bool
+    {
+        return $this->hasAtLeastRole($user, UserRole::USER);
+    }
+
     private function hasAnyRole(User $user, UserRole ...$requiredRoles): bool
     {
         $userRoles = $user->getRoles();

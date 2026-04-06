@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+  <div class="h-screen-with-navbar bg-kyudo-equipment pt-16 pb-10 px-4 sm:px-6">
+    <div class="mx-auto max-w-2xl rounded-3xl bg-kyudo-white shadow-xl p-5 sm:p-8 md:p-12">
+
+      {# --- Header --- #}
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h1 class="text-3xl font-semibold tracking-tight text-kyudo-gm-dark">{{ title }}</h1>
+          <p class="mt-1 text-kyudo-gm-grey">
+            {% if qrCode %}
+              Modifier l'équipement associé au QR code.
+            {% else %}
+              Sélectionner l'équipement pour générer un QR code unique.
+            {% endif %}
+          </p>
+        </div>
+
+        <a
+          href="{{ path('qr_code.index') }}"
+          class="inline-flex items-center justify-center rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)"
+        >
+          ← Retour
+        </a>
+      </div>
+
+      {# --- Formulaire --- #}
+      <div class="mt-8">
+        {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+
+          <div class="rounded-3xl border border-kyudo-gm-light-grey p-6 shadow-sm">
+            <h2 class="text-base font-semibold text-kyudo-gm-dark mb-4">Équipement</h2>
+
+            <div class="space-y-1">
+              {{ form_label(form.equipment, null, {
+                'label_attr': {'class': 'block text-sm font-medium text-kyudo-gm-dark'}
+              }) }}
+              {{ form_widget(form.equipment, {
+                'attr': {'class': 'mt-1 w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 text-kyudo-gm-dark shadow-sm outline-none focus:border-kyudo-blue focus:ring-2 focus:ring-kyudo-washed-blue'}
+              }) }}
+              {{ form_errors(form.equipment) }}
+            </div>
+
+            {% if not qrCode %}
+              <p class="mt-3 text-xs text-kyudo-gm-grey">
+                Seuls les équipements sans QR code sont affichés. L'UUID sera généré automatiquement.
+              </p>
+            {% endif %}
+          </div>
+
+          <div class="flex gap-3 justify-end">
+            <a
+              href="{{ path('qr_code.index') }}"
+              class="inline-flex items-center justify-center rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)"
+            >
+              Annuler
+            </a>
+            <button
+              type="submit"
+              class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-(--color-kyudo-white) shadow-sm hover:bg-kyudo-royal-blue focus:outline-none focus:ring-2 focus:ring-kyudo-washed-blue"
+            >
+              {% if qrCode %}Enregistrer{% else %}Générer le QR code{% endif %}
+            </button>
+          </div>
+
+        {{ form_end(form) }}
+      </div>
+
+    </div>
+  </div>
+{% endblock %}

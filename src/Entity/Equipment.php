@@ -30,6 +30,9 @@ abstract class Equipment
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\OneToOne(targetEntity: QRCode::class, mappedBy: 'equipment', cascade: ['persist', 'remove'])]
+    private ?QRCode $qrCode = null;
+
     #[ORM\ManyToOne(inversedBy: 'owned_equipments')]
     #[Versioned]
     private ?Club $owner_club = null;
@@ -45,6 +48,26 @@ abstract class Equipment
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getQrCode(): ?QRCode
+    {
+        return $this->qrCode;
+    }
+
+    public function setQrCode(?QRCode $qrCode): static
+    {
+        if (null === $qrCode && null !== $this->qrCode) {
+            $this->qrCode->setEquipment(null);
+        }
+
+        if (null !== $qrCode && $qrCode->getEquipment() !== $this) {
+            $qrCode->setEquipment($this);
+        }
+
+        $this->qrCode = $qrCode;
+
+        return $this;
     }
 
     public function getOwnerClub(): ?Club
