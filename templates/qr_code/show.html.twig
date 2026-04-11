@@ -1,0 +1,152 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}QR Code – {{ qrCode.uuid|slice(0, 8) }}{% endblock %}
+
+{% block body %}
+  <div class="h-screen-with-navbar bg-kyudo-equipment pt-16 pb-10 px-4 sm:px-6">
+    <div class="mx-auto max-w-6xl rounded-3xl bg-kyudo-white shadow-xl p-5 sm:p-8 md:p-12">
+
+      {# --- Header --- #}
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <div class="text-sm font-medium text-kyudo-gm-grey">QR Code</div>
+          <h1 class="mt-1 text-3xl font-semibold tracking-tight text-kyudo-gm-dark">
+            {% if qrCode.equipment %}
+              #{{ qrCode.equipment.id }} – {{ qrCode.equipment.typeName|capitalize }}
+            {% else %}
+              QR code sans équipement
+            {% endif %}
+          </h1>
+          <p class="mt-1 text-kyudo-gm-grey font-mono text-xs">{{ qrCode.uuid }}</p>
+        </div>
+
+        <div class="flex flex-wrap gap-2">
+          <a
+            href="{{ path('qr_code.index') }}"
+            class="inline-flex items-center justify-center rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)"
+          >
+            ← Retour
+          </a>
+          <a
+            href="{{ path('qr_code.edit', {'uuid': qrCode.uuid}) }}"
+            class="inline-flex items-center justify-center rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)"
+          >
+            Modifier
+          </a>
+          <a
+            href="{{ path('qr_code.download_pdf', {'uuid': qrCode.uuid}) }}"
+            class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-(--color-kyudo-white) shadow-sm hover:bg-kyudo-royal-blue focus:outline-none focus:ring-2 focus:ring-kyudo-washed-blue"
+          >
+            Télécharger PDF
+          </a>
+        </div>
+      </div>
+
+      <div class="mt-8 grid gap-6 lg:grid-cols-3">
+
+        {# --- Infos équipement --- #}
+        <section class="lg:col-span-2 rounded-3xl border border-kyudo-gm-light-grey bg-kyudo-white p-6 shadow-sm">
+          <h2 class="text-base font-semibold text-kyudo-gm-dark">Équipement associé</h2>
+
+          {% if qrCode.equipment %}
+            {% set equipment = qrCode.equipment %}
+            <dl class="mt-4 grid gap-4 sm:grid-cols-2">
+              <div class="rounded-2xl bg-kyudo-gm-light-grey p-4">
+                <dt class="text-xs font-medium text-kyudo-gm-grey">ID Équipement</dt>
+                <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">{{ equipment.id }}</dd>
+              </div>
+
+              <div class="rounded-2xl bg-kyudo-gm-light-grey p-4">
+                <dt class="text-xs font-medium text-kyudo-gm-grey">Type</dt>
+                <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">{{ equipment.typeName|capitalize }}</dd>
+              </div>
+
+              <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
+                <dt class="text-xs font-medium text-kyudo-gm-grey">Propriétaire</dt>
+                <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
+                  {{ equipment.ownerClub ? equipment.ownerClub.name : '—' }}
+                </dd>
+              </div>
+
+              <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
+                <dt class="text-xs font-medium text-kyudo-gm-grey">Statut</dt>
+                <dd class="mt-2">
+                  {% if equipment.borrowerClub %}
+                    <span class="inline-flex items-center gap-2 rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-800">
+                      Prêté à <span class="font-semibold">{{ equipment.borrowerClub.name }}</span>
+                    </span>
+                  {% else %}
+                    <span class="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-800">
+                      Disponible
+                    </span>
+                  {% endif %}
+                </dd>
+              </div>
+            </dl>
+
+            <div class="mt-4">
+              <a
+                href="{{ path('equipment.show', {'id': equipment.id}) }}"
+                class="inline-flex items-center justify-center rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 text-sm font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)"
+              >
+                Voir la fiche équipement →
+              </a>
+            </div>
+          {% else %}
+            <p class="mt-4 text-sm text-kyudo-gm-grey">Aucun équipement associé.</p>
+          {% endif %}
+
+          <div class="mt-6 border-t border-kyudo-gm-light-grey pt-4">
+            <h3 class="text-sm font-semibold text-kyudo-gm-dark">Métadonnées</h3>
+            <dl class="mt-3 grid gap-3 sm:grid-cols-2">
+              <div class="rounded-2xl bg-kyudo-gm-light-grey p-4">
+                <dt class="text-xs font-medium text-kyudo-gm-grey">Créé le</dt>
+                <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">{{ qrCode.createdAt|date('d/m/Y à H:i') }}</dd>
+              </div>
+              <div class="rounded-2xl bg-kyudo-gm-light-grey p-4">
+                <dt class="text-xs font-medium text-kyudo-gm-grey">Modifié le</dt>
+                <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">{{ qrCode.updatedAt|date('d/m/Y à H:i') }}</dd>
+              </div>
+            </dl>
+          </div>
+        </section>
+
+        {# --- QR Code SVG --- #}
+        <aside class="rounded-3xl border border-kyudo-gm-light-grey bg-kyudo-white p-6 shadow-sm flex flex-col items-center">
+          <h2 class="text-base font-semibold text-kyudo-gm-dark self-start">QR Code</h2>
+
+          <div class="mt-4 w-full max-w-[220px]">
+            {{ svg|raw }}
+          </div>
+
+          <p class="mt-3 text-xs text-center text-kyudo-gm-grey">
+            Ce QR code redirige automatiquement vers la fiche de l'équipement.
+          </p>
+
+          <a
+            href="{{ path('qr_code.download_pdf', {'uuid': qrCode.uuid}) }}"
+            class="mt-4 w-full inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-(--color-kyudo-white) shadow-sm hover:bg-kyudo-royal-blue text-sm"
+          >
+            Télécharger PDF
+          </a>
+
+          <form
+            method="post"
+            action="{{ path('qr_code.delete', {'uuid': qrCode.uuid}) }}"
+            class="mt-2 w-full"
+            onsubmit="return confirm('Supprimer définitivement ce QR code ?')"
+          >
+            <input type="hidden" name="_token" value="{{ csrf_token('delete_qr_code_' ~ qrCode.uuid) }}">
+            <button
+              type="submit"
+              class="w-full inline-flex items-center justify-center rounded-2xl border border-red-200 bg-kyudo-white px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50"
+            >
+              Supprimer
+            </button>
+          </form>
+        </aside>
+
+      </div>
+    </div>
+  </div>
+{% endblock %}

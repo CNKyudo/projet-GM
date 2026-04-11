@@ -123,6 +123,54 @@
           <p class="mt-3 text-xs text-">
             L'emprunteur est optionnel. Si aucun club n'est renseigné, l'équipement est considéré disponible.
           </p>
+
+          {# --- QR Code --- #}
+          <div class="mt-6 border-t border-kyudo-gm-light-grey pt-5">
+            <h2 class="text-base font-semibold text-kyudo-gm-dark">QR Code</h2>
+
+            {% if equipment.qrCode %}
+              {% set qrCode = equipment.qrCode %}
+              <div class="mt-3 flex flex-col items-center">
+                {# Rendu SVG inline via le controller dédié #}
+                <a href="{{ path('qr_code.show', {'uuid': qrCode.uuid}) }}" title="Voir le QR code">
+                  <img
+                    src="{{ path('qr_code.svg', {'uuid': qrCode.uuid}) }}"
+                    alt="QR code équipement #{{ equipment.id }}"
+                    class="w-40 h-40 rounded-xl border border-kyudo-gm-light-grey p-1 hover:shadow-md transition"
+                  >
+                </a>
+                <div class="mt-3 flex gap-2">
+                  <a
+                    href="{{ path('qr_code.show', {'uuid': qrCode.uuid}) }}"
+                    class="rounded-xl border border-kyudo-gm-light-grey bg-kyudo-white px-3 py-2 text-xs font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)"
+                  >
+                    Détails
+                  </a>
+                  <a
+                    href="{{ path('qr_code.download_pdf', {'uuid': qrCode.uuid}) }}"
+                    class="rounded-xl bg-kyudo-blue px-3 py-2 text-xs font-medium text-(--color-kyudo-white) hover:bg-kyudo-royal-blue"
+                  >
+                    PDF
+                  </a>
+                </div>
+              </div>
+            {% else %}
+                <div class="mt-3 flex flex-col items-center gap-3">
+                <div class="w-40 h-40 rounded-xl border-2 border-dashed border-kyudo-gm-light-grey flex items-center justify-center text-kyudo-gm-grey text-xs text-center p-4">
+                  Aucun QR code généré
+                </div>
+                <form method="post" action="{{ path('qr_code.generate_for_equipment', {'equipmentId': equipment.id}) }}">
+                  <input type="hidden" name="_token" value="{{ csrf_token('generate_qr_' ~ equipment.id) }}">
+                  <button
+                    type="submit"
+                    class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2 text-sm font-medium text-(--color-kyudo-white) shadow-sm hover:bg-kyudo-royal-blue"
+                  >
+                    + Générer un QR code
+                  </button>
+                </form>
+              </div>
+            {% endif %}
+          </div>
         </aside>
       </div>
 
