@@ -20,9 +20,11 @@
 					</p>
 				</div>
 
+			{% if is_granted('CREATE_OWN_CLUB_EQUIPMENT') or is_granted('CREATE_REGIONAL_EQUIPMENT') or is_granted('CREATE_NATIONAL_EQUIPMENT') %}
 				<a href="{{ path('equipment.create') ?? '/equipment/create' }}" class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-(--color-kyudo-white) shadow-sm hover:bg-kyudo-royal-blue focus:outline-none focus:ring-2 focus:ring-kyudo-washed-blue">
 					+ Ajouter
 				</a>
+			{% endif %}
 			</div>
 
 			<form method="get" class="mt-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -80,9 +82,10 @@
 					<tbody class="divide-y divide-kyudo-gm-light-grey text-sm">
 						{% for equipment in equipments %}
 							{% set owner = equipment.ownerClub %}
-							{% set borrower = equipment.borrowerClub %}
+							{% set borrowerClub = equipment.borrowerClub %}
+							{% set borrowerUser = equipment.borrowerUser %}
 
-							<tr class="hover:bg-kyudo-gm-light-grey">
+							<tr class="hover:bg-kyudo-gm-light-grey" data-testid="equipment-row">
 								<td class="px-5 py-4 text-kyudo-gm-grey">{{ equipment.id }}</td>
 
 								<td class="px-5 py-4">
@@ -90,19 +93,34 @@
 									<div class="mt-0.5 text-xs text-">Équipement de Kyudo</div>
 								</td>
 
-								<td class="px-5 py-4 text-kyudo-gm-dark">
-									{% if owner %}
-										{{ owner.name }}
-									{% else %}
-										<span class="text-">-</span>
+							<td class="px-5 py-4 text-kyudo-gm-dark">
+							{% set level = equipment.equipmentLevel.value %}
+							{% if level == 'national' %}
+								<span class="inline-flex items-center rounded-full bg-purple-100 px-2 py-0.5 text-xs font-semibold text-purple-800">National</span>
+								<div class="mt-0.5 text-xs text-kyudo-gm-grey">Fédération</div>
+							{% elseif level == 'regional' %}
+								<span class="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-800">Régional</span>
+									{% if equipment.ownerRegion %}
+										<div class="mt-0.5 text-xs text-kyudo-gm-grey">{{ equipment.ownerRegion.name }}</div>
 									{% endif %}
-								</td>
+								{% else %}
+									<span class="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-800">Club</span>
+									{% if owner %}
+										<div class="mt-0.5 text-xs text-kyudo-gm-grey">{{ owner.name }}</div>
+									{% endif %}
+								{% endif %}
+							</td>
 
 								<td class="px-5 py-4">
-									{% if borrower %}
+									{% if borrowerClub %}
 										<span class="inline-flex items-center gap-2 rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-800">
 											Prêté à
-											<span class="font-semibold">{{ borrower.name }}</span>
+											<span class="font-semibold">{{ borrowerClub.name }}</span>
+										</span>
+									{% elseif borrowerUser %}
+										<span class="inline-flex items-center gap-2 rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-800">
+											Prêté à
+											<span class="font-semibold">{{ borrowerUser.email }}</span>
 										</span>
 									{% else %}
 										<span class="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-800">
@@ -111,28 +129,34 @@
 									{% endif %}
 								</td>
 
-								<td class="px-5 py-4">
-									<div class="flex justify-end gap-2">
-										<a class="rounded-xl border border-kyudo-gm-light-grey bg-kyudo-white px-3 py-2 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)" href="/equipment/{{ equipment.id }}">
+							<td class="px-5 py-4">
+								<div class="flex justify-end gap-2">
+									{% if is_granted('VIEW_EQUIPMENT', equipment) %}
+										<a class="rounded-xl border border-kyudo-gm-light-grey bg-kyudo-white px-3 py-2 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)" href="{{ path('equipment.show', {'id': equipment.id}) }}">
 											Voir
 										</a>
-										<a class="rounded-xl border border-kyudo-gm-light-grey bg-kyudo-white px-3 py-2 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)" href="/equipment/{{ equipment.id }}/edit">
+									{% endif %}
+									{% if is_granted('EDIT_EQUIPMENT', equipment) %}
+										<a class="rounded-xl border border-kyudo-gm-light-grey bg-kyudo-white px-3 py-2 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)" href="{{ path('equipment.edit', {'id': equipment.id}) }}">
 											Modifier
 										</a>
-									</div>
-								</td>
+									{% endif %}
+								</div>
+							</td>
 							</tr>
 
 						{% else %}
 							<tr>
-								<td colspan="5" class="px-5 py-10 text-center text-kyudo-gm-dark">
-									Aucun équipement trouvé
+						<td colspan="5" class="px-5 py-10 text-center text-kyudo-gm-dark">
+								Aucun équipement trouvé
+								{% if is_granted('CREATE_OWN_CLUB_EQUIPMENT') or is_granted('CREATE_REGIONAL_EQUIPMENT') or is_granted('CREATE_NATIONAL_EQUIPMENT') %}
 									<div class="mt-3">
 										<a class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-(--color-kyudo-white) hover:bg-kyudo-royal-blue" href="{{ path('equipment.create') ?? '/equipment/create' }}">
 											+ Ajouter un équipement
 										</a>
 									</div>
-								</td>
+								{% endif %}
+							</td>
 							</tr>
 						{% endfor %}
 					</tbody>

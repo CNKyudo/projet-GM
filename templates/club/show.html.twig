@@ -25,9 +25,11 @@
 						Retour
 					</a>
 
-					<a href="{{ path('club_edit', {'id': club.id}) }}" class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-(--color-kyudo-white) shadow-sm hover:bg-kyudo-royal-blue focus:outline-none focus:ring-2 focus:ring-kyudo-washed-blue">
-						Modifier
-					</a>
+					{% if is_granted('EDIT_CLUB', club) %}
+						<a href="{{ path('club_edit', {'id': club.id}) }}" class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-(--color-kyudo-white) shadow-sm hover:bg-kyudo-royal-blue focus:outline-none focus:ring-2 focus:ring-kyudo-washed-blue">
+							Modifier
+						</a>
+					{% endif %}
 				</div>
 			</div>
 

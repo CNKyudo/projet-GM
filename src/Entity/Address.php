@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\AddressRepository;
@@ -7,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: AddressRepository::class)]
-class Address
+class Address implements \Stringable
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -81,7 +83,7 @@ class Address
         return $this;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getStreetAddress().', '.$this->getPostalCode().' '.$this->getCity().' '.$this->getCountry();
     }

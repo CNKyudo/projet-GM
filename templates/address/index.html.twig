@@ -13,9 +13,11 @@
 					<p class="mt-1 text-kyudo-gm-grey">Gestion des adresses utilisées par les clubs.</p>
 				</div>
 
-				<a href="{{ path('address_new') }}" class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-(--color-kyudo-white) shadow-sm hover:bg-kyudo-royal-blue focus:outline-none focus:ring-2 focus:ring-kyudo-washed-blue">
-					+ Ajouter
-				</a>
+				{% if is_granted('CREATE_ADDRESS') %}
+					<a href="{{ path('address_new') }}" class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-(--color-kyudo-white) shadow-sm hover:bg-kyudo-royal-blue focus:outline-none focus:ring-2 focus:ring-kyudo-washed-blue">
+						+ Ajouter
+					</a>
+				{% endif %}
 			</div>
 
 			<div class="mt-8 overflow-x-auto rounded-3xl border border-kyudo-gm-light-grey bg-kyudo-white shadow-sm">
@@ -43,17 +45,19 @@
 										<a href="{{ path('address_show', {'id': address.id}) }}" class="rounded-xl border border-kyudo-gm-light-grey bg-kyudo-white px-3 py-2 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)">
 											Voir
 										</a>
-										<a href="{{ path('address_edit', {'id': address.id}) }}" class="rounded-xl border border-kyudo-gm-light-grey bg-kyudo-white px-3 py-2 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)">
-											Modifier
-										</a>
-										{#                     
-																				                    <form method="post" action="{{ path('address_delete', {'id': address.id}) }}" onsubmit="return confirm('Supprimer cette adresse ?');">
-																				                      <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ address.id) }}">
-																				                      <button type="submit" class="rounded-xl border border-red-200 bg-kyudo-white px-3 py-2 font-medium text-red-700 hover:bg-red-50">
-																				                        Supprimer
-																				                      </button>
-																				                    </form> 
-																				                    #}
+										{% if is_granted('EDIT_ADDRESS') %}
+											<a href="{{ path('address_edit', {'id': address.id}) }}" class="rounded-xl border border-kyudo-gm-light-grey bg-kyudo-white px-3 py-2 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)">
+												Modifier
+											</a>
+										{% endif %}
+										{% if is_granted('DELETE_ADDRESS') %}
+											<form method="post" action="{{ path('address_delete', {'id': address.id}) }}" onsubmit="return confirm('Supprimer cette adresse ?');">
+												<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ address.id) }}">
+												<button type="submit" class="rounded-xl border border-red-200 bg-kyudo-white px-3 py-2 font-medium text-red-700 hover:bg-red-50">
+													Supprimer
+												</button>
+											</form>
+										{% endif %}
 									</div>
 								</td>
 							</tr>

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form;
 
 use App\Entity\User;
@@ -24,12 +26,8 @@ final class UserProfileType extends AbstractType
                     'autocomplete' => 'email',
                 ],
                 'constraints' => [
-                    new NotBlank([
-                        'message' => 'Veuillez renseigner une adresse email.',
-                    ]),
-                    new Email([
-                        'message' => 'Veuillez renseigner une adresse email valide.',
-                    ]),
+                    new NotBlank(message: 'Veuillez renseigner une adresse email.'),
+                    new Email(message: 'Veuillez renseigner une adresse email valide.'),
                 ],
             ])
         ;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form;
 
 use App\Entity\Club;
@@ -22,7 +24,23 @@ class UserClubAssignType extends AbstractType
                 'choice_label' => 'name',
                 'placeholder' => '--- aucun club ---',
                 'required' => false,
-                'label' => 'Club attribué',
+                'label' => 'Club (président)',
+            ])
+            ->add('clubWhereImEquipmentManager', EntityType::class, [
+                'class' => Club::class,
+                'choice_label' => 'name',
+                'placeholder' => '--- aucun club ---',
+                'required' => false,
+                'label' => 'Club (gestionnaire matériel)',
+            ])
+            ->add('memberOfClubs', EntityType::class, [
+                'class' => Club::class,
+                'choice_label' => 'name',
+                'multiple' => true,
+                'expanded' => false,
+                'required' => false,
+                'label' => 'Clubs (membre)',
+                'by_reference' => false,
             ])
         ;
     }

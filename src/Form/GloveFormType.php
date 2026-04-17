@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form;
 
 use App\Entity\Glove;
@@ -20,21 +22,18 @@ class GloveFormType extends AbstractType
             ->add('nb_fingers', IntegerType::class, [
                 'label' => 'Nombre de doigts',
                 'constraints' => [
-                    new Range([
-                        'min' => 0,
-                        'max' => 5,
-                    ]),
+                    new Range(min: 0, max: 5),
                 ],
                 'required' => true,
             ])
             ->add('size', IntegerType::class, [
                 'label' => 'Taille',
                 'constraints' => [
-                    new Range([
-                        'min' => 3,
-                        'max' => 11,
-                        'notInRangeMessage' => 'La taille doit être entre 3 et 11',
-                    ]),
+                    new Range(
+                        notInRangeMessage: 'La taille doit être entre 3 et 11',
+                        min: 3,
+                        max: 11,
+                    ),
                 ],
                 'required' => false,
                 'attr' => [

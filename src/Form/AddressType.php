@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form;
 
 use App\Entity\Address;
@@ -36,12 +38,12 @@ class AddressType extends AbstractType
                 'required' => false,
             ]);
 
-        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($options): void {
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $formEvent) use ($options): void {
             if (($options['require_at_least_one_field'] ?? true) !== true) {
                 return;
             }
 
-            $address = $event->getData();
+            $address = $formEvent->getData();
             if (!$address instanceof Address) {
                 return;
             }
@@ -59,7 +61,7 @@ class AddressType extends AbstractType
                 }
             }
 
-            $event->getForm()->addError(new FormError('Veuillez renseigner au moins un champ d\'adresse.'));
+            $formEvent->getForm()->addError(new FormError("Veuillez renseigner au moins un champ d'adresse."));
         });
     }
 

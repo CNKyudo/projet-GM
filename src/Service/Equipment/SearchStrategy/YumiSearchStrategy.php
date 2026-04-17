@@ -1,44 +1,42 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service\Equipment\SearchStrategy;
 
 use App\Enum\EquipmentType;
 use App\Repository\YumiRepository;
 use Doctrine\ORM\QueryBuilder;
 
-class YumiSearchStrategy implements SearchStrategyInterface
+final class YumiSearchStrategy extends AbstractSearchStrategy
 {
     public function __construct(
-        private readonly YumiRepository $repository,
+        private readonly YumiRepository $yumiRepository,
     ) {
     }
 
-    public function buildQuery(string $searchTerm = '', string $status = 'all'): QueryBuilder
+    protected function createBaseQueryBuilder(): QueryBuilder
     {
-        $qb = $this->repository->createQueryBuilder('y')
+        return $this->yumiRepository->createQueryBuilder('y')
             ->leftJoin('y.owner_club', 'owner')->addSelect('owner')
             ->leftJoin('y.borrower_club', 'borrower')->addSelect('borrower')
             ->orderBy('y.id', 'DESC');
+    }
 
-        if ('available' === $status) {
-            $qb->andWhere('y.borrower_club IS NULL');
-        } elseif ('loaned' === $status) {
-            $qb->andWhere('y.borrower_club IS NOT NULL');
-        }
-
-        if ('' !== $searchTerm) {
-            $qb->andWhere(
-                $qb->expr()->orX(
-                    $qb->expr()->like('LOWER(y.material)', ':term'),
-                    $qb->expr()->like('CONCAT(y.strength, \'\')', ':term'),
-                    $qb->expr()->like('LOWER(y.length)', ':term'),
-                    $qb->expr()->like('LOWER(owner.name)', ':term'),
-                    $qb->expr()->like('LOWER(borrower.name)', ':term')
-                )
-            )->setParameter('term', $searchTerm);
-        }
-
-        return $qb;
+    protected function applySpecificSearchConditions(
+        QueryBuilder $queryBuilder,
+        string $alias,
+        string $searchTerm,
+    ): void {
+        $queryBuilder->andWhere(
+            $queryBuilder->expr()->orX(
+                $queryBuilder->expr()->like("LOWER($alias.material)", ':term'),
+                $queryBuilder->expr()->like("CONCAT($alias.strength, '')", ':term'),
+                $queryBuilder->expr()->like("LOWER($alias.yumiLength)", ':term'),
+                $queryBuilder->expr()->like('LOWER(owner.name)', ':term'),
+                $queryBuilder->expr()->like('LOWER(borrower.name)', ':term')
+            )
+        )->setParameter('term', $searchTerm);
     }
 
     public function getEquipmentType(): ?EquipmentType

@@ -1,54 +1,42 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Entity\Address;
 use App\Entity\Club;
 use App\Form\AddressType;
-use App\Repository\AddressRepository;
 use App\Repository\ClubRepository;
+use App\Security\Voter\UserPermissionVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/address')]
 class AddressController extends AbstractController
 {
-    private const ITEMS_PER_PAGE = 20;
-
-    #[Route('/', name: 'address_index', methods: ['GET'])]
-    public function index(AddressRepository $addressRepository, Request $request, PaginatorInterface $paginator): Response
+    public function __construct(private readonly ClubRepository $clubRepository)
     {
-        $qb = $addressRepository->createQueryBuilder('a')->orderBy('a.id', 'DESC');
-
-        $addresses = $paginator->paginate(
-            $qb,
-            $request->query->getInt('page', 1),
-            self::ITEMS_PER_PAGE,
-        );
-
-        return $this->render('address/index.html.twig', [
-            'addresses' => $addresses,
-        ]);
     }
 
-    #[Route('/new', name: 'address_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $em): Response
+    #[Route('/address/new', name: 'address_new', methods: ['GET', 'POST'])]
+    #[IsGranted(UserPermissionVoter::CREATE_ADDRESS)]
+    public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $address = new Address();
         $form = $this->createForm(AddressType::class, $address);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em->persist($address);
-            $em->flush();
+            $entityManager->persist($address);
+            $entityManager->flush();
 
             $this->addFlash('success', 'Adresse créée.');
 
-            return $this->redirectToRoute('address_index');
+            return $this->redirectToRoute('address_show', ['id' => $address->getId()]);
         }
 
         return $this->render('address/new.html.twig', [
@@ -56,7 +44,8 @@ class AddressController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'address_show', methods: ['GET'], requirements: ['id' => '\d+'])]
+    #[Route('/address/{id}', name: 'address_show', requirements: ['id' => '\d+'], methods: ['GET'])]
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function show(Address $address): Response
     {
         return $this->render('address/show.html.twig', [
@@ -64,8 +53,9 @@ class AddressController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'address_edit', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]
-    public function edit(Request $request, Address $address, EntityManagerInterface $em): Response
+    #[Route('/address/{id}/edit', name: 'address_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    #[IsGranted(UserPermissionVoter::EDIT_ADDRESS)]
+    public function edit(Request $request, Address $address, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(AddressType::class, $address, [
             'is_edit' => true,
@@ -73,10 +63,10 @@ class AddressController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em->flush();
+            $entityManager->flush();
             $this->addFlash('success', 'Adresse mise à jour.');
 
-            return $this->redirectToRoute('address_index');
+            return $this->redirectToRoute('address_show', ['id' => $address->getId()]);
         }
 
         return $this->render('address/edit.html.twig', [
@@ -85,24 +75,25 @@ class AddressController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'address_delete', methods: ['POST'], requirements: ['id' => '\d+'])]
-    public function delete(Request $request, Address $address, EntityManagerInterface $em, ClubRepository $clubRepo): Response
+    #[Route('/address/{id}', name: 'address_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
+    #[IsGranted(UserPermissionVoter::DELETE_ADDRESS)]
+    public function delete(Request $request, Address $address, EntityManagerInterface $entityManager): Response
     {
         $token = (string) $request->request->get('_token');
         if ($this->isCsrfTokenValid('delete'.$address->getId(), $token)) {
-            $club = $clubRepo->findOneBy(['address' => $address]);
+            $club = $this->clubRepository->findOneBy(['address' => $address]);
 
             if ($club instanceof Club) {
-                $this->addFlash('error', 'Adresse déjà associée à un club ('.$club->getName().'). Changez l\'adresse du club pour supprimer celle ci.');
+                $this->addFlash('error', 'Adresse déjà associée à un club ('.$club->getName()."). Changez l'adresse du club pour supprimer celle ci.");
 
-                return $this->redirectToRoute('address_index');
+                return $this->redirectToRoute('address_show', ['id' => $address->getId()]);
             }
 
-            $em->remove($address);
-            $em->flush();
+            $entityManager->remove($address);
+            $entityManager->flush();
             $this->addFlash('success', 'Adresse supprimée.');
         }
 
-        return $this->redirectToRoute('address_index');
+        return $this->redirectToRoute('app_home');
     }
 }

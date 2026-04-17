@@ -1,10 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Voter;
 
+use App\Entity\Club;
+use App\Entity\Equipment;
 use App\Entity\User;
+use App\Enum\EquipmentLevel;
 use App\Security\UserPermissionService;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
@@ -12,67 +18,97 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
  */
 final class UserPermissionVoter extends Voter
 {
+    // Gestion des utilisateurs
     public const ACCESS_USER_MANAGEMENT = 'ACCESS_USER_MANAGEMENT';
-    public const EDIT_USER_ROLES = 'EDIT_USER_ROLES';
-    public const CREATE_NATIONAL_EQUIPMENT = 'CREATE_NATIONAL_EQUIPMENT';
-    public const CREATE_REGIONAL_EQUIPMENT = 'CREATE_REGIONAL_EQUIPMENT';
-    public const CREATE_OWN_CLUB_EQUIPMENT = 'CREATE_OWN_CLUB_EQUIPMENT';
-    public const CREATE_EQUIPMENT_FOR_OTHER_CLUB = 'CREATE_EQUIPMENT_FOR_OTHER_CLUB';
-    public const EDIT_NATIONAL_EQUIPMENT = 'EDIT_NATIONAL_EQUIPMENT';
-    public const EDIT_REGIONAL_EQUIPMENT = 'EDIT_REGIONAL_EQUIPMENT';
-    public const EDIT_OWN_CLUB_EQUIPMENT = 'EDIT_OWN_CLUB_EQUIPMENT';
-    public const EDIT_EQUIPMENT_FROM_OTHER_CLUB = 'EDIT_EQUIPMENT_FROM_OTHER_CLUB';
-    public const VIEW_OWN_CLUB_EQUIPMENT = 'VIEW_OWN_CLUB_EQUIPMENT';
-    public const VIEW_EQUIPMENT_FROM_OTHER_CLUB = 'VIEW_EQUIPMENT_FROM_OTHER_CLUB';
-    public const CREATE_CLUB = 'CREATE_CLUB';
-    public const TRANSFER_CLUB_PRESIDENCY = 'TRANSFER_CLUB_PRESIDENCY';
-    public const APPOINT_CLUB_PRESIDENT = 'APPOINT_CLUB_PRESIDENT';
-    public const ASSIGN_REGIONAL_ROLES = 'ASSIGN_REGIONAL_ROLES';
-    public const ASSIGN_NATIONAL_ROLES = 'ASSIGN_NATIONAL_ROLES';
-    public const ASSIGN_USER_TO_ANY_CLUB = 'ASSIGN_USER_TO_ANY_CLUB';
-    public const ASSIGN_USER_TO_OWN_CLUB = 'ASSIGN_USER_TO_OWN_CLUB';
-    public const BORROW_OWN_CLUB_EQUIPMENT = 'BORROW_OWN_CLUB_EQUIPMENT';
-    public const BORROW_EQUIPMENT_FROM_OTHER_CLUB = 'BORROW_EQUIPMENT_FROM_OTHER_CLUB';
-    public const SET_ANOTHER_BORROWER_FOR_OWN_CLUB_EQUIPMENT = 'SET_ANOTHER_BORROWER_FOR_OWN_CLUB_EQUIPMENT';
-    public const SET_ANOTHER_BORROWER_FOR_OTHER_CLUB_EQUIPMENT = 'SET_ANOTHER_BORROWER_FOR_OTHER_CLUB_EQUIPMENT';
+
     public const EDIT_OWN_ACCOUNT_INFORMATION = 'EDIT_OWN_ACCOUNT_INFORMATION';
+
+    public const ASSIGN_USER_TO_ANY_CLUB = 'ASSIGN_USER_TO_ANY_CLUB';
+
+    public const ASSIGN_USER_TO_OWN_CLUB = 'ASSIGN_USER_TO_OWN_CLUB';
+
+    // Gestion des clubs (sans sujet = création/transfert, avec sujet Club = edit/delete)
+    public const CREATE_CLUB = 'CREATE_CLUB';
+
+    public const EDIT_CLUB = 'EDIT_CLUB';
+
+    public const DELETE_CLUB = 'DELETE_CLUB';
+
+    public const TRANSFER_CLUB_PRESIDENCY = 'TRANSFER_CLUB_PRESIDENCY';
+
+    // Gestion des adresses
+    public const CREATE_ADDRESS = 'CREATE_ADDRESS';
+
+    public const EDIT_ADDRESS = 'EDIT_ADDRESS';
+
+    public const DELETE_ADDRESS = 'DELETE_ADDRESS';
+
+    // Gestion des équipements (sans sujet = création, avec sujet Equipment = view/edit/borrow)
+    public const BROWSE_ALL_EQUIPMENT = 'BROWSE_ALL_EQUIPMENT';
+
+    public const CREATE_NATIONAL_EQUIPMENT = 'CREATE_NATIONAL_EQUIPMENT';
+
+    public const CREATE_REGIONAL_EQUIPMENT = 'CREATE_REGIONAL_EQUIPMENT';
+
+    public const CREATE_OWN_CLUB_EQUIPMENT = 'CREATE_OWN_CLUB_EQUIPMENT';
+
+    public const CREATE_EQUIPMENT_FOR_OTHER_CLUB = 'CREATE_EQUIPMENT_FOR_OTHER_CLUB';
+
+    public const VIEW_EQUIPMENT = 'VIEW_EQUIPMENT';
+
+    public const EDIT_EQUIPMENT = 'EDIT_EQUIPMENT';
+
+    public const BORROW_EQUIPMENT = 'BORROW_EQUIPMENT';
+
+    public const SET_ANOTHER_BORROWER_FOR_EQUIPMENT = 'SET_ANOTHER_BORROWER_FOR_EQUIPMENT';
+
     public const CREATE_QRCODE = 'CREATE_QRCODE';
     public const EDIT_QRCODE = 'EDIT_QRCODE';
     public const DELETE_QRCODE = 'DELETE_QRCODE';
     public const VIEW_QRCODE = 'VIEW_QRCODE';
 
     /**
+     * Attributs sans sujet : délégation directe au service via le rôle uniquement.
+     *
      * @var array<string, string>
      */
-    private const METHOD_BY_ATTRIBUTE = [
+    private const ROLE_ONLY_ATTRIBUTES = [
         self::ACCESS_USER_MANAGEMENT => 'canAccessUserManagement',
-        self::EDIT_USER_ROLES => 'canEditUserRoles',
+        self::EDIT_OWN_ACCOUNT_INFORMATION => 'canEditOwnAccountInformation',
+        self::ASSIGN_USER_TO_ANY_CLUB => 'canAssignUserToAnyClub',
+        self::ASSIGN_USER_TO_OWN_CLUB => 'canAssignUserToOwnClub',
+        self::CREATE_CLUB => 'canCreateClub',
+        self::TRANSFER_CLUB_PRESIDENCY => 'canTransferClubPresidency',
+        self::CREATE_ADDRESS => 'canCreateAddress',
+        self::EDIT_ADDRESS => 'canEditAddress',
+        self::DELETE_ADDRESS => 'canDeleteAddress',
+        self::BROWSE_ALL_EQUIPMENT => 'canBrowseAllEquipment',
         self::CREATE_NATIONAL_EQUIPMENT => 'canCreateNationalEquipment',
         self::CREATE_REGIONAL_EQUIPMENT => 'canCreateRegionalEquipment',
         self::CREATE_OWN_CLUB_EQUIPMENT => 'canCreateOwnClubEquipment',
         self::CREATE_EQUIPMENT_FOR_OTHER_CLUB => 'canCreateEquipmentForOtherClub',
-        self::EDIT_NATIONAL_EQUIPMENT => 'canEditNationalEquipment',
-        self::EDIT_REGIONAL_EQUIPMENT => 'canEditRegionalEquipment',
-        self::EDIT_OWN_CLUB_EQUIPMENT => 'canEditOwnClubEquipment',
-        self::EDIT_EQUIPMENT_FROM_OTHER_CLUB => 'canEditEquipmentFromOtherClub',
-        self::VIEW_OWN_CLUB_EQUIPMENT => 'canViewOwnClubEquipment',
-        self::VIEW_EQUIPMENT_FROM_OTHER_CLUB => 'canViewEquipmentFromOtherClub',
-        self::CREATE_CLUB => 'canCreateClub',
-        self::TRANSFER_CLUB_PRESIDENCY => 'canTransferClubPresidency',
-        self::APPOINT_CLUB_PRESIDENT => 'canAppointClubPresident',
-        self::ASSIGN_REGIONAL_ROLES => 'canAssignRegionalRoles',
-        self::ASSIGN_NATIONAL_ROLES => 'canAssignNationalRoles',
-        self::ASSIGN_USER_TO_ANY_CLUB => 'canAssignUserToAnyClub',
-        self::ASSIGN_USER_TO_OWN_CLUB => 'canAssignUserToOwnClub',
-        self::BORROW_OWN_CLUB_EQUIPMENT => 'canBorrowOwnClubEquipment',
-        self::BORROW_EQUIPMENT_FROM_OTHER_CLUB => 'canBorrowEquipmentFromOtherClub',
-        self::SET_ANOTHER_BORROWER_FOR_OWN_CLUB_EQUIPMENT => 'canSetAnotherBorrowerForOwnClubEquipment',
-        self::SET_ANOTHER_BORROWER_FOR_OTHER_CLUB_EQUIPMENT => 'canSetAnotherBorrowerForOtherClubEquipment',
-        self::EDIT_OWN_ACCOUNT_INFORMATION => 'canEditOwnAccountInformation',
         self::CREATE_QRCODE => 'canCreateQRCode',
         self::EDIT_QRCODE => 'canEditQRCode',
         self::DELETE_QRCODE => 'canDeleteQRCode',
         self::VIEW_QRCODE => 'canViewQRCode',
+    ];
+
+    /**
+     * Attributs avec sujet Equipment : la logique "own/other/regional/national" est résolue ici.
+     */
+    private const EQUIPMENT_SUBJECT_ATTRIBUTES = [
+        self::VIEW_EQUIPMENT,
+        self::EDIT_EQUIPMENT,
+        self::BORROW_EQUIPMENT,
+        self::SET_ANOTHER_BORROWER_FOR_EQUIPMENT,
+    ];
+
+    /**
+     * Attributs avec sujet Club : la logique "own vs other" est résolue ici.
+     */
+    private const CLUB_SUBJECT_ATTRIBUTES = [
+        self::EDIT_CLUB,
+        self::DELETE_CLUB,
     ];
 
     public function __construct(
@@ -82,21 +118,145 @@ final class UserPermissionVoter extends Voter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        return \array_key_exists($attribute, self::METHOD_BY_ATTRIBUTE);
+        if (\array_key_exists($attribute, self::ROLE_ONLY_ATTRIBUTES)) {
+            return true;
+        }
+
+        if (\in_array($attribute, self::EQUIPMENT_SUBJECT_ATTRIBUTES, true)) {
+            return $subject instanceof Equipment || null === $subject;
+        }
+
+        if (\in_array($attribute, self::CLUB_SUBJECT_ATTRIBUTES, true)) {
+            return $subject instanceof Club || null === $subject;
+        }
+
+        return false;
     }
 
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         $user = $token->getUser();
         if (!$user instanceof User) {
             return false;
         }
 
-        $method = self::METHOD_BY_ATTRIBUTE[$attribute] ?? null;
-        if (null === $method || !\method_exists($this->userPermissionService, $method)) {
-            return false;
+        // Attributs sans sujet : délégation directe au service
+        if (\array_key_exists($attribute, self::ROLE_ONLY_ATTRIBUTES)) {
+            $method = self::ROLE_ONLY_ATTRIBUTES[$attribute];
+            if (!\method_exists($this->userPermissionService, $method)) {
+                return false;
+            }
+
+            return $this->userPermissionService->{$method}($user);
         }
 
-        return $this->userPermissionService->{$method}($user);
+        // Attributs avec sujet Equipment
+        if (\in_array($attribute, self::EQUIPMENT_SUBJECT_ATTRIBUTES, true)) {
+            return $this->voteOnEquipmentAttribute($attribute, $subject, $user);
+        }
+
+        // Attributs avec sujet Club
+        if (\in_array($attribute, self::CLUB_SUBJECT_ATTRIBUTES, true)) {
+            return $this->voteOnClubAttribute($attribute, $subject, $user);
+        }
+
+        return false;
+    }
+
+    private function voteOnEquipmentAttribute(string $attribute, mixed $subject, User $user): bool
+    {
+        // Sans sujet : vérifie uniquement si le rôle permet l'action sur son propre club
+        if (!$subject instanceof Equipment) {
+            return match ($attribute) {
+                self::VIEW_EQUIPMENT => $this->userPermissionService->canViewOwnClubEquipment($user),
+                self::EDIT_EQUIPMENT => $this->userPermissionService->canEditOwnClubEquipment($user),
+                self::BORROW_EQUIPMENT => $this->userPermissionService->canBorrowOwnClubEquipment($user),
+                self::SET_ANOTHER_BORROWER_FOR_EQUIPMENT => $this->userPermissionService->canSetAnotherBorrowerForOwnClubEquipment($user),
+                default => false,
+            };
+        }
+
+        return match ($subject->getEquipmentLevel()) {
+            EquipmentLevel::NATIONAL => $this->voteOnNationalEquipmentAttribute($attribute, $user),
+            EquipmentLevel::REGIONAL => $this->voteOnRegionalEquipmentAttribute($attribute, $subject, $user),
+            EquipmentLevel::CLUB     => $this->voteOnClubEquipmentAttribute($attribute, $subject, $user),
+        };
+    }
+
+    private function voteOnClubEquipmentAttribute(string $attribute, Equipment $equipment, User $user): bool
+    {
+        $ownerClub = $equipment->getOwnerClub();
+        $userPresidentClub = $user->getClubWhichImPresidentOf();
+        $userManagerClub = $user->getClubWhereImEquipmentManager();
+
+        $isOwnClub = ($ownerClub instanceof Club) && (
+            ($userPresidentClub instanceof Club && $ownerClub->getId() === $userPresidentClub->getId())
+            || ($userManagerClub instanceof Club && $ownerClub->getId() === $userManagerClub->getId())
+        );
+
+        return match ($attribute) {
+            self::VIEW_EQUIPMENT => $isOwnClub
+                ? $this->userPermissionService->canViewOwnClubEquipment($user)
+                : (
+                    $this->userPermissionService->canViewEquipmentFromOtherClub($user)
+                    || $this->userPermissionService->canViewOtherClubEquipmentInOwnRegion($user, $equipment)
+                ),
+            self::EDIT_EQUIPMENT => $isOwnClub
+                ? $this->userPermissionService->canEditOwnClubEquipment($user)
+                : $this->userPermissionService->canEditEquipmentFromOtherClub($user),
+            self::BORROW_EQUIPMENT => $isOwnClub
+                ? $this->userPermissionService->canBorrowOwnClubEquipment($user)
+                : $this->userPermissionService->canBorrowEquipmentFromOtherClub($user),
+            self::SET_ANOTHER_BORROWER_FOR_EQUIPMENT => $isOwnClub
+                ? $this->userPermissionService->canSetAnotherBorrowerForOwnClubEquipment($user)
+                : $this->userPermissionService->canSetAnotherBorrowerForOtherClubEquipment($user),
+            default => false,
+        };
+    }
+
+    private function voteOnRegionalEquipmentAttribute(string $attribute, Equipment $equipment, User $user): bool
+    {
+        return match ($attribute) {
+            self::VIEW_EQUIPMENT => $this->userPermissionService->canViewRegionalEquipment($user, $equipment),
+            self::EDIT_EQUIPMENT => $this->userPermissionService->canEditRegionalEquipment($user, $equipment),
+            self::BORROW_EQUIPMENT,
+            self::SET_ANOTHER_BORROWER_FOR_EQUIPMENT => $this->userPermissionService->canBorrowRegionalOrNationalEquipment($user),
+            default => false,
+        };
+    }
+
+    private function voteOnNationalEquipmentAttribute(string $attribute, User $user): bool
+    {
+        return match ($attribute) {
+            self::VIEW_EQUIPMENT => $this->userPermissionService->canViewNationalEquipment($user),
+            self::EDIT_EQUIPMENT => $this->userPermissionService->canEditNationalEquipment($user),
+            self::BORROW_EQUIPMENT,
+            self::SET_ANOTHER_BORROWER_FOR_EQUIPMENT => $this->userPermissionService->canBorrowRegionalOrNationalEquipment($user),
+            default => false,
+        };
+    }
+
+    private function voteOnClubAttribute(string $attribute, mixed $subject, User $user): bool
+    {
+        // Sans sujet : vérification basée sur le rôle uniquement
+        if (!$subject instanceof Club) {
+            return match ($attribute) {
+                self::EDIT_CLUB => $this->userPermissionService->canEditClub($user),
+                self::DELETE_CLUB => $this->userPermissionService->canDeleteClub($user),
+                default => false,
+            };
+        }
+
+        $userClub = $user->getClubWhichImPresidentOf();
+        $isOwnClub = $userClub instanceof Club && $subject->getId() === $userClub->getId();
+
+        return match ($attribute) {
+            // Un président peut transférer/éditer son propre club, les managers peuvent tout éditer
+            self::EDIT_CLUB => $isOwnClub
+                ? $this->userPermissionService->canTransferClubPresidency($user)
+                : $this->userPermissionService->canEditClub($user),
+            self::DELETE_CLUB => $this->userPermissionService->canDeleteClub($user),
+            default => false,
+        };
     }
 }

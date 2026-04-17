@@ -4,7 +4,7 @@
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
-        "php": ">=8.2",
+        "php": ">=8.4",
         "ext-ctype": "*",
         "ext-iconv": "*",
         "bacon/bacon-qr-code": "^3.0",
@@ -12,7 +12,7 @@
         "doctrine/doctrine-bundle": "^2.18.2",
         "doctrine/doctrine-migrations-bundle": "^3.7.0",
         "doctrine/orm": "^3.6.2",
-        "dompdf/dompdf": "^3.1",
+        "dompdf/dompdf": "^3.1.5",
         "endroid/qr-code": "^6.1",
         "gedmo/doctrine-extensions": "^3.22",
         "knplabs/knp-paginator-bundle": "^6.10",
@@ -103,17 +103,20 @@
         }
     },
     "require-dev": {
+        "doctrine/doctrine-fixtures-bundle": "^4.3",
         "friendsofphp/php-cs-fixer": "^3.94.2",
         "phpstan/phpstan": "^2.1.39",
         "phpstan/phpstan-doctrine": "^2.0.17",
         "phpstan/phpstan-symfony": "^2.0.14",
         "phpunit/phpunit": "^9.6.34",
+        "rector/rector": "^2.3",
         "symfony/browser-kit": "7.4.*",
         "symfony/css-selector": "7.4.*",
         "symfony/debug-bundle": "7.4.*",
         "symfony/maker-bundle": "^1.66",
         "symfony/phpunit-bridge": "^7.4.3",
         "symfony/stopwatch": "7.4.*",
-        "symfony/web-profiler-bundle": "7.4.*"
+        "symfony/web-profiler-bundle": "7.4.*",
+        "zenstruck/foundry": "^2.9"
     }
 }

@@ -13,14 +13,13 @@
 				<a href="{{ path('app_home') }}" class="rounded-md px-3 py-1 text-sm font-medium {{ current_route starts with 'app_home' ? 'bg-kyudo-blue text-(--color-kyudo-white) hover:bg-kyudo-royal-blue' : 'text-kyudo-gm-grey hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }}">
 					Accueil
 				</a>
+				{% if is_granted(roles.MEMBER) %}
 				<a href="{{ path('equipment.index') }}" class="rounded-md px-3 py-1 text-sm font-medium {{ current_route starts with 'equipment' ? 'bg-kyudo-blue text-(--color-kyudo-white) hover:bg-kyudo-royal-blue' : 'text-kyudo-gm-grey hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }}">
 					Équipements
 				</a>
+				{% endif %}
 				<a href="{{ path('club_index') }}" class="rounded-md px-3 py-1 text-sm font-medium {{ current_route starts with 'club_' ? 'bg-kyudo-blue text-(--color-kyudo-white) hover:bg-kyudo-royal-blue' : 'text-kyudo-gm-grey hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }}">
 					Clubs
-				</a>
-				<a href="{{ path('address_index') }}" class="rounded-md px-3 py-1 text-sm font-medium {{ current_route starts with 'address_' ? 'bg-kyudo-blue text-(--color-kyudo-white) hover:bg-kyudo-royal-blue' : 'text-kyudo-gm-grey hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }}">
-					Adresses
 				</a>
 			</div>
 
@@ -49,8 +48,7 @@
 			<div class="flex flex-col gap-2">
 				<a href="{{ path('app_home') }}" class="rounded-md px-3 py-2 text-sm font-medium {{ current_route starts with 'app_home' ? 'bg-kyudo-blue text-(--color-kyudo-white)' : 'text-kyudo-gm-grey hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }}">Accueil</a>
 				<a href="{{ path('equipment.index') }}" class="rounded-md px-3 py-2 text-sm font-medium {{ current_route starts with 'equipment' ? 'bg-kyudo-blue text-(--color-kyudo-white)' : 'text-kyudo-gm-grey hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }}">Équipements</a>
-				<a href="{{ path('club_index') }}" class="rounded-md px-3 py-2 text-sm font-medium {{ current_route starts with 'club_' ? 'bg-kyudo-blue text-(--color-kyudo-white)' : 'text-kyudo-gm-grey hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }}">Clubs</a>
-				<a href="{{ path('address_index') }}" class="rounded-md px-3 py-2 text-sm font-medium {{ current_route starts with 'address_' ? 'bg-kyudo-blue text-(--color-kyudo-white)' : 'text-kyudo-gm-grey hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }}">Adresses</a>
+			<a href="{{ path('club_index') }}" class="rounded-md px-3 py-2 text-sm font-medium {{ current_route starts with 'club_' ? 'bg-kyudo-blue text-(--color-kyudo-white)' : 'text-kyudo-gm-grey hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }}">Clubs</a>
 			</div>
 
 			<div class="mt-3 border-t border-kyudo-gm-light-grey pt-3">

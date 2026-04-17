@@ -1,44 +1,43 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service\Equipment\SearchStrategy;
 
+use App\Entity\Equipment;
 use App\Enum\EquipmentType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 
-class DefaultSearchStrategy implements SearchStrategyInterface
+final class DefaultSearchStrategy extends AbstractSearchStrategy
 {
     public function __construct(
-        private readonly EntityManagerInterface $em,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
-    public function buildQuery(string $searchTerm = '', string $status = 'all'): QueryBuilder
+    protected function createBaseQueryBuilder(): QueryBuilder
     {
-        $qb = $this->em->createQueryBuilder()
+        return $this->entityManager->createQueryBuilder()
             ->select('e', 'owner', 'borrower')
-            ->from(\App\Entity\Equipment::class, 'e')
+            ->from(Equipment::class, 'e')
             ->leftJoin('e.owner_club', 'owner')
             ->leftJoin('e.borrower_club', 'borrower')
             ->orderBy('e.id', 'DESC');
+    }
 
-        if ('available' === $status) {
-            $qb->andWhere('e.borrower_club IS NULL');
-        } elseif ('loaned' === $status) {
-            $qb->andWhere('e.borrower_club IS NOT NULL');
-        }
-
-        if ('' !== $searchTerm) {
-            $qb->andWhere(
-                $qb->expr()->orX(
-                    $qb->expr()->like('LOWER(owner.name)', ':term'),
-                    $qb->expr()->like('LOWER(borrower.name)', ':term'),
-                    $qb->expr()->like('CONCAT(e.id, \'\')', ':term')
-                )
-            )->setParameter('term', $searchTerm);
-        }
-
-        return $qb;
+    protected function applySpecificSearchConditions(
+        QueryBuilder $queryBuilder,
+        string $alias,
+        string $searchTerm,
+    ): void {
+        $queryBuilder->andWhere(
+            $queryBuilder->expr()->orX(
+                $queryBuilder->expr()->like('LOWER(owner.name)', ':term'),
+                $queryBuilder->expr()->like('LOWER(borrower.name)', ':term'),
+                $queryBuilder->expr()->like("CONCAT($alias.id, '')", ':term')
+            )
+        )->setParameter('term', $searchTerm);
     }
 
     public function getEquipmentType(): ?EquipmentType
