@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form;
 
 use App\Entity\Yumi;
@@ -30,7 +32,7 @@ class YumiFormType extends AbstractType
                     'placeholder' => 'Force en kg',
                 ],
             ])
-            ->add('length', null, [
+            ->add('yumiLength', null, [
                 'label' => 'Taille',
                 'required' => false,
                 'choices' => YumiLength::cases(),

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Enum\EquipmentType;
@@ -21,7 +23,7 @@ class Yumi extends Equipment
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Versioned]
-    private ?YumiLength $length = null;
+    private ?YumiLength $yumiLength = null;
 
     public static function getType(): EquipmentType
     {
@@ -52,14 +54,14 @@ class Yumi extends Equipment
         return $this;
     }
 
-    public function getLength(): ?YumiLength
+    public function getYumiLength(): ?YumiLength
     {
-        return $this->length;
+        return $this->yumiLength;
     }
 
-    public function setLength(?YumiLength $length): static
+    public function setYumiLength(?YumiLength $yumiLength): static
     {
-        $this->length = $length;
+        $this->yumiLength = $yumiLength;
 
         return $this;
     }

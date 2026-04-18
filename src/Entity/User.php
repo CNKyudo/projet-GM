@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Enum\UserRole;
@@ -15,7 +17,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\Table(name: 'users')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[UniqueEntity(fields: ['email'], message: 'Un compte avec cet email existe déjà.')]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface, \Stringable
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -40,6 +42,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToOne(mappedBy: 'president')]
     private ?Club $clubWhichImPresidentOf = null;
 
+    #[ORM\OneToOne(mappedBy: 'equipment_manager')]
+    private ?Club $clubWhereImEquipmentManager = null;
+
+    /**
+     * Clubs dont l'utilisateur est membre (hors présidence).
+     *
+     * @var Collection<int, Club>
+     */
+    #[ORM\ManyToMany(targetEntity: Club::class, inversedBy: 'members')]
+    #[ORM\JoinTable(name: 'club_members')]
+    private Collection $memberOfClubs;
+
+    /**
+     * Régions gérées par cet utilisateur (pour ROLE_EQUIPMENT_MANAGER_CTK).
+     *
+     * @var Collection<int, Region>
+     */
+    #[ORM\ManyToMany(targetEntity: Region::class, inversedBy: 'managers')]
+    #[ORM\JoinTable(name: 'user_managed_regions')]
+    private Collection $managedRegions;
+
     /**
      * @var Collection<int, Equipment>
      */
@@ -48,7 +71,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function __construct()
     {
+        $this->memberOfClubs = new ArrayCollection();
         $this->borrowed_equipments = new ArrayCollection();
+        $this->managedRegions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -128,22 +153,49 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
+    /**
+     * @return Collection<int, Club>
+     */
+    public function getMemberOfClubs(): Collection
+    {
+        return $this->memberOfClubs;
+    }
+
+    public function addMemberOfClub(Club $club): static
+    {
+        if (!$this->memberOfClubs->contains($club)) {
+            $this->memberOfClubs->add($club);
+            $club->addMember($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMemberOfClub(Club $club): static
+    {
+        if ($this->memberOfClubs->removeElement($club)) {
+            $club->removeMember($this);
+        }
+
+        return $this;
+    }
+
     public function getClubWhichImPresidentOf(): ?Club
     {
         return $this->clubWhichImPresidentOf;
     }
 
-    public function setClubWhichImPresidentOf(?Club $clubWhichImPresidentOf): static
+    public function setClubWhichImPresidentOf(?Club $club): static
     {
-        if (null !== $this->clubWhichImPresidentOf && $this->clubWhichImPresidentOf !== $clubWhichImPresidentOf) {
+        if ($this->clubWhichImPresidentOf instanceof Club && $this->clubWhichImPresidentOf !== $club) {
             $this->clubWhichImPresidentOf->setPresident(null);
         }
 
-        if (null !== $clubWhichImPresidentOf && $clubWhichImPresidentOf->getPresident() !== $this) {
-            $clubWhichImPresidentOf->setPresident($this);
+        if ($club instanceof Club && $club->getPresident() !== $this) {
+            $club->setPresident($this);
         }
 
-        $this->clubWhichImPresidentOf = $clubWhichImPresidentOf;
+        $this->clubWhichImPresidentOf = $club;
 
         return $this;
     }
@@ -168,12 +220,62 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeBorrowedEquipment(Equipment $borrowedEquipment): static
     {
-        if ($this->borrowed_equipments->removeElement($borrowedEquipment)) {
-            // set the owning side to null (unless already changed)
-            if ($borrowedEquipment->getBorrowerUser() === $this) {
-                $borrowedEquipment->setBorrowerUser(null);
-            }
+        // set the owning side to null (unless already changed)
+        if ($this->borrowed_equipments->removeElement($borrowedEquipment) && $borrowedEquipment->getBorrowerUser() === $this) {
+            $borrowedEquipment->setBorrowerUser(null);
         }
+
+        return $this;
+    }
+
+    public function getClubWhereImEquipmentManager(): ?Club
+    {
+        return $this->clubWhereImEquipmentManager;
+    }
+
+    public function setClubWhereImEquipmentManager(?Club $club): static
+    {
+        // Éviter la récursion : on ne met à jour que si l'état a changé
+        if ($this->clubWhereImEquipmentManager === $club) {
+            return $this;
+        }
+
+        $previous = $this->clubWhereImEquipmentManager;
+        $this->clubWhereImEquipmentManager = $club;
+
+        // Détacher de l'ancien club
+        if ($previous instanceof Club && $previous->getEquipmentManager() === $this) {
+            $previous->setEquipmentManager(null);
+        }
+
+        // Attacher au nouveau club
+        if ($club instanceof Club && $club->getEquipmentManager() !== $this) {
+            $club->setEquipmentManager($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Region>
+     */
+    public function getManagedRegions(): Collection
+    {
+        return $this->managedRegions;
+    }
+
+    public function addManagedRegion(Region $region): static
+    {
+        if (!$this->managedRegions->contains($region)) {
+            $this->managedRegions->add($region);
+        }
+
+        return $this;
+    }
+
+    public function removeManagedRegion(Region $region): static
+    {
+        $this->managedRegions->removeElement($region);
 
         return $this;
     }

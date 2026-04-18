@@ -23,9 +23,33 @@
         </div>
       {% endif %}
 
+      {% if form.owner_federation is defined %}
+        <div>
+          <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
+            {{ form.owner_federation.vars.label|default('Fédération propriétaire (national)') }}
+          </label>
+          {{ form_widget(form.owner_federation, {
+            attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 text-kyudo-gm-dark shadow-sm outline-none focus:border-kyudo-gm-light-grey focus:ring-2 focus:ring-kyudo-washed-blue' }
+          }) }}
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.owner_federation) }}</div>
+        </div>
+      {% endif %}
+
+      {% if form.owner_region is defined %}
+        <div>
+          <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
+            {{ form.owner_region.vars.label|default('Région propriétaire (régional)') }}
+          </label>
+          {{ form_widget(form.owner_region, {
+            attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 text-kyudo-gm-dark shadow-sm outline-none focus:border-kyudo-gm-light-grey focus:ring-2 focus:ring-kyudo-washed-blue' }
+          }) }}
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.owner_region) }}</div>
+        </div>
+      {% endif %}
+
       <div>
         <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
-          {{ form.owner_club.vars.label|default('Propriétaire') }}
+          {{ form.owner_club.vars.label|default('Club propriétaire') }}
         </label>
         {{ form_widget(form.owner_club, {
           attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 text-kyudo-gm-dark shadow-sm outline-none focus:border-kyudo-gm-light-grey focus:ring-2 focus:ring-kyudo-washed-blue' }
@@ -113,12 +137,12 @@
           <div class="mt-1 text-sm text-red-600">{{ form_errors(form.yumi_form.strength) }}</div>
 
           <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
-            {{ form.yumi_form.length.vars.label|default('Taille') }}
+            {{ form.yumi_form.yumiLength.vars.label|default('Taille') }}
           </label>
-          {{ form_widget(form.yumi_form.length, {
+          {{ form_widget(form.yumi_form.yumiLength, {
             attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
           }) }}
-          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.yumi_form.length) }}</div>
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.yumi_form.yumiLength) }}</div>
         {% endif %}
       </div>
 

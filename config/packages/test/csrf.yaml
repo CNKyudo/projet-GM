@@ -1,0 +1,7 @@
+# Désactiver la protection CSRF dans les tests fonctionnels
+# Cela permet de soumettre des formulaires sans token CSRF dans les tests
+framework:
+    form:
+        csrf_protection: false
+    csrf_protection:
+        stateless_token_ids: []

@@ -21,9 +21,11 @@
 					<p class="mt-1 text-kyudo-gm-grey">Répertoire des clubs (président, contact, actions).</p>
 				</div>
 
-				<a class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-(--color-kyudo-white) shadow-sm hover:bg-kyudo-royal-blue focus:ring-2 focus:ring-kyudo-washed-blue" href="{{ path('club_new') }}">
-					+ Ajouter un club
-				</a>
+				{% if is_granted('CREATE_CLUB') %}
+					<a class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-(--color-kyudo-white) shadow-sm hover:bg-kyudo-royal-blue focus:ring-2 focus:ring-kyudo-washed-blue" href="{{ path('club_new') }}">
+						+ Ajouter un club
+					</a>
+				{% endif %}
 			</div>
 
 			<form method="get" class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -81,14 +83,16 @@
 									</span>
 								</div>
 
-								<div class="mt-4 flex gap-2">
-									<a class="flex-1 rounded-xl border border-kyudo-gm-light-grey px-3 py-2 text-center text-xs font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)" href="{{ path('club_show', {'id': club.id}) }}">
-										Voir
-									</a>
+							<div class="mt-4 flex gap-2">
+								<a class="flex-1 rounded-xl border border-kyudo-gm-light-grey px-3 py-2 text-center text-xs font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)" href="{{ path('club_show', {'id': club.id}) }}">
+									Voir
+								</a>
+								{% if is_granted('EDIT_CLUB', club) %}
 									<a class="flex-1 rounded-xl border border-kyudo-gm-light-grey px-3 py-2 text-center text-xs font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)" href="{{ path('club_edit', {'id': club.id}) }}">
 										Modifier
 									</a>
-								</div>
+								{% endif %}
+							</div>
 							</article>
 						{% else %}
 							<div class="sm:col-span-2 lg:col-span-4 rounded-2xl border border-dashed border-kyudo-gm-light-grey bg-kyudo-white p-10 text-center">
@@ -128,9 +132,11 @@
 												<a class="rounded-xl border border-kyudo-gm-light-grey bg-kyudo-white px-3 py-2 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)" href="{{ path('club_show', {'id': club.id}) }}">
 													Voir
 												</a>
-												<a class="rounded-xl border border-kyudo-gm-light-grey bg-kyudo-white px-3 py-2 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)" href="{{ path('club_edit', {'id': club.id}) }}">
-													Modifier
-												</a>
+												{% if is_granted('EDIT_CLUB', club) %}
+													<a class="rounded-xl border border-kyudo-gm-light-grey bg-kyudo-white px-3 py-2 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)" href="{{ path('club_edit', {'id': club.id}) }}">
+														Modifier
+													</a>
+												{% endif %}
 											</div>
 										</td>
 									</tr>

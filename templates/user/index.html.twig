@@ -57,17 +57,36 @@
 												<div class="font-medium text-kyudo-gm-dark">{{ user.clubWhichImPresidentOf.name }}</div>
 												<div class="mt-1 text-sm text-kyudo-gm-grey">Président du club</div>
 											</div>
-										{% else %}
+										{% endif %}
+										{% if user.clubWhereImEquipmentManager %}
+											<div class="rounded-2xl bg-kyudo-gm-light-grey p-3 {{ user.clubWhichImPresidentOf ? 'mt-2' : '' }}">
+												<div class="font-medium text-kyudo-gm-dark">{{ user.clubWhereImEquipmentManager.name }}</div>
+												<div class="mt-1 text-sm text-kyudo-gm-grey">Gestionnaire matériel</div>
+											</div>
+										{% endif %}
+										{% if user.memberOfClubs|length > 0 %}
+											<div class="rounded-2xl bg-kyudo-gm-light-grey p-3 {{ (user.clubWhichImPresidentOf or user.clubWhereImEquipmentManager) ? 'mt-2' : '' }}">
+												<div class="font-medium text-kyudo-gm-dark">
+													{% for club in user.memberOfClubs %}
+														{{ club.name }}{% if not loop.last %}, {% endif %}
+													{% endfor %}
+												</div>
+												<div class="mt-1 text-sm text-kyudo-gm-grey">Membre{{ user.memberOfClubs|length > 1 ? 's' : '' }}</div>
+											</div>
+										{% endif %}
+										{% if not user.clubWhichImPresidentOf and not user.clubWhereImEquipmentManager and user.memberOfClubs|length == 0 %}
 											<span class="text-sm text-kyudo-gm-grey">Aucun club attribué</span>
 										{% endif %}
 									</td>
-									<td class="px-5 py-4">
-										<div class="flex justify-end">
+								<td class="px-5 py-4">
+									<div class="flex justify-end">
+										{% if is_granted('ASSIGN_USER_TO_ANY_CLUB') or is_granted('ASSIGN_USER_TO_OWN_CLUB') %}
 											<a class="btn btn-primary" href="{{ path('user_assign_club', {'id': user.id}) }}">
 												Attribuer un club
 											</a>
-										</div>
-									</td>
+										{% endif %}
+									</div>
+								</td>
 								</tr>
 							{% else %}
 								<tr>

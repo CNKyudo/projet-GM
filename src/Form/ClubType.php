@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form;
 
 use App\Entity\Club;
+use App\Entity\Region;
 use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -23,11 +26,25 @@ class ClubType extends AbstractType
             ->add('name', TextType::class, [
                 'label' => 'Nom du club',
             ])
+            ->add('region', EntityType::class, [
+                'class' => Region::class,
+                'choice_label' => 'name',
+                'placeholder' => '--- choisir une région ---',
+                'required' => false,
+                'label' => 'Région',
+            ])
             ->add('president', EntityType::class, [
                 'class' => User::class,
                 'choice_value' => 'id',
                 'placeholder' => '--- choisir un président ---',
                 'required' => false,
+            ])
+            ->add('equipment_manager', EntityType::class, [
+                'class' => User::class,
+                'choice_value' => 'id',
+                'placeholder' => '--- choisir un gestionnaire matériel ---',
+                'required' => false,
+                'label' => 'Gestionnaire matériel',
             ])
             ->add('email', EmailType::class, [
                 'label' => 'E-mail',

@@ -30,7 +30,7 @@
 					</div>
 				</a>
 
-				{% if is_granted('ROLE_ADMIN') %}
+				{% if is_granted(roles.ADMIN) %}
 					<a href="{{ path('user_index') }}" class="split-col split-chevauchement hover:flex-[1.2]">
 						<div class="split-separator"></div>
 						<div class="split-media split-club-clip split-bg-admin">

@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
+use App\Enum\EquipmentLevel;
 use App\Enum\EquipmentType;
 use App\Repository\EquipmentRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -36,6 +39,28 @@ abstract class Equipment
     #[ORM\ManyToOne(inversedBy: 'owned_equipments')]
     #[Versioned]
     private ?Club $owner_club = null;
+
+    /**
+     * Propriétaire région (si equipment_level = REGIONAL).
+     */
+    #[ORM\ManyToOne(inversedBy: 'owned_equipments')]
+    #[Versioned]
+    private ?Region $owner_region = null;
+
+    /**
+     * Propriétaire fédération (si equipment_level = NATIONAL).
+     */
+    #[ORM\ManyToOne(inversedBy: 'owned_equipments')]
+    #[Versioned]
+    private ?Federation $owner_federation = null;
+
+    /**
+     * Niveau de propriété : CLUB, REGIONAL ou NATIONAL.
+     * Détermine quel champ owner_* est non-null.
+     */
+    #[ORM\Column(length: 50, enumType: EquipmentLevel::class)]
+    #[Versioned]
+    private EquipmentLevel $equipmentLevel = EquipmentLevel::CLUB;
 
     #[ORM\ManyToOne(inversedBy: 'borrowed_equipments')]
     #[Versioned]
@@ -75,9 +100,9 @@ abstract class Equipment
         return $this->owner_club;
     }
 
-    public function setOwnerClub(?Club $owner_club): static
+    public function setOwnerClub(?Club $club): static
     {
-        $this->owner_club = $owner_club;
+        $this->owner_club = $club;
 
         return $this;
     }
@@ -87,6 +112,42 @@ abstract class Equipment
         return $this->borrower_club;
     }
 
+    public function getEquipmentLevel(): EquipmentLevel
+    {
+        return $this->equipmentLevel;
+    }
+
+    public function setEquipmentLevel(EquipmentLevel $equipmentLevel): static
+    {
+        $this->equipmentLevel = $equipmentLevel;
+
+        return $this;
+    }
+
+    public function getOwnerRegion(): ?Region
+    {
+        return $this->owner_region;
+    }
+
+    public function setOwnerRegion(?Region $region): static
+    {
+        $this->owner_region = $region;
+
+        return $this;
+    }
+
+    public function getOwnerFederation(): ?Federation
+    {
+        return $this->owner_federation;
+    }
+
+    public function setOwnerFederation(?Federation $federation): static
+    {
+        $this->owner_federation = $federation;
+
+        return $this;
+    }
+
     abstract public static function getType(): EquipmentType;
 
     public function getTypeName(): string
@@ -94,9 +155,9 @@ abstract class Equipment
         return static::getType()->value;
     }
 
-    public function setBorrowerClub(?Club $borrower_club): static
+    public function setBorrowerClub(?Club $club): static
     {
-        $this->borrower_club = $borrower_club;
+        $this->borrower_club = $club;
 
         return $this;
     }
@@ -106,9 +167,9 @@ abstract class Equipment
         return $this->borrower_user;
     }
 
-    public function setBorrowerUser(?User $borrower_user): static
+    public function setBorrowerUser(?User $user): static
     {
-        $this->borrower_user = $borrower_user;
+        $this->borrower_user = $user;
 
         return $this;
     }

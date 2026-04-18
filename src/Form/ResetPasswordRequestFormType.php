@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form;
 
 use App\Entity\ResetPasswordRequest;
@@ -20,9 +22,7 @@ class ResetPasswordRequestFormType extends AbstractType
             ->add('email', EmailType::class, [
                 'attr' => ['autocomplete' => 'email'],
                 'constraints' => [
-                    new NotBlank([
-                        'message' => 'Please enter your email',
-                    ]),
+                    new NotBlank(message: 'Please enter your email'),
                 ],
             ])
         ;

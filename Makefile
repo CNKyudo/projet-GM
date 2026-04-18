@@ -2,7 +2,7 @@ DOCKER_VERSION := $(shell docker version --format '{{.Server.Version}}')
 DOCKER_COMPOSE_CMD := $(shell [ "$(DOCKER_VERSION)" \< "20.10.6" ] && echo docker-compose || echo docker compose)
 
 up:
-	$(DOCKER_COMPOSE_CMD) build
+# 	$(DOCKER_COMPOSE_CMD) build
 	$(DOCKER_COMPOSE_CMD) up -d
 	$(DOCKER_COMPOSE_CMD) exec php-fpm composer install
 	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:migrations:migrate --no-interaction
@@ -24,7 +24,22 @@ migrate:
 	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:migrations:diff
 	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:migrations:migrate --no-interaction
 
-fix: csfixer phpstan
+test-functional:
+	@echo "Preparing test database..."
+	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:database:create --env=test --if-not-exists
+	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:migrations:migrate --env=test --no-interaction
+	@echo "Loading fixtures..."
+	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:query:sql "SET session_replication_role = replica" --env=test
+	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:fixtures:load --env=test --no-interaction --purge-with-truncate
+	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:query:sql "SET session_replication_role = DEFAULT" --env=test
+	@echo "Running functional tests..."
+	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/phpunit tests/Functional/ --testdox
+
+fix: rector csfixer phpstan
+
+rector:
+	@echo "Running rector..."
+	$(DOCKER_COMPOSE_CMD) exec php-fpm vendor/bin/rector process --config=tools/rector.php
 
 csfixer:
 	@echo "Running php-cs-fixer..."
@@ -34,4 +49,4 @@ phpstan:
 	@echo "Running phpstan analyse (configuration tools/phpstan.neon)..."
 	$(DOCKER_COMPOSE_CMD) exec php-fpm vendor/bin/phpstan analyse --configuration=tools/phpstan.neon
 
-.PHONY: fix phpstan csfixer
+.PHONY: fix rector phpstan csfixer test-functional

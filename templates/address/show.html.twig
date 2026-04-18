@@ -15,12 +15,14 @@
 				</div>
 
 				<div class="flex flex-wrap gap-2">
-					<a href="{{ path('address_index') }}" class="inline-flex items-center justify-center rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)" data-history-back>
+					<a href="{{ path('app_home') }}" class="inline-flex items-center justify-center rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)" data-history-back>
 						Retour
 					</a>
-					<a href="{{ path('address_edit', {'id': address.id}) }}" class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-(--color-kyudo-white) shadow-sm hover:bg-kyudo-royal-blue focus:outline-none focus:ring-2 focus:ring-kyudo-washed-blue">
-						Modifier
-					</a>
+					{% if is_granted('EDIT_ADDRESS') %}
+						<a href="{{ path('address_edit', {'id': address.id}) }}" class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-(--color-kyudo-white) shadow-sm hover:bg-kyudo-royal-blue focus:outline-none focus:ring-2 focus:ring-kyudo-washed-blue">
+							Modifier
+						</a>
+					{% endif %}
 				</div>
 			</div>
 
@@ -51,19 +53,19 @@
 					</dl>
 				</section>
 
-				<aside class="rounded-3xl border border-kyudo-gm-light-grey bg-kyudo-white p-6 shadow-sm">
-					<h2 class="text-base font-semibold text-kyudo-gm-dark">Actions</h2>
-					{# 
-					          <p class="mt-2 text-sm text-kyudo-gm-grey">Supprimez cette adresse si elle n'est plus utilisee.</p>
-					
-					          <form class="mt-4" method="post" action="{{ path('address_delete', {'id': address.id}) }}" onsubmit="return confirm('Supprimer cette adresse ?');">
-					            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ address.id) }}">
-					            <button type="submit" class="inline-flex w-full items-center justify-center rounded-2xl border border-red-200 bg-kyudo-white px-4 py-2.5 font-medium text-red-700 hover:bg-red-50">
-					              Supprimer
-					            </button>
-					          </form> 
-					          #}
-				</aside>
+			<aside class="rounded-3xl border border-kyudo-gm-light-grey bg-kyudo-white p-6 shadow-sm">
+				<h2 class="text-base font-semibold text-kyudo-gm-dark">Actions</h2>
+				{% if is_granted('DELETE_ADDRESS') %}
+					<p class="mt-2 text-sm text-kyudo-gm-grey">Supprimez cette adresse si elle n'est plus utilisée.</p>
+
+					<form class="mt-4" method="post" action="{{ path('address_delete', {'id': address.id}) }}" onsubmit="return confirm('Supprimer cette adresse ?');">
+						<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ address.id) }}">
+						<button type="submit" class="inline-flex w-full items-center justify-center rounded-2xl border border-red-200 bg-kyudo-white px-4 py-2.5 font-medium text-red-700 hover:bg-red-50">
+							Supprimer
+						</button>
+					</form>
+				{% endif %}
+			</aside>
 			</div>
 
 		</div>

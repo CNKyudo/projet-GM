@@ -23,12 +23,14 @@
           >
             Retour
           </a>
-          <a
-            href="{{ path('equipment.edit', {'id': equipment.id}) }}"
-            class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-(--color-kyudo-white) shadow-sm hover:bg-kyudo-royal-blue focus:outline-none focus:ring-2 focus:ring-kyudo-washed-blue"
-          >
-            Modifier
-          </a>
+          {% if is_granted('EDIT_EQUIPMENT', equipment) %}
+            <a
+              href="{{ path('equipment.edit', {'id': equipment.id}) }}"
+              class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-(--color-kyudo-white) shadow-sm hover:bg-kyudo-royal-blue focus:outline-none focus:ring-2 focus:ring-kyudo-washed-blue"
+            >
+              Modifier
+            </a>
+          {% endif %}
         </div>
       </div>
 
@@ -49,8 +51,18 @@
 
             <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
               <dt class="text-xs font-medium text-">Propriétaire</dt>
-              <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
-                {{ equipment.ownerClub ? equipment.ownerClub.name : '-' }}
+              <dd class="mt-1 flex flex-wrap items-center gap-2">
+                {% set level = equipment.equipmentLevel.value %}
+                {% if level == 'national' %}
+                  <span class="inline-flex items-center rounded-full bg-purple-100 px-2 py-0.5 text-xs font-semibold text-purple-800">National</span>
+                  <span class="text-sm font-semibold text-kyudo-gm-dark">- {{ equipment.ownerFederation ? equipment.ownerFederation.name : '-' }}</span>
+                {% elseif level == 'regional' %}
+                  <span class="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-800">Régional</span>
+                  <span class="text-sm font-semibold text-kyudo-gm-dark">- {{ equipment.ownerRegion ? equipment.ownerRegion.name : '-' }}</span>
+                {% else %}
+                  <span class="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-800">Club</span>
+                  <span class="text-sm font-semibold text-kyudo-gm-dark">- {{ equipment.ownerClub ? equipment.ownerClub.name : '-' }}</span>
+                {% endif %}
               </dd>
             </div>
 
@@ -83,7 +95,7 @@
               <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
                 <dt class="text-xs font-medium text-">Taille</dt>
                 <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
-                  {{ equipment.length.value ?: '-' }}
+                  {{ equipment.yumiLength.value ?: '-' }}
                 </dd>
               </div>
             {% endif %}
@@ -94,6 +106,10 @@
                 {% if equipment.borrowerClub %}
                   <span class="inline-flex items-center gap-2 rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-800">
                     Prêté à <span class="font-semibold">{{ equipment.borrowerClub.name }}</span>
+                  </span>
+                {% elseif equipment.borrowerUser %}
+                  <span class="inline-flex items-center gap-2 rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-800">
+                    Prêté à <span class="font-semibold">{{ equipment.borrowerUser.email }}</span>
                   </span>
                 {% else %}
                   <span class="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-800">

@@ -76,10 +76,45 @@ function updateEquipmentSections(selectElement, gloveSection, yumiSection) {
     disableFormSection(yumiSection)
 }
 
+/**
+ * Quand l'utilisateur sélectionne une valeur dans un champ owner_*,
+ * vider automatiquement les autres champs owner_* pour éviter l'ambiguïté.
+ * Priorité implicite : fédération > région > club.
+ */
+function initOwnerMutualExclusion(root) {
+    const ownerFields = ['owner_federation', 'owner_region', 'owner_club']
+    const selects = ownerFields
+        .map(function (name) {
+            return root.querySelector('select[name$="[' + name + ']"]')
+        })
+        .filter(Boolean)
+
+    if (selects.length < 2) {
+        return
+    }
+
+    selects.forEach(function (select) {
+        select.addEventListener('change', function () {
+            if (!select.value) {
+                return
+            }
+            // Vider les autres champs owner_*
+            selects.forEach(function (other) {
+                if (other !== select) {
+                    other.value = ''
+                }
+            })
+        })
+    })
+}
+
 function initEquipmentForm(root) {
     const equipmentType = getEquipmentTypeSelect(root)
 
+    // En mode édition, le champ equipment_type est absent du formulaire.
+    // On initialise quand même la logique d'exclusion mutuelle des propriétaires.
     if (!equipmentType) {
+        initOwnerMutualExclusion(root)
         return
     }
 
@@ -97,6 +132,7 @@ function initEquipmentForm(root) {
     }
 
     refreshSections()
+    initOwnerMutualExclusion(root)
 }
 
 export function initEquipmentForms() {

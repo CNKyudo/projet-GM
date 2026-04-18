@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Entity\User;
@@ -19,6 +21,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class UserController extends AbstractController
 {
+    public function __construct(private readonly UserPasswordHasherInterface $userPasswordHasher, private readonly UserRepository $userRepository)
+    {
+    }
+
     #[Route('/profile', name: 'user_profile', methods: ['GET'])]
     #[IsGranted(UserPermissionVoter::EDIT_OWN_ACCOUNT_INFORMATION)]
     public function profile(): Response
@@ -55,7 +61,6 @@ final class UserController extends AbstractController
     #[IsGranted(UserPermissionVoter::EDIT_OWN_ACCOUNT_INFORMATION)]
     public function changePassword(
         Request $request,
-        UserPasswordHasherInterface $passwordHasher,
         EntityManagerInterface $entityManager,
     ): Response {
         $user = $this->getAuthenticatedUser();
@@ -66,7 +71,7 @@ final class UserController extends AbstractController
             /** @var string $plainPassword */
             $plainPassword = $form->get('plainPassword')->getData();
 
-            $user->setPassword($passwordHasher->hashPassword($user, $plainPassword));
+            $user->setPassword($this->userPasswordHasher->hashPassword($user, $plainPassword));
             $entityManager->flush();
 
             $this->addFlash('success', 'Votre mot de passe a bien été modifié.');
@@ -81,13 +86,12 @@ final class UserController extends AbstractController
 
     #[Route('/user', name: 'user_index', methods: ['GET'])]
     #[IsGranted(UserPermissionVoter::ACCESS_USER_MANAGEMENT)]
-    public function index(UserRepository $userRepository): Response
+    public function index(): Response
     {
-        $users = $userRepository->findBy([], ['email' => 'ASC']);
+        $users = $this->userRepository->findBy([], ['email' => 'ASC']);
         $roleLabelsByUserId = [];
-
-        foreach ($users as $listedUser) {
-            $roleLabelsByUserId[(int) $listedUser->getId()] = $this->mapRoleLabels($listedUser->getRoles());
+        foreach ($users as $user) {
+            $roleLabelsByUserId[(int) $user->getId()] = $this->mapRoleLabels($user->getRoles());
         }
 
         return $this->render('user/index.html.twig', [
@@ -96,7 +100,7 @@ final class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/user/{id}/club', name: 'user_assign_club', methods: ['GET', 'POST'], requirements: ['id' => '\\d+'])]
+    #[Route('/user/{id}/club', name: 'user_assign_club', requirements: ['id' => '\\d+'], methods: ['GET', 'POST'])]
     #[IsGranted(UserPermissionVoter::ASSIGN_USER_TO_ANY_CLUB)]
     public function assignClub(Request $request, User $targetUser, EntityManagerInterface $entityManager): Response
     {
