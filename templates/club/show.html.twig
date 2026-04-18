@@ -77,5 +77,58 @@
 			</div>
 
 		</div>
+
+		<div class="mx-auto max-w-6xl mt-6 rounded-3xl bg-kyudo-white shadow-xl p-5 sm:p-8 md:p-12">
+			<h2 class="text-base font-semibold text-kyudo-gm-dark">Équipements du club</h2>
+
+			{% if club.ownedEquipments is empty %}
+				<p class="mt-4 text-sm text-kyudo-gm-grey">Aucun équipement n'appartient à ce club.</p>
+			{% else %}
+				<div class="mt-4 overflow-x-auto rounded-2xl border border-kyudo-gm-light-grey">
+					<table class="min-w-full text-sm text-kyudo-gm-dark">
+						<thead class="bg-kyudo-gm-light-grey text-xs font-semibold uppercase tracking-wide">
+							<tr>
+								<th class="px-4 py-3 text-left">ID</th>
+								<th class="px-4 py-3 text-left">Type</th>
+								<th class="px-4 py-3 text-left">Détails</th>
+								<th class="px-4 py-3 text-left">Emprunteur</th>
+							</tr>
+						</thead>
+						<tbody class="divide-y divide-kyudo-gm-light-grey">
+							{% for equipment in club.ownedEquipments %}
+								<tr class="hover:bg-kyudo-gm-light-grey/40">
+									<td class="px-4 py-3 font-medium">{{ equipment.id }}</td>
+									<td class="px-4 py-3">{{ equipment.typeName }}</td>
+									<td class="px-4 py-3">
+										{% if equipment.typeName == 'yumi' %}
+											{% if equipment.material %}Matériau : {{ equipment.material }}{% endif %}
+											{% if equipment.strength %} &nbsp;·&nbsp; Force : {{ equipment.strength }} kg{% endif %}
+											{% if equipment.yumiLength %} &nbsp;·&nbsp; Longueur : {{ equipment.yumiLength.value }}{% endif %}
+											{% if not equipment.material and not equipment.strength and not equipment.yumiLength %}-{% endif %}
+										{% elseif equipment.typeName == 'glove' %}
+											{% if equipment.nbFingers %}Doigts : {{ equipment.nbFingers }}{% endif %}
+											{% if equipment.size %} &nbsp;·&nbsp; Taille : {{ equipment.size }}{% endif %}
+											{% if not equipment.nbFingers and not equipment.size %}-{% endif %}
+										{% else %}
+											-
+										{% endif %}
+									</td>
+									<td class="px-4 py-3">
+										{% if equipment.borrowerUser %}
+											{{ equipment.borrowerUser }}
+										{% elseif equipment.borrowerClub %}
+											{{ equipment.borrowerClub }}
+										{% else %}
+											<span class="text-kyudo-gm-grey">-</span>
+										{% endif %}
+									</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			{% endif %}
+		</div>
+
 	</div>
 {% endblock %}
