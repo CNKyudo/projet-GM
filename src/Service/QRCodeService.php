@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
 use App\Entity\Equipment;
@@ -70,12 +72,12 @@ class QRCodeService
     {
         $equipment = $qrCode->getEquipment();
 
-        $equipmentLabel = $equipment
+        $equipmentLabel = $equipment instanceof Equipment
             ? sprintf('#%d - %s', $equipment->getId(), ucfirst($equipment->getTypeName()))
             : 'Équipement inconnu';
 
         $ownerLabel = ($equipment && $equipment->getOwnerClub())
-            ? htmlspecialchars($equipment->getOwnerClub()->getName())
+            ? htmlspecialchars((string) $equipment->getOwnerClub()->getName())
             : '-';
 
         $url = $this->urlGenerator->generate(
@@ -86,7 +88,7 @@ class QRCodeService
 
         // Génération PNG via endroid/qr-code (utilise GD, pas Imagick)
         $endroidQr = new EndroidQrCode(data: $url, size: 300, margin: 10);
-        $pngContent = (new PngWriter())->write($endroidQr)->getString();
+        $pngContent = new PngWriter()->write($endroidQr)->getString();
 
         // Fichier temporaire PNG référencé via file:// par Dompdf
         $tmpFile = tempnam(sys_get_temp_dir(), 'qr_').'.png';
@@ -125,7 +127,7 @@ class QRCodeService
     {
         // Détacher l'ancien équipement
         $oldEquipment = $qrCode->getEquipment();
-        if (null !== $oldEquipment && $oldEquipment !== $newEquipment) {
+        if ($oldEquipment instanceof Equipment && $oldEquipment !== $newEquipment) {
             $oldEquipment->setQrCode(null);
         }
 

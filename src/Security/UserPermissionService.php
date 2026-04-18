@@ -406,13 +406,7 @@ final class UserPermissionService
     {
         $userRoles = $user->getRoles();
 
-        foreach ($requiredRoles as $requiredRole) {
-            if (\in_array($requiredRole->value, $userRoles, true)) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($requiredRoles, fn ($requiredRole): bool => \in_array($requiredRole->value, $userRoles, true));
     }
 
     private function hasAtLeastRole(User $user, UserRole $userRole): bool

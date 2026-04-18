@@ -57,9 +57,9 @@ abstract class AbstractSearchStrategy implements SearchStrategyInterface
     protected function applyStatusFilter(QueryBuilder $queryBuilder, string $alias, string $status): void
     {
         if ('available' === $status) {
-            $queryBuilder->andWhere("$alias.borrower_club IS NULL AND $alias.borrower_user IS NULL");
+            $queryBuilder->andWhere(sprintf('%s.borrower_club IS NULL AND %s.borrower_user IS NULL', $alias, $alias));
         } elseif ('loaned' === $status) {
-            $queryBuilder->andWhere("$alias.borrower_club IS NOT NULL OR $alias.borrower_user IS NOT NULL");
+            $queryBuilder->andWhere(sprintf('%s.borrower_club IS NOT NULL OR %s.borrower_user IS NOT NULL', $alias, $alias));
         }
     }
 
@@ -110,7 +110,7 @@ abstract class AbstractSearchStrategy implements SearchStrategyInterface
             $orParts[] = $queryBuilder->expr()->eq($alias.'.equipmentLevel', ':levelNational');
         }
 
-        if (!empty($orParts)) {
+        if ([] !== $orParts) {
             $queryBuilder->andWhere($queryBuilder->expr()->orX(...$orParts));
         }
     }

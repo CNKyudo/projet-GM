@@ -19,60 +19,63 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 final class UserPermissionVoter extends Voter
 {
     // Gestion des utilisateurs
-    public const ACCESS_USER_MANAGEMENT = 'ACCESS_USER_MANAGEMENT';
+    public const string ACCESS_USER_MANAGEMENT = 'ACCESS_USER_MANAGEMENT';
 
-    public const EDIT_OWN_ACCOUNT_INFORMATION = 'EDIT_OWN_ACCOUNT_INFORMATION';
+    public const string EDIT_OWN_ACCOUNT_INFORMATION = 'EDIT_OWN_ACCOUNT_INFORMATION';
 
-    public const ASSIGN_USER_TO_ANY_CLUB = 'ASSIGN_USER_TO_ANY_CLUB';
+    public const string ASSIGN_USER_TO_ANY_CLUB = 'ASSIGN_USER_TO_ANY_CLUB';
 
-    public const ASSIGN_USER_TO_OWN_CLUB = 'ASSIGN_USER_TO_OWN_CLUB';
+    public const string ASSIGN_USER_TO_OWN_CLUB = 'ASSIGN_USER_TO_OWN_CLUB';
 
     // Gestion des clubs (sans sujet = création/transfert, avec sujet Club = edit/delete)
-    public const CREATE_CLUB = 'CREATE_CLUB';
+    public const string CREATE_CLUB = 'CREATE_CLUB';
 
-    public const EDIT_CLUB = 'EDIT_CLUB';
+    public const string EDIT_CLUB = 'EDIT_CLUB';
 
-    public const DELETE_CLUB = 'DELETE_CLUB';
+    public const string DELETE_CLUB = 'DELETE_CLUB';
 
-    public const TRANSFER_CLUB_PRESIDENCY = 'TRANSFER_CLUB_PRESIDENCY';
+    public const string TRANSFER_CLUB_PRESIDENCY = 'TRANSFER_CLUB_PRESIDENCY';
 
     // Gestion des adresses
-    public const CREATE_ADDRESS = 'CREATE_ADDRESS';
+    public const string CREATE_ADDRESS = 'CREATE_ADDRESS';
 
-    public const EDIT_ADDRESS = 'EDIT_ADDRESS';
+    public const string EDIT_ADDRESS = 'EDIT_ADDRESS';
 
-    public const DELETE_ADDRESS = 'DELETE_ADDRESS';
+    public const string DELETE_ADDRESS = 'DELETE_ADDRESS';
 
     // Gestion des équipements (sans sujet = création, avec sujet Equipment = view/edit/borrow)
-    public const BROWSE_ALL_EQUIPMENT = 'BROWSE_ALL_EQUIPMENT';
+    public const string BROWSE_ALL_EQUIPMENT = 'BROWSE_ALL_EQUIPMENT';
 
-    public const CREATE_NATIONAL_EQUIPMENT = 'CREATE_NATIONAL_EQUIPMENT';
+    public const string CREATE_NATIONAL_EQUIPMENT = 'CREATE_NATIONAL_EQUIPMENT';
 
-    public const CREATE_REGIONAL_EQUIPMENT = 'CREATE_REGIONAL_EQUIPMENT';
+    public const string CREATE_REGIONAL_EQUIPMENT = 'CREATE_REGIONAL_EQUIPMENT';
 
-    public const CREATE_OWN_CLUB_EQUIPMENT = 'CREATE_OWN_CLUB_EQUIPMENT';
+    public const string CREATE_OWN_CLUB_EQUIPMENT = 'CREATE_OWN_CLUB_EQUIPMENT';
 
-    public const CREATE_EQUIPMENT_FOR_OTHER_CLUB = 'CREATE_EQUIPMENT_FOR_OTHER_CLUB';
+    public const string CREATE_EQUIPMENT_FOR_OTHER_CLUB = 'CREATE_EQUIPMENT_FOR_OTHER_CLUB';
 
-    public const VIEW_EQUIPMENT = 'VIEW_EQUIPMENT';
+    public const string VIEW_EQUIPMENT = 'VIEW_EQUIPMENT';
 
-    public const EDIT_EQUIPMENT = 'EDIT_EQUIPMENT';
+    public const string EDIT_EQUIPMENT = 'EDIT_EQUIPMENT';
 
-    public const BORROW_EQUIPMENT = 'BORROW_EQUIPMENT';
+    public const string BORROW_EQUIPMENT = 'BORROW_EQUIPMENT';
 
-    public const SET_ANOTHER_BORROWER_FOR_EQUIPMENT = 'SET_ANOTHER_BORROWER_FOR_EQUIPMENT';
+    public const string SET_ANOTHER_BORROWER_FOR_EQUIPMENT = 'SET_ANOTHER_BORROWER_FOR_EQUIPMENT';
 
-    public const CREATE_QRCODE = 'CREATE_QRCODE';
-    public const EDIT_QRCODE = 'EDIT_QRCODE';
-    public const DELETE_QRCODE = 'DELETE_QRCODE';
-    public const VIEW_QRCODE = 'VIEW_QRCODE';
+    public const string CREATE_QRCODE = 'CREATE_QRCODE';
+
+    public const string EDIT_QRCODE = 'EDIT_QRCODE';
+
+    public const string DELETE_QRCODE = 'DELETE_QRCODE';
+
+    public const string VIEW_QRCODE = 'VIEW_QRCODE';
 
     /**
      * Attributs sans sujet : délégation directe au service via le rôle uniquement.
      *
      * @var array<string, string>
      */
-    private const ROLE_ONLY_ATTRIBUTES = [
+    private const array ROLE_ONLY_ATTRIBUTES = [
         self::ACCESS_USER_MANAGEMENT => 'canAccessUserManagement',
         self::EDIT_OWN_ACCOUNT_INFORMATION => 'canEditOwnAccountInformation',
         self::ASSIGN_USER_TO_ANY_CLUB => 'canAssignUserToAnyClub',
@@ -96,7 +99,7 @@ final class UserPermissionVoter extends Voter
     /**
      * Attributs avec sujet Equipment : la logique "own/other/regional/national" est résolue ici.
      */
-    private const EQUIPMENT_SUBJECT_ATTRIBUTES = [
+    private const array EQUIPMENT_SUBJECT_ATTRIBUTES = [
         self::VIEW_EQUIPMENT,
         self::EDIT_EQUIPMENT,
         self::BORROW_EQUIPMENT,
@@ -106,7 +109,7 @@ final class UserPermissionVoter extends Voter
     /**
      * Attributs avec sujet Club : la logique "own vs other" est résolue ici.
      */
-    private const CLUB_SUBJECT_ATTRIBUTES = [
+    private const array CLUB_SUBJECT_ATTRIBUTES = [
         self::EDIT_CLUB,
         self::DELETE_CLUB,
     ];

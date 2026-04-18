@@ -30,16 +30,16 @@ final class YumiSearchStrategy extends AbstractSearchStrategy
     ): void {
         $queryBuilder->andWhere(
             $queryBuilder->expr()->orX(
-                $queryBuilder->expr()->like("LOWER($alias.material)", ':term'),
-                $queryBuilder->expr()->like("CONCAT($alias.strength, '')", ':term'),
-                $queryBuilder->expr()->like("LOWER($alias.yumiLength)", ':term'),
+                $queryBuilder->expr()->like(sprintf('LOWER(%s.material)', $alias), ':term'),
+                $queryBuilder->expr()->like(sprintf("CONCAT(%s.strength, '')", $alias), ':term'),
+                $queryBuilder->expr()->like(sprintf('LOWER(%s.yumiLength)', $alias), ':term'),
                 $queryBuilder->expr()->like('LOWER(owner.name)', ':term'),
                 $queryBuilder->expr()->like('LOWER(borrower.name)', ':term')
             )
         )->setParameter('term', $searchTerm);
     }
 
-    public function getEquipmentType(): ?EquipmentType
+    public function getEquipmentType(): EquipmentType
     {
         return EquipmentType::YUMI;
     }

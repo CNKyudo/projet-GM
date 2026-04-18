@@ -35,7 +35,7 @@ final class DefaultSearchStrategy extends AbstractSearchStrategy
             $queryBuilder->expr()->orX(
                 $queryBuilder->expr()->like('LOWER(owner.name)', ':term'),
                 $queryBuilder->expr()->like('LOWER(borrower.name)', ':term'),
-                $queryBuilder->expr()->like("CONCAT($alias.id, '')", ':term')
+                $queryBuilder->expr()->like(sprintf("CONCAT(%s.id, '')", $alias), ':term')
             )
         )->setParameter('term', $searchTerm);
     }

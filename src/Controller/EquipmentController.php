@@ -25,7 +25,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class EquipmentController extends AbstractController
 {
-    private const ITEMS_PER_PAGE = 20;
+    private const int ITEMS_PER_PAGE = 20;
 
     public function __construct(private readonly EquipmentRepository $equipmentRepository, private readonly PaginatorInterface $paginator)
     {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Entity\QRCode;
@@ -19,7 +21,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/qr-code')]
 final class QRCodeController extends AbstractController
 {
-    private const ITEMS_PER_PAGE = 20;
+    private const int ITEMS_PER_PAGE = 20;
 
     public function __construct(
         private readonly QRCodeService $qrCodeService,
@@ -31,7 +33,7 @@ final class QRCodeController extends AbstractController
      */
     #[Route('/equipment/{equipmentId}/generate-qr', name: 'qr_code.generate_for_equipment', requirements: ['equipmentId' => '\d+'], methods: ['POST'])]
     #[IsGranted(UserPermissionVoter::CREATE_QRCODE)]
-    public function generateForEquipment(int $equipmentId, Request $request, EquipmentRepository $equipmentRepository): Response
+    public function generateForEquipment(int $equipmentId, Request $request, EquipmentRepository $equipmentRepository): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         $equipment = $equipmentRepository->find($equipmentId);
 
@@ -64,11 +66,11 @@ final class QRCodeController extends AbstractController
      * IMPORTANT : cette route doit être déclarée AVANT les routes préfixées /qr-code/{uuid}/...
      */
     #[Route('/{uuid}', name: 'qr_code.scan', requirements: ['uuid' => '[0-9a-f\-]{36}'], methods: ['GET'], priority: 10)]
-    public function scan(string $uuid, QRCodeRepository $repository): Response
+    public function scan(string $uuid, QRCodeRepository $repository): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         $qrCode = $repository->findByUuid($uuid);
 
-        if (null === $qrCode || null === $qrCode->getEquipment()) {
+        if (!$qrCode instanceof QRCode || !$qrCode->getEquipment() instanceof \App\Entity\Equipment) {
             throw $this->createNotFoundException('QR code introuvable ou équipement supprimé.');
         }
 
@@ -107,7 +109,7 @@ final class QRCodeController extends AbstractController
     {
         $qrCode = $repository->findByUuid($uuid);
 
-        if (null === $qrCode) {
+        if (!$qrCode instanceof QRCode) {
             throw $this->createNotFoundException('QR code introuvable.');
         }
 
@@ -155,7 +157,7 @@ final class QRCodeController extends AbstractController
     {
         $qrCode = $repository->findByUuid($uuid);
 
-        if (null === $qrCode) {
+        if (!$qrCode instanceof QRCode) {
             throw $this->createNotFoundException('QR code introuvable.');
         }
 
@@ -185,11 +187,11 @@ final class QRCodeController extends AbstractController
      */
     #[Route('/{uuid}/delete', name: 'qr_code.delete', requirements: ['uuid' => '[0-9a-f\-]{36}'], methods: ['POST'])]
     #[IsGranted(UserPermissionVoter::DELETE_QRCODE)]
-    public function delete(string $uuid, Request $request, QRCodeRepository $repository): Response
+    public function delete(string $uuid, Request $request, QRCodeRepository $repository): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         $qrCode = $repository->findByUuid($uuid);
 
-        if (null === $qrCode) {
+        if (!$qrCode instanceof QRCode) {
             throw $this->createNotFoundException('QR code introuvable.');
         }
 
@@ -215,7 +217,7 @@ final class QRCodeController extends AbstractController
     {
         $qrCode = $repository->findByUuid($uuid);
 
-        if (null === $qrCode) {
+        if (!$qrCode instanceof QRCode) {
             throw $this->createNotFoundException('QR code introuvable.');
         }
 
@@ -236,7 +238,7 @@ final class QRCodeController extends AbstractController
     {
         $qrCode = $repository->findByUuid($uuid);
 
-        if (null === $qrCode) {
+        if (!$qrCode instanceof QRCode) {
             throw $this->createNotFoundException('QR code introuvable.');
         }
 
@@ -245,7 +247,7 @@ final class QRCodeController extends AbstractController
         $equipment = $qrCode->getEquipment();
         $filename = sprintf(
             'qrcode-%s-%s.pdf',
-            $equipment ? $equipment->getId() : 'unknown',
+            $equipment instanceof \App\Entity\Equipment ? $equipment->getId() : 'unknown',
             substr($qrCode->getUuid(), 0, 8)
         );
 

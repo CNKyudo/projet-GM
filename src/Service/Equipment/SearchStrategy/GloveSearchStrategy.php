@@ -30,15 +30,15 @@ final class GloveSearchStrategy extends AbstractSearchStrategy
     ): void {
         $queryBuilder->andWhere(
             $queryBuilder->expr()->orX(
-                $queryBuilder->expr()->like("CONCAT($alias.nb_fingers, '')", ':term'),
-                $queryBuilder->expr()->like("CONCAT($alias.size, '')", ':term'),
+                $queryBuilder->expr()->like(sprintf("CONCAT(%s.nb_fingers, '')", $alias), ':term'),
+                $queryBuilder->expr()->like(sprintf("CONCAT(%s.size, '')", $alias), ':term'),
                 $queryBuilder->expr()->like('LOWER(owner.name)', ':term'),
                 $queryBuilder->expr()->like('LOWER(borrower.name)', ':term')
             )
         )->setParameter('term', $searchTerm);
     }
 
-    public function getEquipmentType(): ?EquipmentType
+    public function getEquipmentType(): EquipmentType
     {
         return EquipmentType::GLOVE;
     }

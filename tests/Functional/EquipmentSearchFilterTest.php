@@ -92,41 +92,26 @@ use Symfony\Component\HttpFoundation\Request;
 final class EquipmentSearchFilterTest extends AbstractWebTestCase
 {
     // ─── Totaux globaux ──────────────────────────────────────────────────────
-    private const TOTAL_COUNT = 17;
+    private const int TOTAL_COUNT = 17;
 
-    private const TOTAL_YUMI_COUNT = 9;
+    private const int TOTAL_YUMI_COUNT = 9;
 
-    private const TOTAL_GLOVE_COUNT = 8;
+    private const int TOTAL_GLOVE_COUNT = 8;
 
     // ─── Totaux par status ───────────────────────────────────────────────────
 
     /** gloveB (borrower_club) + yumiD (borrower_user) → 2 prêtés */
-    private const LOANED_COUNT = 2;
+    private const int LOANED_COUNT = 2;
 
-    private const AVAILABLE_COUNT = 15;
+    private const int AVAILABLE_COUNT = 15;
 
-    private const AVAILABLE_YUMI_COUNT = 8;
+    private const int AVAILABLE_YUMI_COUNT = 8;
 
-    private const LOANED_YUMI_COUNT = 1;
+    private const int LOANED_YUMI_COUNT = 1;
 
-    private const AVAILABLE_GLOVE_COUNT = 7;
+    private const int AVAILABLE_GLOVE_COUNT = 7;
 
-    private const LOANED_GLOVE_COUNT = 1;
-
-    // ─── Tous les rôles testés ───────────────────────────────────────────────
-
-    /** @return array<string, array{string}> */
-    private static function allRoles(): array
-    {
-        return [
-            'MEMBER'       => [AppFixtures::USER_MEMBER],
-            'PRESIDENT'    => [AppFixtures::USER_PRESIDENT],
-            'MANAGER_CLUB' => [AppFixtures::USER_MANAGER_CLUB],
-            'MANAGER_CTK'  => [AppFixtures::USER_MANAGER_CTK],
-            'MANAGER_CN'   => [AppFixtures::USER_MANAGER_CN],
-            'ADMIN'        => [AppFixtures::USER_ADMIN],
-        ];
-    }
+    private const int LOANED_GLOVE_COUNT = 1;
 
     // -----------------------------------------------------------------------
     // Helper

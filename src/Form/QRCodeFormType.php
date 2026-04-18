@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form;
 
 use App\Entity\Equipment;
@@ -22,13 +24,13 @@ class QRCodeFormType extends AbstractType
 
         $builder->add('equipment', EntityType::class, [
             'class' => Equipment::class,
-            'choice_label' => fn (Equipment $e) => sprintf('#%d - %s', $e->getId(), ucfirst($e->getTypeName())),
+            'choice_label' => fn (Equipment $e): string => sprintf('#%d - %s', $e->getId(), ucfirst($e->getTypeName())),
             'placeholder' => '--- Sélectionner un équipement ---',
             'required' => true,
             'label' => 'Équipement',
             'query_builder' => function (EntityRepository $er) use ($currentEquipment): QueryBuilder {
                 $qb = $er->createQueryBuilder('e')
-                    ->leftJoin('App\Entity\QRCode', 'q', 'WITH', 'q.equipment = e')
+                    ->leftJoin(QRCode::class, 'q', 'WITH', 'q.equipment = e')
                     ->where('q.id IS NULL');
 
                 // En mode édition, inclure aussi l'équipement actuellement associé

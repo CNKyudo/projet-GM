@@ -82,11 +82,11 @@ abstract class Equipment
 
     public function setQrCode(?QRCode $qrCode): static
     {
-        if (null === $qrCode && null !== $this->qrCode) {
+        if (!$qrCode instanceof QRCode && $this->qrCode instanceof QRCode) {
             $this->qrCode->setEquipment(null);
         }
 
-        if (null !== $qrCode && $qrCode->getEquipment() !== $this) {
+        if ($qrCode instanceof QRCode && $qrCode->getEquipment() !== $this) {
             $qrCode->setEquipment($this);
         }
 
