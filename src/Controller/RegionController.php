@@ -19,7 +19,7 @@ use App\Enum\UserRole;
 #[IsGranted(UserRole::ADMIN->value)]
 class RegionController extends AbstractController
 {
-    private const ITEMS_PER_PAGE = 20;
+    private const int ITEMS_PER_PAGE = 20;
 
     public function __construct(private readonly RegionRepository $regionRepository, private readonly PaginatorInterface $paginator)
     {

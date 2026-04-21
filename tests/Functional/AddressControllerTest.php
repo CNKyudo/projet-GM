@@ -47,7 +47,7 @@ final class AddressControllerTest extends AbstractWebTestCase
         /** @var EntityManagerInterface $objectManager */
         $objectManager = $doctrine->getManager();
 
-        $address = (new Address())
+        $address = new Address()
             ->setPostalCode('75001')
             ->setCity('Paris')
             ->setCountry('France');

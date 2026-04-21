@@ -158,7 +158,7 @@ class ResetPasswordController extends AbstractController
         }
 
         try {
-            $email = (new TemplatedEmail())
+            $email = new TemplatedEmail()
                 ->from(new Address('nepasrepondre@kyudo.fr', 'Ne pas répondre'))
                 ->to((string) $user->getEmail())
                 ->subject('Réinitialisation de votre mot de passe')

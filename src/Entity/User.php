@@ -266,7 +266,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
     /**
      * Retourne les équipements empruntés via le ClubMember lié, ou une collection vide.
      *
-     * @return Collection<int, \App\Entity\Equipment>
+     * @return Collection<int, Equipment>
      */
     public function getBorrowedEquipments(): Collection
     {

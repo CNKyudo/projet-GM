@@ -16,18 +16,20 @@ use Symfony\Component\HttpFoundation\Request;
  * quel que soit le rôle → un seul test par scénario suffit.
  *
  * ─────────────────────────────────────────────────────────────────────────────
- * INVENTAIRE DES FIXTURES (17 équipements au total)
+ * INVENTAIRE DES FIXTURES (19 équipements au total)
  * ─────────────────────────────────────────────────────────────────────────────
  *
- * Gants (8) :
- *   gloveA1  CLUB      Club A (Paris Marais)    nb_fingers=3  size=8   disponible
- *   gloveA2  CLUB      Club A (Paris Marais)    nb_fingers=3  size=7   disponible
- *   gloveB   CLUB      Club B (Lyon)            nb_fingers=3  size=9   prêté à Club C
- *   gloveC   CLUB      Club C (Vincennes)       nb_fingers=3  size=6   disponible
- *   gloveG   CLUB      Club G (Rennes)          nb_fingers=4  size=7   disponible
- *   gloveRA  REGIONAL  Région A (Île-de-France) nb_fingers=3  size=8   disponible
- *   gloveRC  REGIONAL  Région C (Bretagne)      nb_fingers=3  size=7   disponible
- *   gloveNat NATIONAL  Fédération               nb_fingers=5  size=10  disponible
+ * Gants (10) :
+ *   gloveA1          CLUB      Club A (Paris Marais)    nb_fingers=3  size=8   disponible
+ *   gloveA2          CLUB      Club A (Paris Marais)    nb_fingers=3  size=7   disponible
+ *   gloveB           CLUB      Club B (Lyon)            nb_fingers=3  size=9   prêté à Club C
+ *   gloveC           CLUB      Club C (Vincennes)       nb_fingers=3  size=6   disponible
+ *   gloveG           CLUB      Club G (Rennes)          nb_fingers=4  size=7   disponible
+ *   gloveRA          REGIONAL  Région A (Île-de-France) nb_fingers=3  size=8   disponible
+ *   gloveRC          REGIONAL  Région C (Bretagne)      nb_fingers=3  size=7   disponible
+ *   gloveNat         NATIONAL  Fédération               nb_fingers=5  size=10  disponible
+ *   gloveNatBorrowed NATIONAL  Fédération               nb_fingers=3  size=8   prêté à memberLinked
+ *   gloveRegABorrowed REGIONAL Région A (Île-de-France) nb_fingers=4  size=7   prêté à Club A
  *
  * Arcs (9) :
  *   yumiA1   CLUB      Club A  bambou       14  namisun      disponible
@@ -44,18 +46,18 @@ use Symfony\Component\HttpFoundation\Request;
  * TOTAUX ATTENDUS
  * ─────────────────────────────────────────────────────────────────────────────
  *
- * Sans filtre             → 17
+ * Sans filtre             → 19
  * equipmentType=yumi      →  9
- * equipmentType=glove     →  8
+ * equipmentType=glove     → 10
  *
- * status=all              → 17
- * status=available        → 15  (gloveB borrowerClub + yumiD borrowerMember → 2 prêtés)
- * status=loaned           →  2  (gloveB + yumiD)
+ * status=all              → 19
+ * status=available        → 15  (gloveB + yumiD + gloveNatBorrowed + gloveRegABorrowed → 4 prêtés)
+ * status=loaned           →  4  (gloveB + yumiD + gloveNatBorrowed + gloveRegABorrowed)
  *
  * status=available + yumi →  8  (yumiD a un borrowerMember → loaned)
  * status=loaned   + yumi  →  1  (yumiD)
- * status=available + glove→  7  (tous les gloves sauf gloveB)
- * status=loaned   + glove →  1  (gloveB)
+ * status=available + glove→  7  (tous les gloves sauf gloveB, gloveNatBorrowed, gloveRegABorrowed)
+ * status=loaned   + glove →  3  (gloveB + gloveNatBorrowed + gloveRegABorrowed)
  *
  * Recherche textuelle (DefaultSearchStrategy — sans filtre de type) :
  *   Champs indexés : ownerClub.name, borrowerClub.name, CONCAT(id,'')
@@ -63,6 +65,7 @@ use Symfony\Component\HttpFoundation\Request;
  *
  *   q="paris"   → Club A ("Kyudo Paris Marais") + Club D ("Ryushin Dojo Paris")
  *                  gloveA1, gloveA2, yumiA1, yumiA2, yumiD → 5
+ *                  + gloveRegABorrowed (borrowerClub=Club A → "Paris") → 6
  *   q="lyon"    → Club B ("Kyudo Lyon") → gloveB (via owner.name) → 1
  *   q="vincen"  → Club C ("Kyudo Vincennes") via owner.name (gloveC) + via borrower.name (gloveB) → 2
  *   q="bambou"  → aucun club/région/fédération ne contient "bambou" → 0
@@ -82,23 +85,23 @@ use Symfony\Component\HttpFoundation\Request;
  *   Équipements régionaux/nationaux trouvables via nb_fingers/size.
  *
  *   q="5"      → gloveNat (nb_fingers=5) → 1
- *   q="3"      → 6 gloves avec nb_fingers=3 (tous sauf gloveG et gloveNat) → 6
- *   q="paris"  → Club A → gloveA1, gloveA2 → 2
+ *   q="3"      → 7 gloves avec nb_fingers=3 (gloveA1,gloveA2,gloveB,gloveC,gloveRA,gloveRC,gloveNatBorrowed)
+ *   q="paris"  → Club A → gloveA1, gloveA2 + gloveRegABorrowed (borrowerClub=Club A) → 3
  *   q="vincen" → Club C via owner.name (gloveC) + via borrower.name (gloveB) → 2
  */
 final class EquipmentSearchFilterTest extends AbstractWebTestCase
 {
     // ─── Totaux globaux ──────────────────────────────────────────────────────
-    private const int TOTAL_COUNT = 17;
+    private const int TOTAL_COUNT = 19;
 
     private const int TOTAL_YUMI_COUNT = 9;
 
-    private const int TOTAL_GLOVE_COUNT = 8;
+    private const int TOTAL_GLOVE_COUNT = 10;
 
     // ─── Totaux par status ───────────────────────────────────────────────────
 
-    /** gloveB (borrowerClub) + yumiD (borrowerMember) → 2 prêtés */
-    private const int LOANED_COUNT = 2;
+    /** gloveB (borrowerClub) + yumiD (borrowerMember) + gloveNatBorrowed + gloveRegABorrowed → 4 prêtés */
+    private const int LOANED_COUNT = 4;
 
     private const int AVAILABLE_COUNT = 15;
 
@@ -108,7 +111,7 @@ final class EquipmentSearchFilterTest extends AbstractWebTestCase
 
     private const int AVAILABLE_GLOVE_COUNT = 7;
 
-    private const int LOANED_GLOVE_COUNT = 1;
+    private const int LOANED_GLOVE_COUNT = 3;
 
     // -----------------------------------------------------------------------
     // Helper
@@ -232,7 +235,7 @@ final class EquipmentSearchFilterTest extends AbstractWebTestCase
 
     public function testFilterGloveLoaned(): void
     {
-        // gloveB (Club B → emprunté par Club C) est le seul gant prêté
+        // gloveB (Club B → emprunté par Club C) + gloveNatBorrowed + gloveRegABorrowed → 3 gants prêtés
         $this->loginAs(AppFixtures::USER_ADMIN);
         $crawler = $this->requestIndex(['equipmentType' => 'glove', 'status' => 'loaned']);
         $this->assertResponseIsSuccessful();
@@ -250,10 +253,11 @@ final class EquipmentSearchFilterTest extends AbstractWebTestCase
     {
         // "paris" → Club A (Paris Marais) + Club D (Ryushin Dojo Paris)
         // gloveA1, gloveA2, yumiA1, yumiA2, yumiD → 5
+        // + gloveRegABorrowed (borrowerClub=Club A → "Kyudo Paris Marais") → 6
         $this->loginAs(AppFixtures::USER_MEMBER);
         $crawler = $this->requestIndex(['q' => 'paris']);
         $this->assertResponseIsSuccessful();
-        $this->assertSame(5, $this->countEquipmentRows($crawler));
+        $this->assertSame(6, $this->countEquipmentRows($crawler));
         $this->assertStringContainsString(AppFixtures::CLUB_A, (string) $this->client->getResponse()->getContent());
     }
 
@@ -357,20 +361,22 @@ final class EquipmentSearchFilterTest extends AbstractWebTestCase
 
     public function testSearchByNbFingers3MatchesSixGloves(): void
     {
-        // nb_fingers LIKE %3% → 6 gants avec nb_fingers=3 (tous sauf gloveG(4) et gloveNat(5))
+        // nb_fingers LIKE %3% → 7 gants avec nb_fingers=3
+        // (gloveA1, gloveA2, gloveB, gloveC, gloveRA, gloveRC, gloveNatBorrowed — sauf gloveG(4), gloveNat(5), gloveRegABorrowed(4))
         $this->loginAs(AppFixtures::USER_ADMIN);
         $crawler = $this->requestIndex(['q' => '3', 'equipmentType' => 'glove']);
         $this->assertResponseIsSuccessful();
-        $this->assertSame(6, $this->countEquipmentRows($crawler));
+        $this->assertSame(7, $this->countEquipmentRows($crawler));
     }
 
     public function testSearchByOwnerNameInGlove(): void
     {
-        // "paris" → Club A → gloveA1, gloveA2 → 2 gants (Club D n'a pas de gant)
+        // "paris" → Club A → gloveA1, gloveA2 (owner)
+        // + gloveRegABorrowed (borrowerClub=Club A → "Kyudo Paris Marais") → 3
         $this->loginAs(AppFixtures::USER_ADMIN);
         $crawler = $this->requestIndex(['q' => 'paris', 'equipmentType' => 'glove']);
         $this->assertResponseIsSuccessful();
-        $this->assertSame(2, $this->countEquipmentRows($crawler));
+        $this->assertSame(3, $this->countEquipmentRows($crawler));
     }
 
     public function testSearchByBorrowerNameInGloveMatchesBoth(): void
@@ -407,11 +413,11 @@ final class EquipmentSearchFilterTest extends AbstractWebTestCase
 
     public function testCombinedGloveLoanedWithNoQuery(): void
     {
-        // glove + loaned (sans q) → gloveB uniquement → 1
+        // glove + loaned (sans q) → gloveB + gloveNatBorrowed + gloveRegABorrowed → 3
         $this->loginAs(AppFixtures::USER_ADMIN);
         $crawler = $this->requestIndex(['equipmentType' => 'glove', 'status' => 'loaned']);
         $this->assertResponseIsSuccessful();
-        $this->assertSame(1, $this->countEquipmentRows($crawler));
+        $this->assertSame(3, $this->countEquipmentRows($crawler));
         $this->assertStringContainsString(AppFixtures::CLUB_B, (string) $this->client->getResponse()->getContent());
     }
 

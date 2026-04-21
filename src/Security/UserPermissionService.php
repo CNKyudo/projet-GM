@@ -155,33 +155,21 @@ final class UserPermissionService
     }
 
     /**
-     * Peut voir un équipement d'un autre club sans restriction de région.
-     * MEMBER et PRESIDENT : accès à tout autre club.
-     * MANAGER_CLUB : limité aux clubs de sa propre région → @see canViewOtherClubEquipmentInOwnRegion().
+     * Peut voir un équipement d'un autre club (isOwnClub = false dans le voter).
+     *
+     * Règles selon la matrice des droits v2 :
+     *  - USER        : ❌ jamais
+     *  - MEMBER      : ❌ jamais
+     *  - PRESIDENT   : ✅ même CTK, équipement disponible seulement
+     *  - MGR_CLUB    : ✅ même CTK, équipement disponible seulement
+     *  - MGR_CTK     : ✅ même CTK (dispo + prêtés), autres CTK (dispo seulement)
+     *  - MGR_CN      : ✅ tout
+     *  - ADMIN       : ✅ tout
      */
-    public function canViewEquipmentFromOtherClub(User $user): bool
+    public function canViewOtherClubEquipment(User $user, Equipment $equipment): bool
     {
-        return $this->hasAnyRole($user, UserRole::MEMBER, UserRole::CLUB_PRESIDENT, UserRole::ADMIN);
-    }
-
-    /**
-     * MANAGER_CLUB peut voir les équipements CLUB d'un autre club,
-     * à condition que ce club soit dans la même région que son propre club.
-     */
-    public function canViewOtherClubEquipmentInOwnRegion(User $user, Equipment $equipment): bool
-    {
-        if (!$this->hasAnyRole($user, UserRole::EQUIPMENT_MANAGER_CLUB)) {
-            return false;
-        }
-
-        $managerClub = $user->getClubWhereImEquipmentManager();
-        if (!$managerClub instanceof Club) {
-            return false;
-        }
-
-        $managerRegion = $managerClub->getRegion();
-        if (!$managerRegion instanceof Region) {
-            return false;
+        if ($this->isCnOrAdmin($user)) {
+            return true;
         }
 
         $ownerClub = $equipment->getOwnerClub();
@@ -189,23 +177,76 @@ final class UserPermissionService
             return false;
         }
 
-        return $ownerClub->getRegion()?->getId() === $managerRegion->getId();
+        $isBorrowed = $equipment->getBorrowerClub() instanceof Club || $equipment->getBorrowerMember() instanceof \App\Entity\ClubMember;
+        $clubRegion = $ownerClub->getRegion();
+
+        if ($this->hasAnyRole($user, UserRole::EQUIPMENT_MANAGER_CTK)) {
+            // CTK : tout pour les clubs de ses régions gérées, dispo seulement ailleurs
+            if ($clubRegion instanceof Region && $user->getManagedRegions()->contains($clubRegion)) {
+                return true;
+            }
+
+            return !$isBorrowed;
+        }
+
+        if ($this->hasAnyRole($user, UserRole::CLUB_PRESIDENT) || $this->isClubLevel($user)) {
+            // PRESIDENT / MANAGER_CLUB : même CTK, équipement disponible seulement
+            if ($isBorrowed) {
+                return false;
+            }
+
+            if (!$clubRegion instanceof Region) {
+                return false;
+            }
+
+            return $this->userBelongsToRegion($user, $clubRegion);
+        }
+
+        // USER et MEMBER : aucun accès aux équipements d'autres clubs
+        return false;
     }
 
     /**
      * Peut voir un équipement régional.
-     * Tous les utilisateurs rattachés à un club peuvent voir les équipements
-     * de leur région. CN/CTK/ADMIN voient tous les équipements régionaux.
+     *
+     * Règles selon la matrice des droits v2 :
+     *  - USER        : ❌ jamais
+     *  - MEMBER      : ✅ sa CTK, disponible seulement
+     *  - PRESIDENT   : ✅ toutes CTK, disponible seulement
+     *  - MGR_CLUB    : ✅ toutes CTK, disponible seulement
+     *  - MGR_CTK     : ✅ sa CTK (dispo + prêtés), autres CTK (dispo seulement)
+     *  - MGR_CN      : ✅ tout
+     *  - ADMIN       : ✅ tout
      */
     public function canViewRegionalEquipment(User $user, Equipment $equipment): bool
     {
-        if ($this->isCtkOrAbove($user)) {
+        if ($this->isCnOrAdmin($user)) {
             return true;
         }
 
-        // MEMBER, PRESIDENT, MANAGER_CLUB : voient l'équipement régional de leur région
-        if ($this->hasAnyRole($user, UserRole::MEMBER) || $this->isClubLevel($user)) {
-            $ownerRegion = $equipment->getOwnerRegion();
+        $isBorrowed = $equipment->getBorrowerClub() instanceof Club || $equipment->getBorrowerMember() instanceof \App\Entity\ClubMember;
+        $ownerRegion = $equipment->getOwnerRegion();
+
+        if ($this->hasAnyRole($user, UserRole::EQUIPMENT_MANAGER_CTK)) {
+            // CTK : tout pour ses régions gérées, dispo seulement pour les autres
+            if ($ownerRegion instanceof Region && $user->getManagedRegions()->contains($ownerRegion)) {
+                return true;
+            }
+
+            return !$isBorrowed;
+        }
+
+        if ($this->hasAnyRole($user, UserRole::CLUB_PRESIDENT) || $this->isClubLevel($user)) {
+            // PRESIDENT / MANAGER_CLUB : toutes CTK, disponible seulement
+            return !$isBorrowed;
+        }
+
+        if ($this->hasAnyRole($user, UserRole::MEMBER)) {
+            // MEMBER : sa CTK uniquement, disponible seulement
+            if ($isBorrowed) {
+                return false;
+            }
+
             if (!$ownerRegion instanceof Region) {
                 return false;
             }
@@ -217,11 +258,23 @@ final class UserPermissionService
     }
 
     /**
-     * Peut voir un équipement national (tous les utilisateurs connectés).
+     * Peut voir un équipement national.
+     *
+     * Règles selon la matrice des droits v2 :
+     *  - USER à MGR_CTK : ✅ disponible seulement
+     *  - MGR_CN / ADMIN : ✅ tout (dispo + prêtés)
      */
-    public function canViewNationalEquipment(User $user): bool
+    public function canViewNationalEquipment(User $user, Equipment $equipment): bool
     {
-        return $this->hasAtLeastRole($user, UserRole::USER);
+        if ($this->isCnOrAdmin($user)) {
+            return true;
+        }
+
+        if ($this->hasAtLeastRole($user, UserRole::USER)) {
+            return !$equipment->getBorrowerClub() instanceof Club && !$equipment->getBorrowerMember() instanceof \App\Entity\ClubMember;
+        }
+
+        return false;
     }
 
     // -----------------------------------------------------------------------

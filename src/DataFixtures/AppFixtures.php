@@ -60,12 +60,15 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
  *     - Dojo Bretagne Quimper    (Club I)
  *     - Kyudo Lorient            (Club J)
  *
- * Équipements (15) :
+ * Équipements (17) :
  *   Gants (Glove) :
  *     - 3 × niveau CLUB (clubs A, B, C)
- *     - 1 × niveau REGIONAL (Région A)
- *     - 1 × niveau NATIONAL
- *     - 1 × niveau CLUB avec emprunteur club
+ *     - 1 × niveau CLUB avec emprunteur club (Club G → Rennes)
+ *     - 1 × niveau REGIONAL (Région A) disponible
+ *     - 1 × niveau REGIONAL (Région A) emprunté  ← NOUVEAU
+ *     - 1 × niveau REGIONAL (Région C) disponible
+ *     - 1 × niveau NATIONAL disponible
+ *     - 1 × niveau NATIONAL emprunté              ← NOUVEAU
  *   Arcs (Yumi) :
  *     - 4 × niveau CLUB (clubs A, D, E, G)
  *     - 2 × niveau REGIONAL (régions B, C)
@@ -94,6 +97,10 @@ class AppFixtures extends Fixture
     public const CLUB_B = 'Kyudo Lyon';
 
     public const CLUB_C = 'Kyudo Vincennes';
+
+    public const CLUB_D = 'Ryushin Dojo Paris';
+
+    public const CLUB_G = 'Kyudo Rennes';
 
     public const REGION_A = 'Île-de-France';
 
@@ -418,6 +425,25 @@ class AppFixtures extends Fixture
             ->setNbFingers(5)
             ->setSize(10);
         $manager->persist($gloveNat);
+
+        // NATIONAL — emprunté (pour tester la restriction "dispo seulement" des rôles < CN)
+        $gloveNatBorrowed = new Glove()
+            ->setOwnerFederation($federation)
+            ->setEquipmentLevel(EquipmentLevel::NATIONAL)
+            ->setNbFingers(3)
+            ->setSize(8)
+            ->setBorrowerMember($memberLinked);
+        $manager->persist($gloveNatBorrowed);
+
+        // REGIONAL — Région A (Île-de-France) — emprunté
+        // (pour tester la restriction "dispo seulement" de MEMBER / PRESIDENT / MANAGER_CLUB)
+        $gloveRegABorrowed = new Glove()
+            ->setOwnerRegion($regionA)
+            ->setEquipmentLevel(EquipmentLevel::REGIONAL)
+            ->setNbFingers(4)
+            ->setSize(7)
+            ->setBorrowerClub($clubA);
+        $manager->persist($gloveRegABorrowed);
 
         // ────────────────────────────────────────────────────────────────────
         // Équipements — Arcs (Yumi)

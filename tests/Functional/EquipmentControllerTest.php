@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\DataFixtures\AppFixtures;
 use App\Entity\Club;
+use App\Entity\Equipment;
 use App\Entity\Federation;
 use App\Entity\Glove;
 use App\Entity\Region;
@@ -27,44 +28,62 @@ use Doctrine\ORM\EntityManagerInterface;
  *                                 | CREATE_EQUIPMENT_FOR_OTHER_CLUB
  *   GET  /equipment/{id}/edit  → EDIT_EQUIPMENT (avec sujet)
  *
- * Matrice des droits attendus (source : Détails droits Kyudo gestion matériel DHD.csv)
- * ┌──────────────────────────────────────┬───────┬────────┬──────────┬──────────────┬─────────────┬────────────┬───────┐
- * │ Action                               │ USER  │ MEMBER │ PRESIDENT│ MGMT_CLUB    │ MGMT_CTK    │ MGMT_CN    │ ADMIN │
- * ├──────────────────────────────────────┼───────┼────────┼──────────┼──────────────┼─────────────┼────────────┼───────┤
- * │ index (GET)                          │  403  │  200   │  200     │  200         │  200        │  200       │  200  │
- * │ show propre club (GET)               │  403  │  200   │  200     │  200         │  403        │  403       │  200  │
- * │ show autre club (GET)                │  403  │  200   │  200     │  200         │  403        │  403       │  200  │
- * │ create propre club (GET)             │  403  │  403   │  200     │  200         │  403        │  403       │  200  │
- * │ create national (GET)                │  403  │  403   │  403     │  403         │  200        │  200       │  200  │
- * │ create régional (GET)                │  403  │  403   │  403     │  403         │  200        │  200       │  200  │
- * │ create pour autre club (GET)         │  403  │  403   │  403     │  403         │  200        │  200       │  200  │
- * │ edit propre club (GET)               │  403  │  403   │  200     │  403         │  200        │  200       │  200  │
- * │ edit autre club (GET)                │  403  │  403   │  403     │  403         │  200        │  200       │  200  │
- * └──────────────────────────────────────┴───────┴────────┴──────────┴──────────────┴─────────────┴────────────┴───────┘
+ * Matrice des droits de visualisation (source : matrice v2)
+ * ┌────────────────────────────────────────────┬───────┬────────┬──────────┬──────────────┬─────────────┬────────────┬───────┐
+ * │ Action                                     │ USER  │ MEMBER │ PRESIDENT│ MGMT_CLUB    │ MGMT_CTK    │ MGMT_CN    │ ADMIN │
+ * ├────────────────────────────────────────────┼───────┼────────┼──────────┼──────────────┼─────────────┼────────────┼───────┤
+ * │ index (GET)                                │  403  │  200   │  200     │  200         │  200        │  200       │  200  │
+ * │ show club A dispo (propre club)            │  403  │  200   │  200     │  200         │  200 (†)    │  200       │  200  │
+ * │ show club A prêté (propre club)            │  403  │  200   │  200     │  200         │  200 (†)    │  200       │  200  │
+ * │ show club C dispo (même CTK, autre club)   │  403  │  403   │  200     │  200         │  200 (†)    │  200       │  200  │
+ * │ show club C prêté (même CTK, autre club)   │  403  │  403   │  403     │  403         │  200 (†)    │  200       │  200  │
+ * │ show club B emprunté (autre CTK)           │  403  │  403   │  403     │  403         │  403        │  200       │  200  │
+ * │ show club G dispo (autre CTK)              │  403  │  403   │  403     │  403         │  200        │  200       │  200  │
+ * │ show régional Région A dispo               │  403  │  200   │  200     │  200         │  200        │  200       │  200  │
+ * │ show régional Région A prêté               │  403  │  403   │  403     │  403         │  200        │  200       │  200  │
+ * │ show national dispo                        │  200  │  200   │  200     │  200         │  200        │  200       │  200  │
+ * │ show national prêté                        │  403  │  403   │  403     │  403         │  403        │  200       │  200  │
+ * │ create propre club (GET)                   │  403  │  403   │  200     │  200         │  403        │  403       │  200  │
+ * │ create national (GET)                      │  403  │  403   │  403     │  403         │  200        │  200       │  200  │
+ * │ create régional (GET)                      │  403  │  403   │  403     │  403         │  200        │  200       │  200  │
+ * │ create pour autre club (GET)               │  403  │  403   │  403     │  403         │  200        │  200       │  200  │
+ * │ edit propre club (GET)                     │  403  │  403   │  200     │  200         │  403        │  403       │  200  │
+ * │ edit autre club (GET)                      │  403  │  403   │  403     │  403         │  200        │  200       │  200  │
+ * └────────────────────────────────────────────┴───────┴────────┴──────────┴──────────────┴─────────────┴────────────┴───────┘
  *
  * Notes :
- * - INDEX utilise BROWSE_ALL_EQUIPMENT → MEMBER/PRESIDENT/MGMT_CLUB/MGMT_CTK/MGMT_CN/ADMIN.
- * - SHOW utilise VIEW_EQUIPMENT avec sujet (canViewOwnClubEquipment ou canViewEquipmentFromOtherClub).
+ * - (†) MGMT_CTK : Club A et Club C sont dans Région A, gérée par mgr-ctk@kyudo-test.fr.
+ * - INDEX utilise BROWSE_ALL_EQUIPMENT → MEMBER+ autorisé.
+ * - SHOW utilise VIEW_EQUIPMENT avec sujet (logique niveau + emprunt + région).
+ * - SHOW national : USER autorisé si dispo, refusé si prêté.
  * - CREATE utilise un check combiné : au moins un des 4 droits de création.
  * - EDIT utilise EDIT_EQUIPMENT avec sujet (canEditOwnClubEquipment ou canEditEquipmentFromOtherClub).
- * - MGMT_CTK/CN absents de canViewOwnClubEquipment et canViewEquipmentFromOtherClub → 403 sur show.
  */
 final class EquipmentControllerTest extends AbstractWebTestCase
 {
     /** ID du gant appartenant au Club A (président = president@kyudo-test.fr) */
     private int $gloveAId;
 
-    /** ID du gant appartenant au Club B (sans président, Région B) */
+    /** ID du gant appartenant au Club B (sans président, Région B) — emprunté par Club C */
     private int $gloveBId;
 
     /** ID du gant appartenant au Club C (sans président, Région A — même région que Club A) */
     private int $gloveCId;
 
-    /** ID du gant régional (owner_region = Région A) */
+    /** ID du gant appartenant au Club G (Bretagne, Région C — autre CTK) */
+    private int $gloveGId;
+
+    /** ID du gant régional (owner_region = Région A) — disponible */
     private int $gloveRegionalId;
 
-    /** ID du gant national (owner_federation = Fédération) */
+    /** ID du gant régional (owner_region = Région A) — emprunté */
+    private int $gloveRegionalBorrowedId;
+
+    /** ID du gant national (owner_federation = Fédération) — disponible */
     private int $gloveNationalId;
+
+    /** ID du gant national (owner_federation = Fédération) — emprunté */
+    private int $gloveNationalBorrowedId;
 
     protected function setUp(): void
     {
@@ -74,7 +93,7 @@ final class EquipmentControllerTest extends AbstractWebTestCase
         /** @var EquipmentRepository $repo */
         $repo = $container->get(EquipmentRepository::class);
 
-        /** @var Glove[] $gloves */
+        /** @var Equipment[] $gloves */
         $gloves = $repo->findAll();
 
         foreach ($gloves as $glove) {
@@ -88,11 +107,22 @@ final class EquipmentControllerTest extends AbstractWebTestCase
                 $this->gloveBId = $glove->getId();
             } elseif (AppFixtures::CLUB_C === $glove->getOwnerClub()?->getName()) {
                 $this->gloveCId = $glove->getId();
+            } elseif (AppFixtures::CLUB_G === $glove->getOwnerClub()?->getName()) {
+                $this->gloveGId = $glove->getId();
             } elseif (AppFixtures::REGION_A === $glove->getOwnerRegion()?->getName()) {
-                // On cible spécifiquement la Région A : manager_ctk la gère
-                $this->gloveRegionalId = $glove->getId();
-            } elseif (null !== $glove->getOwnerFederation()) {
-                $this->gloveNationalId = $glove->getId();
+                // Deux gants régionaux pour Région A : disponible et emprunté
+                if (!$glove->getBorrowerClub() instanceof Club && !$glove->getBorrowerMember() instanceof \App\Entity\ClubMember) {
+                    $this->gloveRegionalId = $glove->getId();
+                } else {
+                    $this->gloveRegionalBorrowedId = $glove->getId();
+                }
+            } elseif ($glove->getOwnerFederation() instanceof Federation) {
+                // Deux gants nationaux : disponible et emprunté
+                if (!$glove->getBorrowerClub() instanceof Club && !$glove->getBorrowerMember() instanceof \App\Entity\ClubMember) {
+                    $this->gloveNationalId = $glove->getId();
+                } else {
+                    $this->gloveNationalBorrowedId = $glove->getId();
+                }
             }
         }
     }
@@ -164,8 +194,9 @@ final class EquipmentControllerTest extends AbstractWebTestCase
     }
 
     // -----------------------------------------------------------------------
-    // GET /equipment/{id} — show équipement du propre club (Club A)
-    // CSV : MEMBER/PRESIDENT/MGMT_CLUB autorisés, CTK/CN refusés
+    // GET /equipment/{id} — show équipement du propre club (Club A, dispo)
+    // Matrice : USER=403, MEMBER=200, PRESIDENT=200, MGMT_CLUB=200,
+    //           MGMT_CTK=200 (Club A ∈ Région A gérée par CTK), MGMT_CN=200, ADMIN=200
     // -----------------------------------------------------------------------
     public function testShowOwnClubEquipmentDeniedForRoleUser(): void
     {
@@ -193,38 +224,18 @@ final class EquipmentControllerTest extends AbstractWebTestCase
         $this->assertGetGranted('/equipment/'.$this->gloveAId);
     }
 
-    // -----------------------------------------------------------------------
-    // GET /equipment/{id} — MANAGER_CLUB : restriction régionale sur "autre club"
-    // mgr-club@kyudo-test.fr est gestionnaire de Club A (Région A).
-    //   Club C est dans Région A → visible
-    //   Club B est dans Région B → non visible
-    // -----------------------------------------------------------------------
-    public function testShowSameRegionClubEquipmentGrantedForEquipmentManagerClub(): void
+    public function testShowClubEquipmentInManagedRegionGrantedForEquipmentManagerCtk(): void
     {
-        // Club C est en Région A, comme Club A → MANAGER_CLUB peut voir ses équipements
-        $this->loginAs(AppFixtures::USER_MANAGER_CLUB);
-        $this->assertGetGranted('/equipment/'.$this->gloveCId);
-    }
-
-    public function testShowOtherRegionClubEquipmentDeniedForEquipmentManagerClub(): void
-    {
-        // Club B est en Région B, différente de Région A → MANAGER_CLUB ne peut pas voir
-        $this->loginAs(AppFixtures::USER_MANAGER_CLUB);
-        $this->assertGetDenied('/equipment/'.$this->gloveBId);
-    }
-
-    public function testShowOwnClubEquipmentDeniedForEquipmentManagerCtk(): void
-    {
-        // CTK absent de canViewOwnClubEquipment ET canViewEquipmentFromOtherClub → 403
+        // Club A est dans Région A, gérée par mgr-ctk → canViewOtherClubEquipment : même CTK → 200
         $this->loginAs(AppFixtures::USER_MANAGER_CTK);
-        $this->assertGetDenied('/equipment/'.$this->gloveAId);
+        $this->assertGetGranted('/equipment/'.$this->gloveAId);
     }
 
-    public function testShowOwnClubEquipmentDeniedForEquipmentManagerCn(): void
+    public function testShowClubEquipmentGrantedForEquipmentManagerCn(): void
     {
-        // CN absent de canViewOwnClubEquipment ET canViewEquipmentFromOtherClub → 403
+        // CN a accès à tous les équipements club → 200
         $this->loginAs(AppFixtures::USER_MANAGER_CN);
-        $this->assertGetDenied('/equipment/'.$this->gloveAId);
+        $this->assertGetGranted('/equipment/'.$this->gloveAId);
     }
 
     public function testShowOwnClubEquipmentGrantedForAdmin(): void
@@ -234,35 +245,194 @@ final class EquipmentControllerTest extends AbstractWebTestCase
     }
 
     // -----------------------------------------------------------------------
-    // GET /equipment/{id} — show équipement d'un autre club (Club B)
-    // president@kyudo-test.fr est président de Club A, PAS de Club B
-    // CSV : MEMBER/PRESIDENT/MGMT_CLUB autorisés, CTK/CN refusés
+    // GET /equipment/{id} — MANAGER_CLUB : restriction régionale sur "autre club"
+    // mgr-club@kyudo-test.fr est gestionnaire de Club A (Région A).
+    //   Club C dispo (Région A) → visible (même CTK, dispo)
+    //   Club B emprunté (Région B) → non visible (autre CTK)
     // -----------------------------------------------------------------------
-    public function testShowOtherClubEquipmentGrantedForPresident(): void
+    public function testShowSameRegionClubEquipmentGrantedForEquipmentManagerClub(): void
     {
-        // CLUB_PRESIDENT est dans canViewEquipmentFromOtherClub → 200 même pour autre club
-        $this->loginAs(AppFixtures::USER_PRESIDENT);
-        $this->assertGetGranted('/equipment/'.$this->gloveBId);
+        // Club C est en Région A, dispo → MANAGER_CLUB peut voir
+        $this->loginAs(AppFixtures::USER_MANAGER_CLUB);
+        $this->assertGetGranted('/equipment/'.$this->gloveCId);
     }
 
-    public function testShowOtherClubEquipmentDeniedForEquipmentManagerCtk(): void
+    public function testShowOtherRegionClubEquipmentDeniedForEquipmentManagerClub(): void
     {
-        // CTK absent de canViewEquipmentFromOtherClub → 403
+        // Club B est en Région B (autre CTK) → MANAGER_CLUB ne peut pas voir
+        $this->loginAs(AppFixtures::USER_MANAGER_CLUB);
+        $this->assertGetDenied('/equipment/'.$this->gloveBId);
+    }
+
+    // -----------------------------------------------------------------------
+    // GET /equipment/{id} — MEMBER : aucun accès aux équipements d'autres clubs
+    // -----------------------------------------------------------------------
+    public function testShowOtherClubSameCtKEquipmentDeniedForMember(): void
+    {
+        // Club C est en Région A (même CTK que member), mais MEMBER ne voit aucun autre club
+        $this->loginAs(AppFixtures::USER_MEMBER);
+        $this->assertGetDenied('/equipment/'.$this->gloveCId);
+    }
+
+    // -----------------------------------------------------------------------
+    // GET /equipment/{id} — PRESIDENT : même CTK dispo ✅, autre CTK ❌
+    // -----------------------------------------------------------------------
+    public function testShowSameCtKClubEquipmentDispoGrantedForPresident(): void
+    {
+        // Club C est en Région A (même CTK que le président de Club A) → dispo → 200
+        $this->loginAs(AppFixtures::USER_PRESIDENT);
+        $this->assertGetGranted('/equipment/'.$this->gloveCId);
+    }
+
+    public function testShowOtherCtKClubEquipmentDeniedForPresident(): void
+    {
+        // Club G est en Région C (autre CTK) → PRESIDENT ne peut pas voir → 403
+        $this->loginAs(AppFixtures::USER_PRESIDENT);
+        $this->assertGetDenied('/equipment/'.$this->gloveGId);
+    }
+
+    // -----------------------------------------------------------------------
+    // GET /equipment/{id} — MANAGER_CTK : autre CTK dispo ✅, autre CTK prêté ❌
+    // -----------------------------------------------------------------------
+    public function testShowOtherCtKClubEquipmentDispoGrantedForEquipmentManagerCtk(): void
+    {
+        // Club G est en Région C (autre CTK), dispo → CTK voit les équipements dispo des autres CTK
+        $this->loginAs(AppFixtures::USER_MANAGER_CTK);
+        $this->assertGetGranted('/equipment/'.$this->gloveGId);
+    }
+
+    public function testShowOtherCtKClubEquipmentBorrowedDeniedForEquipmentManagerCtk(): void
+    {
+        // Club B est en Région B (autre CTK), gloveB est emprunté → 403
         $this->loginAs(AppFixtures::USER_MANAGER_CTK);
         $this->assertGetDenied('/equipment/'.$this->gloveBId);
     }
 
-    public function testShowOtherClubEquipmentDeniedForEquipmentManagerCn(): void
+    public function testShowOtherCtKClubEquipmentGrantedForEquipmentManagerCn(): void
     {
-        // CN absent de canViewEquipmentFromOtherClub → 403
+        // CN voit tout, y compris les équipements empruntés d'autres CTK → 200
         $this->loginAs(AppFixtures::USER_MANAGER_CN);
-        $this->assertGetDenied('/equipment/'.$this->gloveBId);
+        $this->assertGetGranted('/equipment/'.$this->gloveBId);
     }
 
-    public function testShowOtherClubEquipmentGrantedForAdmin(): void
+    // -----------------------------------------------------------------------
+    // GET /equipment/{id} — show équipement régional (Région A)
+    // Matrice :
+    //   dispo  → USER=403, MEMBER=200(sa CTK), PRESIDENT=200, MGMT_CLUB=200,
+    //            MGMT_CTK=200, MGMT_CN=200, ADMIN=200
+    //   prêté  → USER=403, MEMBER=403, PRESIDENT=403, MGMT_CLUB=403,
+    //            MGMT_CTK=200, MGMT_CN=200, ADMIN=200
+    // -----------------------------------------------------------------------
+    public function testShowRegionalEquipmentDeniedForUser(): void
+    {
+        $this->loginAs(AppFixtures::USER_USER);
+        $this->assertGetDenied('/equipment/'.$this->gloveRegionalId);
+    }
+
+    public function testShowRegionalEquipmentDispoGrantedForMember(): void
+    {
+        // MEMBER peut voir l'équipement régional dispo de sa CTK (Région A)
+        $this->loginAs(AppFixtures::USER_MEMBER);
+        $this->assertGetGranted('/equipment/'.$this->gloveRegionalId);
+    }
+
+    public function testShowRegionalEquipmentBorrowedDeniedForMember(): void
+    {
+        // MEMBER ne peut PAS voir un équipement régional emprunté
+        $this->loginAs(AppFixtures::USER_MEMBER);
+        $this->assertGetDenied('/equipment/'.$this->gloveRegionalBorrowedId);
+    }
+
+    public function testShowRegionalEquipmentDispoGrantedForPresident(): void
+    {
+        $this->loginAs(AppFixtures::USER_PRESIDENT);
+        $this->assertGetGranted('/equipment/'.$this->gloveRegionalId);
+    }
+
+    public function testShowRegionalEquipmentBorrowedDeniedForPresident(): void
+    {
+        // PRESIDENT ne peut pas voir un équipement régional emprunté
+        $this->loginAs(AppFixtures::USER_PRESIDENT);
+        $this->assertGetDenied('/equipment/'.$this->gloveRegionalBorrowedId);
+    }
+
+    public function testShowRegionalEquipmentDispoGrantedForEquipmentManagerClub(): void
+    {
+        $this->loginAs(AppFixtures::USER_MANAGER_CLUB);
+        $this->assertGetGranted('/equipment/'.$this->gloveRegionalId);
+    }
+
+    public function testShowRegionalEquipmentBorrowedDeniedForEquipmentManagerClub(): void
+    {
+        $this->loginAs(AppFixtures::USER_MANAGER_CLUB);
+        $this->assertGetDenied('/equipment/'.$this->gloveRegionalBorrowedId);
+    }
+
+    public function testShowRegionalEquipmentDispoGrantedForEquipmentManagerCtk(): void
+    {
+        // CTK gère Région A → voit les équipements régionaux dispo et prêtés
+        $this->loginAs(AppFixtures::USER_MANAGER_CTK);
+        $this->assertGetGranted('/equipment/'.$this->gloveRegionalId);
+    }
+
+    public function testShowRegionalEquipmentBorrowedGrantedForEquipmentManagerCtk(): void
+    {
+        // CTK gère Région A → voit même les équipements régionaux empruntés de sa CTK
+        $this->loginAs(AppFixtures::USER_MANAGER_CTK);
+        $this->assertGetGranted('/equipment/'.$this->gloveRegionalBorrowedId);
+    }
+
+    // -----------------------------------------------------------------------
+    // GET /equipment/{id} — show équipement national
+    // Matrice :
+    //   dispo  → USER=200, MEMBER=200, ... ADMIN=200
+    //   prêté  → USER=403, MEMBER=403, PRESIDENT=403, MGMT_CLUB=403,
+    //            MGMT_CTK=403, MGMT_CN=200, ADMIN=200
+    // -----------------------------------------------------------------------
+    public function testShowNationalEquipmentDispoGrantedForUser(): void
+    {
+        // USER peut voir un équipement national disponible
+        $this->loginAs(AppFixtures::USER_USER);
+        $this->assertGetGranted('/equipment/'.$this->gloveNationalId);
+    }
+
+    public function testShowNationalEquipmentBorrowedDeniedForUser(): void
+    {
+        // USER ne peut PAS voir un équipement national emprunté
+        $this->loginAs(AppFixtures::USER_USER);
+        $this->assertGetDenied('/equipment/'.$this->gloveNationalBorrowedId);
+    }
+
+    public function testShowNationalEquipmentDispoGrantedForMember(): void
+    {
+        $this->loginAs(AppFixtures::USER_MEMBER);
+        $this->assertGetGranted('/equipment/'.$this->gloveNationalId);
+    }
+
+    public function testShowNationalEquipmentBorrowedDeniedForMember(): void
+    {
+        $this->loginAs(AppFixtures::USER_MEMBER);
+        $this->assertGetDenied('/equipment/'.$this->gloveNationalBorrowedId);
+    }
+
+    public function testShowNationalEquipmentBorrowedDeniedForEquipmentManagerCtk(): void
+    {
+        // CTK ne peut pas voir les équipements nationaux empruntés
+        $this->loginAs(AppFixtures::USER_MANAGER_CTK);
+        $this->assertGetDenied('/equipment/'.$this->gloveNationalBorrowedId);
+    }
+
+    public function testShowNationalEquipmentBorrowedGrantedForEquipmentManagerCn(): void
+    {
+        // CN peut voir tous les équipements nationaux (dispo + prêtés)
+        $this->loginAs(AppFixtures::USER_MANAGER_CN);
+        $this->assertGetGranted('/equipment/'.$this->gloveNationalBorrowedId);
+    }
+
+    public function testShowNationalEquipmentGrantedForAdmin(): void
     {
         $this->loginAs(AppFixtures::USER_ADMIN);
-        $this->assertGetGranted('/equipment/'.$this->gloveBId);
+        $this->assertGetGranted('/equipment/'.$this->gloveNationalBorrowedId);
     }
 
     // -----------------------------------------------------------------------

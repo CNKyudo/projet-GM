@@ -30,6 +30,7 @@ final class AddressFactory extends PersistentProxyObjectFactory
         ];
     }
 
+    #[\Override]
     protected function initialize(): static
     {
         return $this;

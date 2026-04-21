@@ -19,6 +19,7 @@ class ExactlyOneOwner extends Constraint
 
     public string $messageMultiple = 'Un seul propriétaire est autorisé : choisissez soit la fédération, soit la région, soit le club.';
 
+    #[\Override]
     public function getTargets(): string
     {
         return self::CLASS_CONSTRAINT;

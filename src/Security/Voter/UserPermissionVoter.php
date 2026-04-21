@@ -206,7 +206,7 @@ final class UserPermissionVoter extends Voter
         }
 
         return match ($subject->getEquipmentLevel()) {
-            EquipmentLevel::NATIONAL => $this->voteOnNationalEquipmentAttribute($attribute, $user),
+            EquipmentLevel::NATIONAL => $this->voteOnNationalEquipmentAttribute($attribute, $subject, $user),
             EquipmentLevel::REGIONAL => $this->voteOnRegionalEquipmentAttribute($attribute, $subject, $user),
             EquipmentLevel::CLUB     => $this->voteOnClubEquipmentAttribute($attribute, $subject, $user),
         };
@@ -221,15 +221,13 @@ final class UserPermissionVoter extends Voter
         $isOwnClub = ($ownerClub instanceof Club) && (
             ($userPresidentClub instanceof Club && $ownerClub->getId() === $userPresidentClub->getId())
             || ($userManagerClub instanceof Club && $ownerClub->getId() === $userManagerClub->getId())
+            || $user->getMemberOfClubs()->contains($ownerClub)
         );
 
         return match ($attribute) {
             self::VIEW_EQUIPMENT => $isOwnClub
                 ? $this->userPermissionService->canViewOwnClubEquipment($user)
-                : (
-                    $this->userPermissionService->canViewEquipmentFromOtherClub($user)
-                    || $this->userPermissionService->canViewOtherClubEquipmentInOwnRegion($user, $equipment)
-                ),
+                : $this->userPermissionService->canViewOtherClubEquipment($user, $equipment),
             self::EDIT_EQUIPMENT => $isOwnClub
                 ? $this->userPermissionService->canEditOwnClubEquipment($user)
                 : $this->userPermissionService->canEditEquipmentFromOtherClub($user),
@@ -254,10 +252,10 @@ final class UserPermissionVoter extends Voter
         };
     }
 
-    private function voteOnNationalEquipmentAttribute(string $attribute, User $user): bool
+    private function voteOnNationalEquipmentAttribute(string $attribute, Equipment $equipment, User $user): bool
     {
         return match ($attribute) {
-            self::VIEW_EQUIPMENT => $this->userPermissionService->canViewNationalEquipment($user),
+            self::VIEW_EQUIPMENT => $this->userPermissionService->canViewNationalEquipment($user, $equipment),
             self::EDIT_EQUIPMENT => $this->userPermissionService->canEditNationalEquipment($user),
             self::BORROW_EQUIPMENT,
             self::SET_ANOTHER_BORROWER_FOR_EQUIPMENT => $this->userPermissionService->canBorrowRegionalOrNationalEquipment($user),
