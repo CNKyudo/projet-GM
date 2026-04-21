@@ -12,7 +12,7 @@ use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 /**
- * Valide que parmi les champs owner_federation / owner_region / owner_club
+ * Valide que parmi les champs ownerFederation / ownerRegion / ownerClub
  * présents dans les données du formulaire, exactement un est renseigné.
  *
  * Le validator est appliqué au niveau de la classe du FormData (objet stdClass
@@ -50,9 +50,9 @@ class ExactlyOneOwnerValidator extends ConstraintValidator
             return null;
         };
 
-        $federation = $get($value, 'owner_federation');
-        $region     = $get($value, 'owner_region');
-        $club       = $get($value, 'owner_club');
+        $federation = $get($value, 'ownerFederation');
+        $region     = $get($value, 'ownerRegion');
+        $club       = $get($value, 'ownerClub');
 
         // Normalise : seules les entités Doctrine comptent comme "renseignées"
         $hasFederation = $federation instanceof Federation;
@@ -61,16 +61,16 @@ class ExactlyOneOwnerValidator extends ConstraintValidator
 
         // Détermine quels champs sont présents dans le formulaire (selon le rôle)
         $presentFields = [];
-        if (null !== $federation || \array_key_exists('owner_federation', (array) $value)) {
-            $presentFields[] = 'owner_federation';
+        if (null !== $federation || \array_key_exists('ownerFederation', (array) $value)) {
+            $presentFields[] = 'ownerFederation';
         }
 
-        if (null !== $region || \array_key_exists('owner_region', (array) $value)) {
-            $presentFields[] = 'owner_region';
+        if (null !== $region || \array_key_exists('ownerRegion', (array) $value)) {
+            $presentFields[] = 'ownerRegion';
         }
 
-        if (null !== $club || \array_key_exists('owner_club', (array) $value)) {
-            $presentFields[] = 'owner_club';
+        if (null !== $club || \array_key_exists('ownerClub', (array) $value)) {
+            $presentFields[] = 'ownerClub';
         }
 
         // Si aucun champ owner n'est présent dans le formulaire, on ne valide pas
@@ -83,7 +83,7 @@ class ExactlyOneOwnerValidator extends ConstraintValidator
 
         if (0 === $filledCount) {
             $this->context->buildViolation($constraint->messageNone)
-                ->atPath('owner_club')
+                ->atPath('ownerClub')
                 ->addViolation();
 
             return;
@@ -91,7 +91,7 @@ class ExactlyOneOwnerValidator extends ConstraintValidator
 
         if ($filledCount > 1) {
             $this->context->buildViolation($constraint->messageMultiple)
-                ->atPath('owner_federation')
+                ->atPath('ownerFederation')
                 ->addViolation();
         }
     }

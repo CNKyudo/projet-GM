@@ -46,7 +46,7 @@
 						<div class="rounded-2xl bg-kyudo-gm-light-grey p-4">
 							<dt class="text-xs font-medium text-">Président</dt>
 							<dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
-								{{ club.president ?: '-' }}
+								{{ club.president ? club.president.fullName : '-' }}
 							</dd>
 						</div>
 
@@ -78,6 +78,114 @@
 
 		</div>
 
+		{# ── Section Membres du club ──────────────────────────────────────────── #}
+		<div class="mx-auto max-w-6xl mt-6 rounded-3xl bg-kyudo-white shadow-xl p-5 sm:p-8 md:p-12">
+			<div class="flex items-center justify-between">
+				<h2 class="text-base font-semibold text-kyudo-gm-dark">Membres du club</h2>
+			</div>
+
+			{% if club.clubMembers is empty %}
+				<p class="mt-4 text-sm text-kyudo-gm-grey">Aucun membre non-inscrit enregistré pour ce club.</p>
+			{% else %}
+				<div class="mt-4 overflow-x-auto rounded-2xl border border-kyudo-gm-light-grey">
+					<table class="min-w-full text-sm text-kyudo-gm-dark">
+						<thead class="bg-kyudo-gm-light-grey text-xs font-semibold uppercase tracking-wide">
+							<tr>
+								<th class="px-4 py-3 text-left">Nom</th>
+								<th class="px-4 py-3 text-left">Prénom</th>
+								<th class="px-4 py-3 text-left">Email</th>
+
+								<th class="px-4 py-3 text-center">Inscrit</th>
+								{% if is_granted('EDIT_CLUB_MEMBER', club.clubMembers.first) or is_granted('DELETE_CLUB_MEMBER', club.clubMembers.first) %}
+									<th class="px-4 py-3 text-left">Actions</th>
+								{% endif %}
+							</tr>
+						</thead>
+						<tbody class="divide-y divide-kyudo-gm-light-grey">
+							{% for member in club.clubMembers %}
+								<tr class="hover:bg-kyudo-gm-light-grey/40">
+									<td class="px-4 py-3 font-medium">{{ member.lastName }}</td>
+									<td class="px-4 py-3">{{ member.firstName }}</td>
+									<td class="px-4 py-3">
+										{% if member.email %}
+											<a class="text-blue-700 hover:underline" href="mailto:{{ member.email }}">{{ member.email }}</a>
+										{% else %}
+											<span class="text-kyudo-gm-grey">-</span>
+										{% endif %}
+									</td>
+								<td class="px-4 py-3 text-center">
+										{% if member.isRegistered %}
+											<span title="Compte utilisateur lié">✓</span>
+										{% else %}
+											<span title="Pas de compte utilisateur">✗</span>
+										{% endif %}
+									</td>
+									<td class="px-4 py-3 flex gap-2">
+										{% if is_granted('EDIT_CLUB_MEMBER', member) %}
+											<a href="{{ path('club_member_edit', {'clubId': club.id, 'memberId': member.id}) }}"
+											   class="inline-flex items-center rounded-lg bg-kyudo-blue px-3 py-1.5 text-xs font-medium text-(--color-kyudo-white) hover:bg-kyudo-royal-blue">
+												Modifier
+											</a>
+										{% endif %}
+										{% if is_granted('DELETE_CLUB_MEMBER', member) %}
+											{% if not member.canBeDeleted %}
+												<button type="button"
+												        disabled
+												        title="Impossible de supprimer : ce membre a du matériel emprunté. Veuillez d'abord récupérer le matériel."
+												        class="inline-flex items-center rounded-lg bg-gray-300 px-3 py-1.5 text-xs font-medium text-gray-500 cursor-not-allowed">
+													Supprimer
+												</button>
+											{% else %}
+												<form method="post" action="{{ path('club_member_delete', {'clubId': club.id, 'memberId': member.id}) }}" onsubmit="return confirm('Supprimer ce membre ?')">
+													<input type="hidden" name="_token" value="{{ csrf_token('delete_member' ~ member.id) }}">
+													<button type="submit"
+													        class="inline-flex items-center rounded-lg bg-red-500 px-3 py-1.5 text-xs font-medium text-(--color-kyudo-white) hover:bg-red-700">
+														Supprimer
+													</button>
+												</form>
+											{% endif %}
+										{% endif %}
+									</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			{% endif %}
+
+			{# ── Formulaire d'ajout de membre non-inscrit ─────────────────────── #}
+			{% if memberForm is not null %}
+				<div class="mt-8 border-t border-kyudo-gm-light-grey pt-6">
+					<h3 class="text-sm font-semibold text-kyudo-gm-dark mb-4">Ajouter un membre non-inscrit</h3>
+					{{ form_start(memberForm) }}
+					<div class="grid gap-4 sm:grid-cols-2">
+						<div>
+							{{ form_row(memberForm.firstName, {
+								attr: { 'class': 'block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-kyudo-royal-blue' }
+							}) }}
+						</div>
+						<div>
+							{{ form_row(memberForm.lastName, {
+								attr: { 'class': 'block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-kyudo-royal-blue' }
+							}) }}
+						</div>
+						<div>
+							{{ form_row(memberForm.email, {
+								attr: { 'class': 'block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-kyudo-royal-blue' }
+							}) }}
+						</div>
+					</div>
+					<div class="mt-4">
+						<button type="submit" class="inline-flex items-center rounded-2xl bg-kyudo-blue px-4 py-2 text-sm font-medium text-(--color-kyudo-white) hover:bg-kyudo-royal-blue focus:outline-none focus:ring-2 focus:ring-kyudo-washed-blue">
+							Ajouter le membre
+						</button>
+					</div>
+					{{ form_end(memberForm) }}
+				</div>
+			{% endif %}
+		</div>
+
+		{# ── Section Équipements du club ──────────────────────────────────────── #}
 		<div class="mx-auto max-w-6xl mt-6 rounded-3xl bg-kyudo-white shadow-xl p-5 sm:p-8 md:p-12">
 			<h2 class="text-base font-semibold text-kyudo-gm-dark">Équipements du club</h2>
 
@@ -114,13 +222,13 @@
 										{% endif %}
 									</td>
 									<td class="px-4 py-3">
-										{% if equipment.borrowerUser %}
-											{{ equipment.borrowerUser }}
-										{% elseif equipment.borrowerClub %}
-											{{ equipment.borrowerClub }}
-										{% else %}
-											<span class="text-kyudo-gm-grey">-</span>
-										{% endif %}
+								{% if equipment.borrowerMember %}
+										{{ equipment.borrowerMember.fullName }}
+									{% elseif equipment.borrowerClub %}
+										{{ equipment.borrowerClub }}
+									{% else %}
+										<span class="text-kyudo-gm-grey">-</span>
+									{% endif %}
 									</td>
 								</tr>
 							{% endfor %}
@@ -132,3 +240,4 @@
 
 	</div>
 {% endblock %}
+

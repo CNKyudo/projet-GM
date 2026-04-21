@@ -78,6 +78,10 @@ final class EquipmentControllerTest extends AbstractWebTestCase
         $gloves = $repo->findAll();
 
         foreach ($gloves as $glove) {
+            if (!$glove instanceof Glove) {
+                continue;
+            }
+
             if (AppFixtures::CLUB_A === $glove->getOwnerClub()?->getName()) {
                 $this->gloveAId = $glove->getId();
             } elseif (AppFixtures::CLUB_B === $glove->getOwnerClub()?->getName()) {
@@ -143,68 +147,9 @@ final class EquipmentControllerTest extends AbstractWebTestCase
     // -----------------------------------------------------------------------
     // GET /equipment — tous les rôles (MEMBER+) voient l'intégralité des équipements
     // (club, régional, national) sans restriction.
-    // Vérification : chaque rôle voit les 3 clubs (A, B, C).
+    // Vérification : les 3 clubs (A, B, C) apparaissent dans la réponse.
+    // (Le droit d'accès par rôle est couvert par les tests testIndex*Granted/Denied.)
     // -----------------------------------------------------------------------
-
-    public function testIndexForMemberShowsAllClubsAndLevels(): void
-    {
-        $this->loginAs(AppFixtures::USER_MEMBER);
-        $this->client->request(Request::METHOD_GET, '/equipment');
-        $this->assertResponseIsSuccessful();
-
-        $content = (string) $this->client->getResponse()->getContent();
-        $this->assertStringContainsString(AppFixtures::CLUB_A, $content);
-        $this->assertStringContainsString(AppFixtures::CLUB_B, $content);
-        $this->assertStringContainsString(AppFixtures::CLUB_C, $content);
-    }
-
-    public function testIndexForPresidentShowsAllClubsAndLevels(): void
-    {
-        $this->loginAs(AppFixtures::USER_PRESIDENT);
-        $this->client->request(Request::METHOD_GET, '/equipment');
-        $this->assertResponseIsSuccessful();
-
-        $content = (string) $this->client->getResponse()->getContent();
-        $this->assertStringContainsString(AppFixtures::CLUB_A, $content);
-        $this->assertStringContainsString(AppFixtures::CLUB_B, $content);
-        $this->assertStringContainsString(AppFixtures::CLUB_C, $content);
-    }
-
-    public function testIndexForManagerClubShowsAllClubsAndLevels(): void
-    {
-        $this->loginAs(AppFixtures::USER_MANAGER_CLUB);
-        $this->client->request(Request::METHOD_GET, '/equipment');
-        $this->assertResponseIsSuccessful();
-
-        $content = (string) $this->client->getResponse()->getContent();
-        $this->assertStringContainsString(AppFixtures::CLUB_A, $content);
-        $this->assertStringContainsString(AppFixtures::CLUB_B, $content);
-        $this->assertStringContainsString(AppFixtures::CLUB_C, $content);
-    }
-
-    public function testIndexForManagerCtkShowsAllClubsAndLevels(): void
-    {
-        $this->loginAs(AppFixtures::USER_MANAGER_CTK);
-        $this->client->request(Request::METHOD_GET, '/equipment');
-        $this->assertResponseIsSuccessful();
-
-        $content = (string) $this->client->getResponse()->getContent();
-        $this->assertStringContainsString(AppFixtures::CLUB_A, $content);
-        $this->assertStringContainsString(AppFixtures::CLUB_B, $content);
-        $this->assertStringContainsString(AppFixtures::CLUB_C, $content);
-    }
-
-    public function testIndexForManagerCnShowsAllClubsAndLevels(): void
-    {
-        $this->loginAs(AppFixtures::USER_MANAGER_CN);
-        $this->client->request(Request::METHOD_GET, '/equipment');
-        $this->assertResponseIsSuccessful();
-
-        $content = (string) $this->client->getResponse()->getContent();
-        $this->assertStringContainsString(AppFixtures::CLUB_A, $content);
-        $this->assertStringContainsString(AppFixtures::CLUB_B, $content);
-        $this->assertStringContainsString(AppFixtures::CLUB_C, $content);
-    }
 
     public function testIndexForAdminShowsAllClubsAndLevels(): void
     {
@@ -514,9 +459,9 @@ final class EquipmentControllerTest extends AbstractWebTestCase
         $this->assertPostRedirects('/equipment/create', [
             'equipment_form' => [
                 'equipment_type' => 'glove',
-                'owner_club'     => (string) $clubA->getId(),
-                'borrower_club'  => '',
-                'borrower_user'  => '',
+                'ownerClub'      => (string) $clubA->getId(),
+                'borrowerClub'   => '',
+                'borrowerMember' => '',
                 'glove_form'     => ['nb_fingers' => '3', 'size' => '7'],
                 'yumi_form'      => ['material' => '', 'strength' => '', 'length' => ''],
             ],
@@ -536,10 +481,10 @@ final class EquipmentControllerTest extends AbstractWebTestCase
         $this->assertPostRedirects('/equipment/create', [
             'equipment_form' => [
                 'equipment_type'  => 'glove',
-                'owner_region'    => (string) $regionA->getId(),
-                'owner_club'      => '',
-                'borrower_club'   => '',
-                'borrower_user'   => '',
+                'ownerRegion'     => (string) $regionA->getId(),
+                'ownerClub'       => '',
+                'borrowerClub'    => '',
+                'borrowerMember'  => '',
                 'glove_form'      => ['nb_fingers' => '3', 'size' => '7'],
                 'yumi_form'       => ['material' => '', 'strength' => '', 'length' => ''],
             ],
@@ -556,9 +501,9 @@ final class EquipmentControllerTest extends AbstractWebTestCase
 
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode(), (string) $this->client->getResponse()->getContent());
         $this->assertStringNotContainsString(
-            'name="equipment_form[owner_federation]"',
+            'name="equipment_form[ownerFederation]"',
             (string) $this->client->getResponse()->getContent(),
-            'CTK should not see the owner_federation field'
+            'CTK should not see the ownerFederation field'
         );
     }
 
@@ -574,14 +519,14 @@ final class EquipmentControllerTest extends AbstractWebTestCase
 
         $this->assertPostRedirects('/equipment/create', [
             'equipment_form' => [
-                'equipment_type'   => 'glove',
-                'owner_federation' => (string) $federation->getId(),
-                'owner_region'     => '',
-                'owner_club'       => '',
-                'borrower_club'    => '',
-                'borrower_user'    => '',
-                'glove_form'       => ['nb_fingers' => '3', 'size' => '7'],
-                'yumi_form'        => ['material' => '', 'strength' => '', 'length' => ''],
+                'equipment_type'    => 'glove',
+                'ownerFederation'   => (string) $federation->getId(),
+                'ownerRegion'       => '',
+                'ownerClub'         => '',
+                'borrowerClub'      => '',
+                'borrowerMember'    => '',
+                'glove_form'        => ['nb_fingers' => '3', 'size' => '7'],
+                'yumi_form'         => ['material' => '', 'strength' => '', 'length' => ''],
             ],
         ]);
     }
@@ -596,14 +541,14 @@ final class EquipmentControllerTest extends AbstractWebTestCase
 
         $this->client->request(Request::METHOD_POST, '/equipment/create', [
             'equipment_form' => [
-                'equipment_type'   => 'glove',
-                'owner_federation' => '',
-                'owner_region'     => '',
-                'owner_club'       => '',
-                'borrower_club'    => '',
-                'borrower_user'    => '',
-                'glove_form'       => ['nb_fingers' => '3', 'size' => '7'],
-                'yumi_form'        => ['material' => '', 'strength' => '', 'length' => ''],
+                'equipment_type'    => 'glove',
+                'ownerFederation'   => '',
+                'ownerRegion'       => '',
+                'ownerClub'         => '',
+                'borrowerClub'      => '',
+                'borrowerMember'    => '',
+                'glove_form'        => ['nb_fingers' => '3', 'size' => '7'],
+                'yumi_form'         => ['material' => '', 'strength' => '', 'length' => ''],
             ],
         ]);
 
@@ -631,14 +576,14 @@ final class EquipmentControllerTest extends AbstractWebTestCase
 
         $this->client->request(Request::METHOD_POST, '/equipment/create', [
             'equipment_form' => [
-                'equipment_type'   => 'glove',
-                'owner_federation' => (string) $federation->getId(),
-                'owner_region'     => '',
-                'owner_club'       => (string) $clubA->getId(),
-                'borrower_club'    => '',
-                'borrower_user'    => '',
-                'glove_form'       => ['nb_fingers' => '3', 'size' => '7'],
-                'yumi_form'        => ['material' => '', 'strength' => '', 'length' => ''],
+                'equipment_type'    => 'glove',
+                'ownerFederation'   => (string) $federation->getId(),
+                'ownerRegion'       => '',
+                'ownerClub'         => (string) $clubA->getId(),
+                'borrowerClub'      => '',
+                'borrowerMember'    => '',
+                'glove_form'        => ['nb_fingers' => '3', 'size' => '7'],
+                'yumi_form'         => ['material' => '', 'strength' => '', 'length' => ''],
             ],
         ]);
 

@@ -236,31 +236,10 @@ final class ClubControllerTest extends AbstractWebTestCase
     }
 
     // -----------------------------------------------------------------------
-    // TRANSFER_CLUB_PRESIDENCY — édition du propre club par le président
-    // CSV : un président peut transférer sa présidence à un autre membre de son club
-    // Même route que edit, mais logique distincte : voteOnClubAttribute délègue à
-    // canTransferClubPresidency (PRESIDENT/ADMIN) quand le sujet est le propre club.
+    // TRANSFER_CLUB_PRESIDENCY — le président ne peut PAS éditer un autre club
+    // (Les cas member/manager-club/president sur propre club sont couverts
+    //  par la section testEditOwnClub* ci-dessus.)
     // -----------------------------------------------------------------------
-    public function testTransferPresidencyDeniedForMember(): void
-    {
-        $this->loginAs(AppFixtures::USER_MEMBER);
-        $this->assertGetDenied('/club/'.$this->clubAId.'/edit');
-    }
-
-    public function testTransferPresidencyDeniedForEquipmentManagerClub(): void
-    {
-        // MGMT_CLUB n'a pas de droit de modifier un club
-        $this->loginAs(AppFixtures::USER_MANAGER_CLUB);
-        $this->assertGetDenied('/club/'.$this->clubAId.'/edit');
-    }
-
-    public function testTransferPresidencyGrantedForPresident(): void
-    {
-        // CSV : PRESIDENT peut transférer sa présidence → edit de son propre club autorisé
-        $this->loginAs(AppFixtures::USER_PRESIDENT);
-        $this->assertGetGranted('/club/'.$this->clubAId.'/edit');
-    }
-
     public function testTransferPresidencyDeniedForPresidentOnOtherClub(): void
     {
         // PRESIDENT ne peut PAS éditer un club qui n'est pas le sien

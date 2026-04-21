@@ -21,8 +21,8 @@ final class DefaultSearchStrategy extends AbstractSearchStrategy
         return $this->entityManager->createQueryBuilder()
             ->select('e', 'owner', 'borrower')
             ->from(Equipment::class, 'e')
-            ->leftJoin('e.owner_club', 'owner')
-            ->leftJoin('e.borrower_club', 'borrower')
+            ->leftJoin('e.ownerClub', 'owner')
+            ->leftJoin('e.borrowerClub', 'borrower')
             ->orderBy('e.id', 'DESC');
     }
 

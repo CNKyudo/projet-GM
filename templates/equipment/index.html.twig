@@ -81,9 +81,9 @@
 
 					<tbody class="divide-y divide-kyudo-gm-light-grey text-sm">
 						{% for equipment in equipments %}
-							{% set owner = equipment.ownerClub %}
-							{% set borrowerClub = equipment.borrowerClub %}
-							{% set borrowerUser = equipment.borrowerUser %}
+						{% set owner = equipment.ownerClub %}
+						{% set borrowerClub = equipment.borrowerClub %}
+						{% set borrowerMember = equipment.borrowerMember %}
 
 							<tr class="hover:bg-kyudo-gm-light-grey" data-testid="equipment-row">
 								<td class="px-5 py-4 text-kyudo-gm-grey">{{ equipment.id }}</td>
@@ -112,21 +112,21 @@
 							</td>
 
 								<td class="px-5 py-4">
-									{% if borrowerClub %}
-										<span class="inline-flex items-center gap-2 rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-800">
-											Prêté à
-											<span class="font-semibold">{{ borrowerClub.name }}</span>
-										</span>
-									{% elseif borrowerUser %}
-										<span class="inline-flex items-center gap-2 rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-800">
-											Prêté à
-											<span class="font-semibold">{{ borrowerUser.email }}</span>
-										</span>
-									{% else %}
-										<span class="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-800">
-											Disponible
-										</span>
-									{% endif %}
+								{% if borrowerClub %}
+									<span class="inline-flex items-center gap-2 rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-800">
+										Prêté à
+										<span class="font-semibold">{{ borrowerClub.name }}</span>
+									</span>
+								{% elseif borrowerMember %}
+									<span class="inline-flex items-center gap-2 rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-800">
+										Emprunté par
+										<span class="font-semibold">{{ borrowerMember.fullName }}</span>
+									</span>
+								{% else %}
+									<span class="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-800">
+										Disponible
+									</span>
+								{% endif %}
 								</td>
 
 							<td class="px-5 py-4">

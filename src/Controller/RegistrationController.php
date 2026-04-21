@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\RegistrationFormType;
+use App\Repository\ClubMemberRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -16,8 +17,11 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class RegistrationController extends AbstractController
 {
-    public function __construct(private readonly UserPasswordHasherInterface $userPasswordHasher, private readonly Security $security)
-    {
+    public function __construct(
+        private readonly UserPasswordHasherInterface $userPasswordHasher,
+        private readonly Security $security,
+        private readonly ClubMemberRepository $clubMemberRepository,
+    ) {
     }
 
     #[Route('/register', name: 'app_register')]
@@ -35,9 +39,17 @@ class RegistrationController extends AbstractController
             $user->setPassword($this->userPasswordHasher->hashPassword($user, $plainPassword));
 
             $entityManager->persist($user);
-            $entityManager->flush();
 
-            // do anything else you need here, like send an email
+            // Liaison automatique : si un ClubMember non-inscrit a le même email, on le lie
+            $clubMember = $this->clubMemberRepository->findOneBy([
+                'email' => $user->getEmail(),
+                'user'  => null,
+            ]);
+            if (null !== $clubMember) {
+                $clubMember->setUser($user);
+            }
+
+            $entityManager->flush();
 
             return $this->security->login($user, 'form_login', 'main');
         }

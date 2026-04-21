@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\DataFixtures;
 
 use App\Entity\Club;
+use App\Entity\ClubMember;
 use App\Entity\Federation;
 use App\Entity\Glove;
 use App\Entity\Region;
@@ -69,7 +70,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
  *     - 4 × niveau CLUB (clubs A, D, E, G)
  *     - 2 × niveau REGIONAL (régions B, C)
  *     - 2 × niveau NATIONAL
- *     - 1 × niveau CLUB avec emprunteur utilisateur
+ *     - 1 × niveau CLUB avec emprunteur ClubMember (membre lié)
  */
 class AppFixtures extends Fixture
 {
@@ -102,6 +103,9 @@ class AppFixtures extends Fixture
 
     public const PASSWORD = 'password';
 
+    /** Email du ClubMember non-inscrit utilisé dans les tests fonctionnels. */
+    public const CLUB_MEMBER_UNREGISTERED_EMAIL = 'non-inscrit.test@kyudo-test.fr';
+
     public function __construct(
         private readonly UserPasswordHasherInterface $userPasswordHasher,
     ) {
@@ -113,8 +117,11 @@ class AppFixtures extends Fixture
 
         // ────────────────────────────────────────────────────────────────────
         // Fédération
+
         // ────────────────────────────────────────────────────────────────────
-        $federation = (new Federation())
+        // Fédération
+        // ────────────────────────────────────────────────────────────────────
+        $federation = new Federation()
             ->setName(self::FEDERATION_NAME)
             ->setEmail('contact@cnkyudo.fr');
         $manager->persist($federation);
@@ -122,19 +129,19 @@ class AppFixtures extends Fixture
         // ────────────────────────────────────────────────────────────────────
         // Régions (CTK)
         // ────────────────────────────────────────────────────────────────────
-        $regionA = (new Region())
+        $regionA = new Region()
             ->setFederation($federation)
             ->setName(self::REGION_A)
             ->setEmail('ctk.idf@cnkyudo.fr');
         $manager->persist($regionA);
 
-        $regionB = (new Region())
+        $regionB = new Region()
             ->setFederation($federation)
             ->setName(self::REGION_B)
             ->setEmail('ctk.aura@cnkyudo.fr');
         $manager->persist($regionB);
 
-        $regionC = (new Region())
+        $regionC = new Region()
             ->setFederation($federation)
             ->setName('Bretagne')
             ->setEmail('ctk.bretagne@cnkyudo.fr');
@@ -143,23 +150,24 @@ class AppFixtures extends Fixture
         // ────────────────────────────────────────────────────────────────────
         // Comptes de test (requis par les tests fonctionnels)
         // ────────────────────────────────────────────────────────────────────
+        /** @var array<string, array{roles: list<string>}> $testUsers */
         $testUsers = [
-            self::USER_USER         => [],
-            self::USER_MEMBER       => [UserRole::MEMBER->value],
-            self::USER_PRESIDENT    => [UserRole::CLUB_PRESIDENT->value],
-            self::USER_MANAGER_CLUB => [UserRole::EQUIPMENT_MANAGER_CLUB->value],
-            self::USER_MANAGER_CTK  => [UserRole::EQUIPMENT_MANAGER_CTK->value],
-            self::USER_MANAGER_CN   => [UserRole::EQUIPMENT_MANAGER_CN->value],
-            self::USER_ADMIN        => [UserRole::ADMIN->value],
+            self::USER_USER         => ['roles' => []],
+            self::USER_MEMBER       => ['roles' => [UserRole::MEMBER->value]],
+            self::USER_PRESIDENT    => ['roles' => [UserRole::CLUB_PRESIDENT->value]],
+            self::USER_MANAGER_CLUB => ['roles' => [UserRole::EQUIPMENT_MANAGER_CLUB->value]],
+            self::USER_MANAGER_CTK  => ['roles' => [UserRole::EQUIPMENT_MANAGER_CTK->value]],
+            self::USER_MANAGER_CN   => ['roles' => [UserRole::EQUIPMENT_MANAGER_CN->value]],
+            self::USER_ADMIN        => ['roles' => [UserRole::ADMIN->value]],
         ];
 
         /** @var array<string, User> $u */
         $u = [];
-        foreach ($testUsers as $email => $roles) {
-            $user = (new User())
+        foreach ($testUsers as $email => $data) {
+            $user = new User()
                 ->setEmail($email)
                 ->setPassword($hashedPassword)
-                ->setRoles($roles);
+                ->setRoles($data['roles']);
             $manager->persist($user);
             $u[$email] = $user;
         }
@@ -172,7 +180,7 @@ class AppFixtures extends Fixture
         // ────────────────────────────────────────────────────────────────────
 
         // Gestionnaire CTK Auvergne-Rhône-Alpes
-        $ctkAura = (new User())
+        $ctkAura = new User()
             ->setEmail('ctk.aura@cnkyudo.fr')
             ->setPassword($hashedPassword)
             ->setRoles([UserRole::EQUIPMENT_MANAGER_CTK->value]);
@@ -181,7 +189,7 @@ class AppFixtures extends Fixture
         $manager->persist($ctkAura);
 
         // Gestionnaire CTK Bretagne
-        $ctkBretagne = (new User())
+        $ctkBretagne = new User()
             ->setEmail('ctk.bretagne@cnkyudo.fr')
             ->setPassword($hashedPassword)
             ->setRoles([UserRole::EQUIPMENT_MANAGER_CTK->value]);
@@ -190,43 +198,43 @@ class AppFixtures extends Fixture
         $manager->persist($ctkBretagne);
 
         // Membres et présidents supplémentaires
-        $presidentLyon = (new User())
+        $presidentLyon = new User()
             ->setEmail('president.lyon@kyudo.fr')
             ->setPassword($hashedPassword)
             ->setRoles([UserRole::CLUB_PRESIDENT->value]);
         $manager->persist($presidentLyon);
 
-        $presidentRennes = (new User())
+        $presidentRennes = new User()
             ->setEmail('president.rennes@kyudo.fr')
             ->setPassword($hashedPassword)
             ->setRoles([UserRole::CLUB_PRESIDENT->value]);
         $manager->persist($presidentRennes);
 
-        $managerLyon = (new User())
+        $managerLyon = new User()
             ->setEmail('manager.lyon@kyudo.fr')
             ->setPassword($hashedPassword)
             ->setRoles([UserRole::EQUIPMENT_MANAGER_CLUB->value]);
         $manager->persist($managerLyon);
 
-        $membre1 = (new User())
+        $membre1 = new User()
             ->setEmail('alice.martin@kyudo.fr')
             ->setPassword($hashedPassword)
             ->setRoles([UserRole::MEMBER->value]);
         $manager->persist($membre1);
 
-        $membre2 = (new User())
+        $membre2 = new User()
             ->setEmail('benoit.dupont@kyudo.fr')
             ->setPassword($hashedPassword)
             ->setRoles([UserRole::MEMBER->value]);
         $manager->persist($membre2);
 
-        $membre3 = (new User())
+        $membre3 = new User()
             ->setEmail('claire.robert@kyudo.fr')
             ->setPassword($hashedPassword)
             ->setRoles([UserRole::MEMBER->value]);
         $manager->persist($membre3);
 
-        $membre4 = (new User())
+        $membre4 = new User()
             ->setEmail('david.leclerc@kyudo.fr')
             ->setPassword($hashedPassword)
             ->setRoles([UserRole::MEMBER->value]);
@@ -237,7 +245,7 @@ class AppFixtures extends Fixture
         // ────────────────────────────────────────────────────────────────────
 
         // — Île-de-France —
-        $clubA = (new Club())                                       // Club A (tests)
+        $clubA = new Club()                                       // Club A (tests)
             ->setName(self::CLUB_A)
             ->setEmail('contact@kyudo-paris-marais.fr')
             ->setPresident($u[self::USER_PRESIDENT])
@@ -248,7 +256,7 @@ class AppFixtures extends Fixture
 
         $manager->persist($clubA);
 
-        $clubC = (new Club())                                       // Club C (même région que A)
+        $clubC = new Club()                                       // Club C (même région que A)
             ->setName(self::CLUB_C)
             ->setEmail('contact@kyudo-vincennes.fr')
             ->setRegion($regionA);
@@ -256,14 +264,14 @@ class AppFixtures extends Fixture
 
         $manager->persist($clubC);
 
-        $clubD = (new Club())
+        $clubD = new Club()
             ->setName('Ryushin Dojo Paris')
             ->setEmail('contact@ryushin-paris.fr')
             ->setRegion($regionA);
         $manager->persist($clubD);
 
         // — Auvergne-Rhône-Alpes —
-        $clubB = (new Club())                                       // Club B (tests)
+        $clubB = new Club()                                       // Club B (tests)
             ->setName(self::CLUB_B)
             ->setEmail('contact@kyudo-lyon.fr')
             ->setPresident($presidentLyon)
@@ -273,20 +281,20 @@ class AppFixtures extends Fixture
 
         $manager->persist($clubB);
 
-        $clubE = (new Club())
+        $clubE = new Club()
             ->setName('Kyudo Grenoble')
             ->setEmail('contact@kyudo-grenoble.fr')
             ->setRegion($regionB);
         $manager->persist($clubE);
 
-        $clubF = (new Club())
+        $clubF = new Club()
             ->setName('Dojo Zen Clermont')
             ->setEmail('contact@dojo-clermont.fr')
             ->setRegion($regionB);
         $manager->persist($clubF);
 
         // — Bretagne —
-        $clubG = (new Club())
+        $clubG = new Club()
             ->setName('Kyudo Rennes')
             ->setEmail('contact@kyudo-rennes.fr')
             ->setPresident($presidentRennes)
@@ -295,43 +303,78 @@ class AppFixtures extends Fixture
 
         $manager->persist($clubG);
 
-        $clubH = (new Club())
+        $clubH = new Club()
             ->setName('Kyudo Brest')
             ->setEmail('contact@kyudo-brest.fr')
             ->setRegion($regionC);
         $manager->persist($clubH);
 
-        $clubI = (new Club())
+        $clubI = new Club()
             ->setName('Dojo Bretagne Quimper')
             ->setEmail('contact@dojo-quimper.fr')
             ->setRegion($regionC);
         $manager->persist($clubI);
 
-        $clubJ = (new Club())
+        $clubJ = new Club()
             ->setName('Kyudo Lorient')
             ->setEmail('contact@kyudo-lorient.fr')
             ->setRegion($regionC);
         $manager->persist($clubJ);
 
         // ────────────────────────────────────────────────────────────────────
+        // ClubMembers
+        // ────────────────────────────────────────────────────────────────────
+
+        // Club A — membre non-inscrit utilisé dans les tests fonctionnels
+        $unregisteredMember = new ClubMember()
+            ->setFirstName('NonInscrit')
+            ->setLastName('Test')
+            ->setEmail(self::CLUB_MEMBER_UNREGISTERED_EMAIL)
+            ->setClub($clubA);
+        $manager->persist($unregisteredMember);
+
+        // Club A — membre lié à l'utilisateur "member@kyudo-test.fr"
+        $memberLinked = new ClubMember()
+            ->setFirstName('Jean')
+            ->setLastName('Dupont')
+            ->setEmail(self::USER_MEMBER)
+            ->setUser($u[self::USER_MEMBER])
+            ->setClub($clubA);
+        $manager->persist($memberLinked);
+
+        // Club B (Lyon) — deux membres sans compte
+        $memberLyon1 = new ClubMember()
+            ->setFirstName('Thomas')
+            ->setLastName('Petit')
+            ->setClub($clubB);
+        $manager->persist($memberLyon1);
+
+        $memberLyon2 = new ClubMember()
+            ->setFirstName('Nathalie')
+            ->setLastName('Simon')
+            ->setEmail('nathalie.simon@kyudo.fr')
+            ->setClub($clubB);
+        $manager->persist($memberLyon2);
+
+        // ────────────────────────────────────────────────────────────────────
         // Équipements — Gants (Glove)
         // ────────────────────────────────────────────────────────────────────
 
         // CLUB — Club A (Paris Marais)
-        $gloveA1 = (new Glove())
+        $gloveA1 = new Glove()
             ->setOwnerClub($clubA)
             ->setNbFingers(3)
             ->setSize(8);
         $manager->persist($gloveA1);
 
-        $gloveA2 = (new Glove())
+        $gloveA2 = new Glove()
             ->setOwnerClub($clubA)
             ->setNbFingers(3)
             ->setSize(7);
         $manager->persist($gloveA2);
 
         // CLUB — Club B (Lyon) — avec emprunteur club (Vincennes emprunte à Lyon)
-        $gloveB = (new Glove())
+        $gloveB = new Glove()
             ->setOwnerClub($clubB)
             ->setNbFingers(3)
             ->setSize(9)
@@ -339,21 +382,21 @@ class AppFixtures extends Fixture
         $manager->persist($gloveB);
 
         // CLUB — Club C (Vincennes)
-        $gloveC = (new Glove())
+        $gloveC = new Glove()
             ->setOwnerClub($clubC)
             ->setNbFingers(3)
             ->setSize(6);
         $manager->persist($gloveC);
 
         // CLUB — Club G (Rennes)
-        $gloveG = (new Glove())
+        $gloveG = new Glove()
             ->setOwnerClub($clubG)
             ->setNbFingers(4)
             ->setSize(7);
         $manager->persist($gloveG);
 
         // REGIONAL — Région A (Île-de-France)
-        $gloveRegA = (new Glove())
+        $gloveRegA = new Glove()
             ->setOwnerRegion($regionA)
             ->setEquipmentLevel(EquipmentLevel::REGIONAL)
             ->setNbFingers(3)
@@ -361,7 +404,7 @@ class AppFixtures extends Fixture
         $manager->persist($gloveRegA);
 
         // REGIONAL — Région C (Bretagne)
-        $gloveRegC = (new Glove())
+        $gloveRegC = new Glove()
             ->setOwnerRegion($regionC)
             ->setEquipmentLevel(EquipmentLevel::REGIONAL)
             ->setNbFingers(3)
@@ -369,7 +412,7 @@ class AppFixtures extends Fixture
         $manager->persist($gloveRegC);
 
         // NATIONAL
-        $gloveNat = (new Glove())
+        $gloveNat = new Glove()
             ->setOwnerFederation($federation)
             ->setEquipmentLevel(EquipmentLevel::NATIONAL)
             ->setNbFingers(5)
@@ -381,31 +424,31 @@ class AppFixtures extends Fixture
         // ────────────────────────────────────────────────────────────────────
 
         // CLUB — Club A (Paris Marais)
-        $yumiA1 = (new Yumi())
+        $yumiA1 = new Yumi()
             ->setOwnerClub($clubA)
             ->setMaterial('bambou')
             ->setStrength(14)
             ->setYumiLength(YumiLength::NAMISUN);
         $manager->persist($yumiA1);
 
-        $yumiA2 = (new Yumi())
+        $yumiA2 = new Yumi()
             ->setOwnerClub($clubA)
             ->setMaterial('carbone')
             ->setStrength(12)
             ->setYumiLength(YumiLength::NISUN_NOBI);
         $manager->persist($yumiA2);
 
-        // CLUB — Club D (Ryushin Dojo Paris) — avec emprunteur utilisateur
-        $yumiD = (new Yumi())
+        // CLUB — Club D (Ryushin Dojo Paris) — avec emprunteur membre
+        $yumiD = new Yumi()
             ->setOwnerClub($clubD)
             ->setMaterial('bambou')
             ->setStrength(16)
             ->setYumiLength(YumiLength::YONSUN_NOBI)
-            ->setBorrowerUser($u[self::USER_MEMBER]);
+            ->setBorrowerMember($memberLinked);
         $manager->persist($yumiD);
 
         // CLUB — Club E (Grenoble)
-        $yumiE = (new Yumi())
+        $yumiE = new Yumi()
             ->setOwnerClub($clubE)
             ->setMaterial('fibre de verre')
             ->setStrength(10)
@@ -413,7 +456,7 @@ class AppFixtures extends Fixture
         $manager->persist($yumiE);
 
         // CLUB — Club G (Rennes)
-        $yumiG = (new Yumi())
+        $yumiG = new Yumi()
             ->setOwnerClub($clubG)
             ->setMaterial('carbone')
             ->setStrength(13)
@@ -421,7 +464,7 @@ class AppFixtures extends Fixture
         $manager->persist($yumiG);
 
         // REGIONAL — Région B (Auvergne-Rhône-Alpes)
-        $yumiRegB1 = (new Yumi())
+        $yumiRegB1 = new Yumi()
             ->setOwnerRegion($regionB)
             ->setEquipmentLevel(EquipmentLevel::REGIONAL)
             ->setMaterial('bambou')
@@ -429,7 +472,7 @@ class AppFixtures extends Fixture
             ->setYumiLength(YumiLength::NAMISUN);
         $manager->persist($yumiRegB1);
 
-        $yumiRegB2 = (new Yumi())
+        $yumiRegB2 = new Yumi()
             ->setOwnerRegion($regionB)
             ->setEquipmentLevel(EquipmentLevel::REGIONAL)
             ->setMaterial('carbone')
@@ -438,7 +481,7 @@ class AppFixtures extends Fixture
         $manager->persist($yumiRegB2);
 
         // NATIONAL — 2 arcs fédéraux de démonstration
-        $yumiNat1 = (new Yumi())
+        $yumiNat1 = new Yumi()
             ->setOwnerFederation($federation)
             ->setEquipmentLevel(EquipmentLevel::NATIONAL)
             ->setMaterial('bambou')
@@ -446,7 +489,7 @@ class AppFixtures extends Fixture
             ->setYumiLength(YumiLength::NAMISUN);
         $manager->persist($yumiNat1);
 
-        $yumiNat2 = (new Yumi())
+        $yumiNat2 = new Yumi()
             ->setOwnerFederation($federation)
             ->setEquipmentLevel(EquipmentLevel::NATIONAL)
             ->setMaterial('carbone')

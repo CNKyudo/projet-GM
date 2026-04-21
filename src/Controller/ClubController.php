@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Club;
+use App\Entity\ClubMember;
+use App\Form\ClubMemberFormType;
 use App\Form\ClubType;
 use App\Repository\ClubRepository;
 use App\Security\Voter\UserPermissionVoter;
@@ -21,7 +23,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class ClubController extends AbstractController
 {
-    private const ITEMS_PER_PAGE = 20;
+    private const int ITEMS_PER_PAGE = 20;
 
     public function __construct(private readonly ClubRepository $clubRepository, private readonly PaginatorInterface $paginator)
     {
@@ -78,8 +80,17 @@ class ClubController extends AbstractController
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function show(Club $club): Response
     {
+        $memberForm = null;
+        if ($this->isGranted(UserPermissionVoter::CREATE_CLUB_MEMBER, $club)) {
+            $memberForm = $this->createForm(ClubMemberFormType::class, new ClubMember(), [
+                'action' => $this->generateUrl('club_member_create', ['id' => $club->getId()]),
+                'method' => 'POST',
+            ]);
+        }
+
         return $this->render('club/show.html.twig', [
             'club' => $club,
+            'memberForm' => $memberForm?->createView(),
         ]);
     }
 
@@ -135,7 +146,7 @@ class ClubController extends AbstractController
         // Identifier le champ fautif à partir du message SQL (colonne impliquée)
         $message = $uniqueConstraintViolationException->getMessage();
 
-        if (str_contains($message, 'equipment_manager')) {
+        if (str_contains($message, 'equipmentManager')) {
             $this->addEquipmentManagerAlreadyAssignedError($form);
         } else {
             $this->addPresidentAlreadyAssignedError($form);
@@ -161,8 +172,8 @@ class ClubController extends AbstractController
     {
         $message = 'Cet utilisateur est déjà gestionnaire matériel d\'un club.';
 
-        if ($form->has('equipment_manager')) {
-            $form->get('equipment_manager')->addError(new FormError($message));
+        if ($form->has('equipmentManager')) {
+            $form->get('equipmentManager')->addError(new FormError($message));
 
             return;
         }

@@ -39,7 +39,7 @@ class ClubType extends AbstractType
                 'placeholder' => '--- choisir un président ---',
                 'required' => false,
             ])
-            ->add('equipment_manager', EntityType::class, [
+            ->add('equipmentManager', EntityType::class, [
                 'class' => User::class,
                 'choice_value' => 'id',
                 'placeholder' => '--- choisir un gestionnaire matériel ---',
