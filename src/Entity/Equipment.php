@@ -36,39 +36,39 @@ abstract class Equipment
     #[ORM\OneToOne(targetEntity: QRCode::class, mappedBy: 'equipment', cascade: ['persist', 'remove'])]
     private ?QRCode $qrCode = null;
 
-    #[ORM\ManyToOne(inversedBy: 'owned_equipments')]
+    #[ORM\ManyToOne(inversedBy: 'ownedEquipments')]
     #[Versioned]
-    private ?Club $owner_club = null;
+    private ?Club $ownerClub = null;
 
     /**
      * Propriétaire région (si equipment_level = REGIONAL).
      */
-    #[ORM\ManyToOne(inversedBy: 'owned_equipments')]
+    #[ORM\ManyToOne(inversedBy: 'ownedEquipments')]
     #[Versioned]
-    private ?Region $owner_region = null;
+    private ?Region $ownerRegion = null;
 
     /**
      * Propriétaire fédération (si equipment_level = NATIONAL).
      */
-    #[ORM\ManyToOne(inversedBy: 'owned_equipments')]
+    #[ORM\ManyToOne(inversedBy: 'ownedEquipments')]
     #[Versioned]
-    private ?Federation $owner_federation = null;
+    private ?Federation $ownerFederation = null;
 
     /**
      * Niveau de propriété : CLUB, REGIONAL ou NATIONAL.
-     * Détermine quel champ owner_* est non-null.
+     * Détermine quel champ owner* est non-null.
      */
     #[ORM\Column(length: 50, enumType: EquipmentLevel::class)]
     #[Versioned]
     private EquipmentLevel $equipmentLevel = EquipmentLevel::CLUB;
 
-    #[ORM\ManyToOne(inversedBy: 'borrowed_equipments')]
+    #[ORM\ManyToOne(inversedBy: 'borrowedEquipmentsClub')]
     #[Versioned]
-    private ?Club $borrower_club = null;
+    private ?Club $borrowerClub = null;
 
-    #[ORM\ManyToOne(inversedBy: 'borrowed_equipments')]
+    #[ORM\ManyToOne(inversedBy: 'borrowedEquipmentsMember')]
     #[Versioned]
-    private ?User $borrower_user = null;
+    private ?ClubMember $borrowerMember = null;
 
     public function getId(): ?int
     {
@@ -97,19 +97,19 @@ abstract class Equipment
 
     public function getOwnerClub(): ?Club
     {
-        return $this->owner_club;
+        return $this->ownerClub;
     }
 
     public function setOwnerClub(?Club $club): static
     {
-        $this->owner_club = $club;
+        $this->ownerClub = $club;
 
         return $this;
     }
 
     public function getBorrowerClub(): ?Club
     {
-        return $this->borrower_club;
+        return $this->borrowerClub;
     }
 
     public function getEquipmentLevel(): EquipmentLevel
@@ -126,24 +126,24 @@ abstract class Equipment
 
     public function getOwnerRegion(): ?Region
     {
-        return $this->owner_region;
+        return $this->ownerRegion;
     }
 
     public function setOwnerRegion(?Region $region): static
     {
-        $this->owner_region = $region;
+        $this->ownerRegion = $region;
 
         return $this;
     }
 
     public function getOwnerFederation(): ?Federation
     {
-        return $this->owner_federation;
+        return $this->ownerFederation;
     }
 
     public function setOwnerFederation(?Federation $federation): static
     {
-        $this->owner_federation = $federation;
+        $this->ownerFederation = $federation;
 
         return $this;
     }
@@ -157,19 +157,19 @@ abstract class Equipment
 
     public function setBorrowerClub(?Club $club): static
     {
-        $this->borrower_club = $club;
+        $this->borrowerClub = $club;
 
         return $this;
     }
 
-    public function getBorrowerUser(): ?User
+    public function getBorrowerMember(): ?ClubMember
     {
-        return $this->borrower_user;
+        return $this->borrowerMember;
     }
 
-    public function setBorrowerUser(?User $user): static
+    public function setBorrowerMember(?ClubMember $member): static
     {
-        $this->borrower_user = $user;
+        $this->borrowerMember = $member;
 
         return $this;
     }

@@ -13,7 +13,7 @@ abstract class AbstractSearchStrategy implements SearchStrategyInterface
 {
     /**
      * Retourne un QueryBuilder initialisé avec les jointures nécessaires
-     * (owner_club, borrower_club, orderBy) mais sans aucun filtre.
+     * (ownerClub, borrowerClub, orderBy) mais sans aucun filtre.
      */
     abstract protected function createBaseQueryBuilder(): QueryBuilder;
 
@@ -52,14 +52,14 @@ abstract class AbstractSearchStrategy implements SearchStrategyInterface
     }
 
     /**
-     * Applique le filtre de statut (available / loaned) selon borrower_club et borrower_user.
+     * Applique le filtre de statut (available / loaned) selon borrowerClub et borrowerMember.
      */
     protected function applyStatusFilter(QueryBuilder $queryBuilder, string $alias, string $status): void
     {
         if ('available' === $status) {
-            $queryBuilder->andWhere(sprintf('%s.borrower_club IS NULL AND %s.borrower_user IS NULL', $alias, $alias));
+            $queryBuilder->andWhere(sprintf('%s.borrowerClub IS NULL AND %s.borrowerMember IS NULL', $alias, $alias));
         } elseif ('loaned' === $status) {
-            $queryBuilder->andWhere(sprintf('%s.borrower_club IS NOT NULL OR %s.borrower_user IS NOT NULL', $alias, $alias));
+            $queryBuilder->andWhere(sprintf('%s.borrowerClub IS NOT NULL OR %s.borrowerMember IS NOT NULL', $alias, $alias));
         }
     }
 
@@ -90,7 +90,7 @@ abstract class AbstractSearchStrategy implements SearchStrategyInterface
             $queryBuilder->setParameter('levelClub', EquipmentLevel::CLUB);
             $orParts[] = $queryBuilder->expr()->andX(
                 $queryBuilder->expr()->eq($alias.'.equipmentLevel', ':levelClub'),
-                $queryBuilder->expr()->in($alias.'.owner_club', ':allowedClubs')
+                $queryBuilder->expr()->in($alias.'.ownerClub', ':allowedClubs')
             );
         }
 
@@ -100,7 +100,7 @@ abstract class AbstractSearchStrategy implements SearchStrategyInterface
             $queryBuilder->setParameter('levelRegional', EquipmentLevel::REGIONAL);
             $orParts[] = $queryBuilder->expr()->andX(
                 $queryBuilder->expr()->eq($alias.'.equipmentLevel', ':levelRegional'),
-                $queryBuilder->expr()->in($alias.'.owner_region', ':allowedRegions')
+                $queryBuilder->expr()->in($alias.'.ownerRegion', ':allowedRegions')
             );
         }
 

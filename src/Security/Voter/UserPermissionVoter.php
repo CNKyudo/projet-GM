@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Security\Voter;
 
 use App\Entity\Club;
+use App\Entity\ClubMember;
 use App\Entity\Equipment;
 use App\Entity\User;
 use App\Enum\EquipmentLevel;
@@ -70,6 +71,13 @@ final class UserPermissionVoter extends Voter
 
     public const string VIEW_QRCODE = 'VIEW_QRCODE';
 
+    // Gestion des membres de club
+    public const string CREATE_CLUB_MEMBER = 'CREATE_CLUB_MEMBER';
+
+    public const string EDIT_CLUB_MEMBER = 'EDIT_CLUB_MEMBER';
+
+    public const string DELETE_CLUB_MEMBER = 'DELETE_CLUB_MEMBER';
+
     /**
      * Attributs sans sujet : délégation directe au service via le rôle uniquement.
      *
@@ -114,6 +122,15 @@ final class UserPermissionVoter extends Voter
         self::DELETE_CLUB,
     ];
 
+    /**
+     * Attributs avec sujet ClubMember : logique "own club" résolue ici.
+     */
+    private const array CLUB_MEMBER_SUBJECT_ATTRIBUTES = [
+        self::CREATE_CLUB_MEMBER,
+        self::EDIT_CLUB_MEMBER,
+        self::DELETE_CLUB_MEMBER,
+    ];
+
     public function __construct(
         private readonly UserPermissionService $userPermissionService,
     ) {
@@ -131,6 +148,10 @@ final class UserPermissionVoter extends Voter
 
         if (\in_array($attribute, self::CLUB_SUBJECT_ATTRIBUTES, true)) {
             return $subject instanceof Club || null === $subject;
+        }
+
+        if (\in_array($attribute, self::CLUB_MEMBER_SUBJECT_ATTRIBUTES, true)) {
+            return $subject instanceof ClubMember || $subject instanceof Club || null === $subject;
         }
 
         return false;
@@ -161,6 +182,11 @@ final class UserPermissionVoter extends Voter
         // Attributs avec sujet Club
         if (\in_array($attribute, self::CLUB_SUBJECT_ATTRIBUTES, true)) {
             return $this->voteOnClubAttribute($attribute, $subject, $user);
+        }
+
+        // Attributs avec sujet ClubMember
+        if (\in_array($attribute, self::CLUB_MEMBER_SUBJECT_ATTRIBUTES, true)) {
+            return $this->voteOnClubMemberAttribute($attribute, $subject, $user);
         }
 
         return false;
@@ -261,5 +287,62 @@ final class UserPermissionVoter extends Voter
             self::DELETE_CLUB => $this->userPermissionService->canDeleteClub($user),
             default => false,
         };
+    }
+
+    /**
+     * Vote sur les actions ClubMember.
+     *
+     * Règles :
+     *  - CREATE : Président ou Manager du club concerné, ou ADMIN
+     *  - EDIT   : Président/Manager du club OU User lié au ClubMember OU ADMIN
+     *  - DELETE : Président/Manager du club OU ADMIN
+     *
+     * @param Club|ClubMember|null $subject
+     */
+    private function voteOnClubMemberAttribute(string $attribute, mixed $subject, User $user): bool
+    {
+        $isAdmin = $this->userPermissionService->canAccessUserManagement($user);
+
+        if ($isAdmin) {
+            return true;
+        }
+
+        // Pour CREATE, le sujet peut être un Club (on vérifie si l'user est président/manager de ce club)
+        if (self::CREATE_CLUB_MEMBER === $attribute) {
+            $club = $subject instanceof Club ? $subject : null;
+
+            return $this->isPresidentOrManagerOf($user, $club);
+        }
+
+        // Pour EDIT et DELETE, le sujet est un ClubMember
+        if (!$subject instanceof ClubMember) {
+            return false;
+        }
+
+        $club = $subject->getClub();
+        $isPresidentOrManager = $this->isPresidentOrManagerOf($user, $club);
+
+        if (self::EDIT_CLUB_MEMBER === $attribute) {
+            // Le User lié au ClubMember peut aussi modifier son propre profil
+            $isLinkedUser = $subject->getUser() instanceof User && $subject->getUser()->getId() === $user->getId();
+
+            return $isPresidentOrManager || $isLinkedUser;
+        }
+
+        // DELETE : seulement président/manager
+        return $isPresidentOrManager;
+    }
+
+    private function isPresidentOrManagerOf(User $user, ?Club $club): bool
+    {
+        if (!$club instanceof Club) {
+            return false;
+        }
+
+        $presidentClub = $user->getClubWhichImPresidentOf();
+        $managerClub   = $user->getClubWhereImEquipmentManager();
+
+        return ($presidentClub instanceof Club && $presidentClub->getId() === $club->getId())
+            || ($managerClub instanceof Club && $managerClub->getId() === $club->getId());
     }
 }

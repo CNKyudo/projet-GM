@@ -13,6 +13,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
+// Note: ClubMember est dans le même namespace App\Entity, pas besoin de use.
+
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'users')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
@@ -42,7 +44,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
     #[ORM\OneToOne(mappedBy: 'president')]
     private ?Club $clubWhichImPresidentOf = null;
 
-    #[ORM\OneToOne(mappedBy: 'equipment_manager')]
+    #[ORM\OneToOne(mappedBy: 'equipmentManager')]
     private ?Club $clubWhereImEquipmentManager = null;
 
     /**
@@ -64,21 +66,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
     private Collection $managedRegions;
 
     /**
-     * @var Collection<int, Equipment>
+     * Profil de membre de club (null si l'utilisateur n'est associé à aucun ClubMember).
      */
-    #[ORM\OneToMany(targetEntity: Equipment::class, mappedBy: 'borrower_user')]
-    private Collection $borrowed_equipments;
+    #[ORM\OneToOne(mappedBy: 'user')]
+    private ?ClubMember $clubMember = null;
 
     public function __construct()
     {
         $this->memberOfClubs = new ArrayCollection();
-        $this->borrowed_equipments = new ArrayCollection();
         $this->managedRegions = new ArrayCollection();
     }
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getFullName(): string
+    {
+        return $this->clubMember?->getFullName() ?? $this->email;
     }
 
     public function getEmail(): ?string
@@ -200,34 +206,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
         return $this;
     }
 
-    /**
-     * @return Collection<int, Equipment>
-     */
-    public function getBorrowedEquipments(): Collection
-    {
-        return $this->borrowed_equipments;
-    }
-
-    public function addBorrowedEquipment(Equipment $borrowedEquipment): static
-    {
-        if (!$this->borrowed_equipments->contains($borrowedEquipment)) {
-            $this->borrowed_equipments->add($borrowedEquipment);
-            $borrowedEquipment->setBorrowerUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeBorrowedEquipment(Equipment $borrowedEquipment): static
-    {
-        // set the owning side to null (unless already changed)
-        if ($this->borrowed_equipments->removeElement($borrowedEquipment) && $borrowedEquipment->getBorrowerUser() === $this) {
-            $borrowedEquipment->setBorrowerUser(null);
-        }
-
-        return $this;
-    }
-
     public function getClubWhereImEquipmentManager(): ?Club
     {
         return $this->clubWhereImEquipmentManager;
@@ -282,6 +260,28 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
 
     public function __toString(): string
     {
-        return $this->email;
+        return $this->getFullName();
+    }
+
+    /**
+     * Retourne les équipements empruntés via le ClubMember lié, ou une collection vide.
+     *
+     * @return Collection<int, \App\Entity\Equipment>
+     */
+    public function getBorrowedEquipments(): Collection
+    {
+        return $this->clubMember?->getBorrowedEquipmentsMember() ?? new ArrayCollection();
+    }
+
+    public function getClubMember(): ?ClubMember
+    {
+        return $this->clubMember;
+    }
+
+    public function setClubMember(?ClubMember $clubMember): static
+    {
+        $this->clubMember = $clubMember;
+
+        return $this;
     }
 }

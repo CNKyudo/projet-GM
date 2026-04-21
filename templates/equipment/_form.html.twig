@@ -23,60 +23,51 @@
         </div>
       {% endif %}
 
-      {% if form.owner_federation is defined %}
+      {% if form.ownerFederation is defined %}
         <div>
           <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
-            {{ form.owner_federation.vars.label|default('Fédération propriétaire (national)') }}
+            {{ form.ownerFederation.vars.label|default('Fédération propriétaire (national)') }}
           </label>
-          {{ form_widget(form.owner_federation, {
+          {{ form_widget(form.ownerFederation, {
             attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 text-kyudo-gm-dark shadow-sm outline-none focus:border-kyudo-gm-light-grey focus:ring-2 focus:ring-kyudo-washed-blue' }
           }) }}
-          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.owner_federation) }}</div>
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.ownerFederation) }}</div>
         </div>
       {% endif %}
 
-      {% if form.owner_region is defined %}
+      {% if form.ownerRegion is defined %}
         <div>
           <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
-            {{ form.owner_region.vars.label|default('Région propriétaire (régional)') }}
+            {{ form.ownerRegion.vars.label|default('Région propriétaire (régional)') }}
           </label>
-          {{ form_widget(form.owner_region, {
+          {{ form_widget(form.ownerRegion, {
             attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 text-kyudo-gm-dark shadow-sm outline-none focus:border-kyudo-gm-light-grey focus:ring-2 focus:ring-kyudo-washed-blue' }
           }) }}
-          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.owner_region) }}</div>
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.ownerRegion) }}</div>
         </div>
       {% endif %}
 
       <div>
         <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
-          {{ form.owner_club.vars.label|default('Club propriétaire') }}
+          {{ form.ownerClub.vars.label|default('Club propriétaire') }}
         </label>
-        {{ form_widget(form.owner_club, {
+        {{ form_widget(form.ownerClub, {
           attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 text-kyudo-gm-dark shadow-sm outline-none focus:border-kyudo-gm-light-grey focus:ring-2 focus:ring-kyudo-washed-blue' }
         }) }}
-        <div class="mt-1 text-sm text-red-600">{{ form_errors(form.owner_club) }}</div>
+        <div class="mt-1 text-sm text-red-600">{{ form_errors(form.ownerClub) }}</div>
       </div>
 
       <div>
         <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
-          {{ form.borrower_club.vars.label|default('Club emprunteur') }}
+          {{ form.borrowerClub.vars.label|default('Club emprunteur') }}
         </label>
-        {{ form_widget(form.borrower_club, {
+        {{ form_widget(form.borrowerClub, {
           attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 text-kyudo-gm-dark shadow-sm outline-none focus:border-kyudo-gm-light-grey focus:ring-2 focus:ring-kyudo-washed-blue' }
         }) }}
         <p class="mt-2 text-xs text-">Optionnel - si vide, l'équipement est considéré disponible.</p>
-        <div class="mt-1 text-sm text-red-600">{{ form_errors(form.borrower_club) }}</div>
+        <div class="mt-1 text-sm text-red-600">{{ form_errors(form.borrowerClub) }}</div>
       </div>
 
-      <div class="sm:col-span-2">
-        <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
-          {{ form.borrower_user.vars.label|default('Emprunté par (personne)') }}
-        </label>
-        {{ form_widget(form.borrower_user, {
-          attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 text-kyudo-gm-dark shadow-sm outline-none focus:border-kyudo-gm-light-grey focus:ring-2 focus:ring-kyudo-washed-blue' }
-        }) }}
-        <div class="mt-1 text-sm text-red-600">{{ form_errors(form.borrower_user) }}</div>
-      </div>
     </div>
   </section>
 

@@ -24,14 +24,14 @@
 
 					{{ form_errors(registrationForm) }}
 
-					{{ form_start(registrationForm) }}
-					<div class="mb-4">
-						{{ form_row(registrationForm.email, {
-                                attr: {
-                                    'class': 'block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-kyudo-royal-blue focus:border-kyudo-royal-blue'
-                                    }
-                            }) }}
-					</div>
+			{{ form_start(registrationForm) }}
+			<div class="mb-4">
+				{{ form_row(registrationForm.email, {
+                            attr: {
+                                'class': 'block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-kyudo-royal-blue focus:border-kyudo-royal-blue'
+                                }
+                        }) }}
+			</div>
 					<div class="mb-4">
 						{{ form_row(registrationForm.plainPassword, {
                                 label: 'Mot de passe',

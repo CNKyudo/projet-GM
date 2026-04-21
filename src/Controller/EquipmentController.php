@@ -113,9 +113,9 @@ final class EquipmentController extends AbstractController
             };
 
             // Déterminer le niveau et le propriétaire selon les champs soumis
-            $ownerFederation = $form->has('owner_federation') ? $form->get('owner_federation')->getData() : null;
-            $ownerRegion     = $form->has('owner_region') ? $form->get('owner_region')->getData() : null;
-            $ownerClub       = $form->has('owner_club') ? $form->get('owner_club')->getData() : null;
+            $ownerFederation = $form->has('ownerFederation') ? $form->get('ownerFederation')->getData() : null;
+            $ownerRegion     = $form->has('ownerRegion') ? $form->get('ownerRegion')->getData() : null;
+            $ownerClub       = $form->has('ownerClub') ? $form->get('ownerClub')->getData() : null;
 
             if ($ownerFederation instanceof Federation) {
                 // Vérification : seuls CN/ADMIN peuvent créer un équipement national
@@ -139,8 +139,8 @@ final class EquipmentController extends AbstractController
                 $equipment->setOwnerClub($ownerClub);
             }
 
-            $equipment->setBorrowerClub($form->get('borrower_club')->getData());
-            $equipment->setBorrowerUser($form->get('borrower_user')->getData());
+            $equipment->setBorrowerClub($form->get('borrowerClub')->getData());
+            $equipment->setBorrowerMember($form->get('borrowerMember')->getData());
 
             if ($equipment instanceof Glove && $form->has('glove_form')) {
                 $gloveForm = $form->get('glove_form');
@@ -184,9 +184,9 @@ final class EquipmentController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             // Recalculer le niveau et le propriétaire selon les champs soumis
             // Priorité : fédération > région > club (en cas de champs multiples renseignés)
-            $ownerFederation = $form->has('owner_federation') ? $form->get('owner_federation')->getData() : null;
-            $ownerRegion     = $form->has('owner_region') ? $form->get('owner_region')->getData() : null;
-            $ownerClub       = $form->has('owner_club') ? $form->get('owner_club')->getData() : null;
+            $ownerFederation = $form->has('ownerFederation') ? $form->get('ownerFederation')->getData() : null;
+            $ownerRegion     = $form->has('ownerRegion') ? $form->get('ownerRegion')->getData() : null;
+            $ownerClub       = $form->has('ownerClub') ? $form->get('ownerClub')->getData() : null;
 
             if ($ownerFederation instanceof Federation) {
                 if (!$this->isGranted(UserPermissionVoter::CREATE_NATIONAL_EQUIPMENT)) {

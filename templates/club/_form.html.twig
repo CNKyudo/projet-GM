@@ -44,13 +44,13 @@
 
       <div>
         <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">Gestionnaire matériel</label>
-        {{ form_widget(form.equipment_manager, {
+        {{ form_widget(form.equipmentManager, {
           attr: {
             class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 text-kyudo-gm-dark shadow-sm outline-none focus:border-kyudo-gm-light-grey focus:ring-2 focus:ring-kyudo-washed-blue'
           }
         }) }}
         <p class="mt-2 text-xs text-">Optionnel - responsable de la gestion du matériel du club.</p>
-        <div class="mt-1 text-sm text-red-600">{{ form_errors(form.equipment_manager) }}</div>
+        <div class="mt-1 text-sm text-red-600">{{ form_errors(form.equipmentManager) }}</div>
       </div>
 
       <div>

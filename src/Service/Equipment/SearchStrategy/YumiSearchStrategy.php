@@ -18,8 +18,8 @@ final class YumiSearchStrategy extends AbstractSearchStrategy
     protected function createBaseQueryBuilder(): QueryBuilder
     {
         return $this->yumiRepository->createQueryBuilder('y')
-            ->leftJoin('y.owner_club', 'owner')->addSelect('owner')
-            ->leftJoin('y.borrower_club', 'borrower')->addSelect('borrower')
+            ->leftJoin('y.ownerClub', 'owner')->addSelect('owner')
+            ->leftJoin('y.borrowerClub', 'borrower')->addSelect('borrower')
             ->orderBy('y.id', 'DESC');
     }
 

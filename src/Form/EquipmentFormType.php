@@ -6,6 +6,7 @@ namespace App\Form;
 
 use Doctrine\ORM\QueryBuilder;
 use App\Entity\Club;
+use App\Entity\ClubMember;
 use App\Entity\Equipment;
 use App\Entity\Federation;
 use App\Entity\Glove;
@@ -43,15 +44,15 @@ class EquipmentFormType extends AbstractType
         $this->addOwnerFields($builder, $currentUser);
 
         $builder
-            ->add('borrower_club', EntityType::class, [
+            ->add('borrowerClub', EntityType::class, [
                 'class' => Club::class,
                 'choice_label' => 'name',
                 'placeholder' => '--- Aucun ---',
                 'required' => false,
             ])
-            ->add('borrower_user', EntityType::class, [
-                'class' => User::class,
-                'choice_label' => 'email',
+            ->add('borrowerMember', EntityType::class, [
+                'class' => ClubMember::class,
+                'choice_label' => 'fullName',
                 'placeholder' => '--- Aucun ---',
                 'required' => false,
             ]);
@@ -81,7 +82,7 @@ class EquipmentFormType extends AbstractType
                     ])
                 ;
             } elseif ($data instanceof Equipment) {
-                // Reconstruire les champs owner_* avec l'option `data` pour que le select
+                // Reconstruire les champs owner* avec l'option `data` pour que le select
                 // affiche la bonne valeur pré-sélectionnée (setData() ne suffit pas pour
                 // les champs mapped:false avec EntityType).
                 $currentUser = $form->getConfig()->getOption('current_user');
@@ -115,21 +116,21 @@ class EquipmentFormType extends AbstractType
         });
 
         // Validation cross-champs : au moins un propriétaire parmi
-        // owner_federation / owner_region / owner_club doit être renseigné.
+        // ownerFederation / ownerRegion / ownerClub doit être renseigné.
         // En cas de plusieurs renseignés, la priorité est : fédération > région > club
         // (le contrôleur applique la même priorité).
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $formEvent): void {
             $form = $formEvent->getForm();
 
-            $federation = $form->has('owner_federation') ? $form->get('owner_federation')->getData() : null;
-            $region     = $form->has('owner_region') ? $form->get('owner_region')->getData() : null;
-            $club       = $form->has('owner_club') ? $form->get('owner_club')->getData() : null;
+            $federation = $form->has('ownerFederation') ? $form->get('ownerFederation')->getData() : null;
+            $region     = $form->has('ownerRegion') ? $form->get('ownerRegion')->getData() : null;
+            $club       = $form->has('ownerClub') ? $form->get('ownerClub')->getData() : null;
 
             // Si aucun champ owner n'est présent dans le formulaire
             // (rôle sans champ propriétaire exposé), on ne valide pas.
-            $hasAnyOwnerField = $form->has('owner_federation')
-                || $form->has('owner_region')
-                || $form->has('owner_club');
+            $hasAnyOwnerField = $form->has('ownerFederation')
+                || $form->has('ownerRegion')
+                || $form->has('ownerClub');
 
             if (!$hasAnyOwnerField) {
                 return;
@@ -160,10 +161,10 @@ class EquipmentFormType extends AbstractType
     /**
      * Ajoute les champs de propriétaire selon le rôle de l'utilisateur courant :
      *
-     *  - CN / ADMIN           → owner_federation (fédération) OU owner_region OU owner_club (tout club)
-     *  - CTK                  → owner_region (ses régions) OU owner_club (clubs de ses régions)
-     *  - PRESIDENT / MANAGER_CLUB → owner_club (son club uniquement, pré-sélectionné)
-     *  - null / autre          → owner_club (tous les clubs, fallback)
+     *  - CN / ADMIN           → ownerFederation (fédération) OU ownerRegion OU ownerClub (tout club)
+     *  - CTK                  → ownerRegion (ses régions) OU ownerClub (clubs de ses régions)
+     *  - PRESIDENT / MANAGER_CLUB → ownerClub (son club uniquement, pré-sélectionné)
+     *  - null / autre          → ownerClub (tous les clubs, fallback)
      */
     /**
      * @param FormBuilderInterface<mixed>|FormInterface<mixed> $builder
@@ -176,7 +177,7 @@ class EquipmentFormType extends AbstractType
 
         if ($isCnOrAdmin) {
             // Peut créer pour la fédération OU pour n'importe quel club
-            $builder->add('owner_federation', EntityType::class, [
+            $builder->add('ownerFederation', EntityType::class, [
                 'class' => Federation::class,
                 'choice_label' => 'name',
                 'placeholder' => '--- Aucune fédération ---',
@@ -185,7 +186,7 @@ class EquipmentFormType extends AbstractType
                 'label' => 'Fédération propriétaire (national)',
                 'data' => $equipment?->getOwnerFederation(),
             ]);
-            $builder->add('owner_region', EntityType::class, [
+            $builder->add('ownerRegion', EntityType::class, [
                 'class' => Region::class,
                 'choice_label' => 'name',
                 'placeholder' => '--- Aucune région ---',
@@ -194,7 +195,7 @@ class EquipmentFormType extends AbstractType
                 'label' => 'Région propriétaire (régional)',
                 'data' => $equipment?->getOwnerRegion(),
             ]);
-            $builder->add('owner_club', EntityType::class, [
+            $builder->add('ownerClub', EntityType::class, [
                 'class' => Club::class,
                 'choice_label' => 'name',
                 'placeholder' => '--- Aucun club ---',
@@ -207,7 +208,7 @@ class EquipmentFormType extends AbstractType
             // Peut créer pour une de ses régions OU un club de ses régions
             $managedRegions = $user->getManagedRegions();
 
-            $builder->add('owner_region', EntityType::class, [
+            $builder->add('ownerRegion', EntityType::class, [
                 'class' => Region::class,
                 'choice_label' => 'name',
                 'choices' => $managedRegions,
@@ -217,7 +218,7 @@ class EquipmentFormType extends AbstractType
                 'label' => 'Région propriétaire (régional)',
                 'data' => $equipment?->getOwnerRegion(),
             ]);
-            $builder->add('owner_club', EntityType::class, [
+            $builder->add('ownerClub', EntityType::class, [
                 'class' => Club::class,
                 'choice_label' => 'name',
                 'query_builder' => fn (ClubRepository $clubRepository): QueryBuilder => $clubRepository->createQueryBuilder('c')
@@ -235,7 +236,7 @@ class EquipmentFormType extends AbstractType
             $ownClub = $user->getClubWhichImPresidentOf()
                 ?? $user->getClubWhereImEquipmentManager();
 
-            $builder->add('owner_club', EntityType::class, [
+            $builder->add('ownerClub', EntityType::class, [
                 'class' => Club::class,
                 'choice_label' => 'name',
                 'choices' => $ownClub instanceof Club ? [$ownClub] : [],
@@ -246,7 +247,7 @@ class EquipmentFormType extends AbstractType
             ]);
         } else {
             // Fallback (ne devrait pas arriver, accès refusé en amont)
-            $builder->add('owner_club', EntityType::class, [
+            $builder->add('ownerClub', EntityType::class, [
                 'class' => Club::class,
                 'choice_label' => 'name',
                 'placeholder' => '--- Aucun club ---',

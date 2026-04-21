@@ -18,8 +18,8 @@ final class GloveSearchStrategy extends AbstractSearchStrategy
     protected function createBaseQueryBuilder(): QueryBuilder
     {
         return $this->gloveRepository->createQueryBuilder('g')
-            ->leftJoin('g.owner_club', 'owner')->addSelect('owner')
-            ->leftJoin('g.borrower_club', 'borrower')->addSelect('borrower')
+            ->leftJoin('g.ownerClub', 'owner')->addSelect('owner')
+            ->leftJoin('g.borrowerClub', 'borrower')->addSelect('borrower')
             ->orderBy('g.id', 'DESC');
     }
 

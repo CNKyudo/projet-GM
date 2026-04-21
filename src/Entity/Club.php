@@ -13,7 +13,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: ClubRepository::class)]
 #[UniqueEntity(fields: ['president'], message: 'Cet utilisateur est déjà président d\'un club.', errorPath: 'president')]
-#[UniqueEntity(fields: ['equipment_manager'], message: 'Cet utilisateur est déjà responsable matériel d\'un club.', errorPath: 'equipment_manager')]
+#[UniqueEntity(fields: ['equipmentManager'], message: 'Cet utilisateur est déjà responsable matériel d\'un club.', errorPath: 'equipmentManager')]
 class Club implements \Stringable
 {
     use TimestampableEntity;
@@ -30,7 +30,7 @@ class Club implements \Stringable
     private ?User $president = null;
 
     #[ORM\OneToOne(inversedBy: 'clubWhereImEquipmentManager')]
-    private ?User $equipment_manager = null;
+    private ?User $equipmentManager = null;
 
     #[ORM\ManyToOne(inversedBy: 'clubs')]
     private ?Region $region = null;
@@ -52,20 +52,29 @@ class Club implements \Stringable
     /**
      * @var Collection<int, Equipment>
      */
-    #[ORM\OneToMany(targetEntity: Equipment::class, mappedBy: 'owner_club')]
-    private Collection $owned_equipments;
+    #[ORM\OneToMany(targetEntity: Equipment::class, mappedBy: 'ownerClub')]
+    private Collection $ownedEquipments;
 
     /**
      * @var Collection<int, Equipment>
      */
-    #[ORM\OneToMany(targetEntity: Equipment::class, mappedBy: 'borrower_club')]
-    private Collection $borrowed_equipments;
+    #[ORM\OneToMany(targetEntity: Equipment::class, mappedBy: 'borrowerClub')]
+    private Collection $borrowedEquipmentsClub;
+
+    /**
+     * Membres non-inscrits (et inscrits) rattachés au club.
+     *
+     * @var Collection<int, ClubMember>
+     */
+    #[ORM\OneToMany(targetEntity: ClubMember::class, mappedBy: 'club', cascade: ['persist', 'remove'])]
+    private Collection $clubMembers;
 
     public function __construct()
     {
         $this->members = new ArrayCollection();
-        $this->owned_equipments = new ArrayCollection();
-        $this->borrowed_equipments = new ArrayCollection();
+        $this->ownedEquipments = new ArrayCollection();
+        $this->borrowedEquipmentsClub = new ArrayCollection();
+        $this->clubMembers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -153,13 +162,13 @@ class Club implements \Stringable
      */
     public function getOwnedEquipments(): Collection
     {
-        return $this->owned_equipments;
+        return $this->ownedEquipments;
     }
 
     public function addOwnedEquipment(Equipment $equipment): static
     {
-        if (!$this->owned_equipments->contains($equipment)) {
-            $this->owned_equipments->add($equipment);
+        if (!$this->ownedEquipments->contains($equipment)) {
+            $this->ownedEquipments->add($equipment);
             $equipment->setOwnerClub($this);
         }
 
@@ -169,7 +178,7 @@ class Club implements \Stringable
     public function removeOwnedEquipment(Equipment $equipment): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->owned_equipments->removeElement($equipment) && $equipment->getOwnerClub() === $this) {
+        if ($this->ownedEquipments->removeElement($equipment) && $equipment->getOwnerClub() === $this) {
             $equipment->setOwnerClub(null);
         }
 
@@ -179,15 +188,15 @@ class Club implements \Stringable
     /**
      * @return Collection<int, Equipment>
      */
-    public function getBorrowedEquipments(): Collection
+    public function getBorrowedEquipmentsClub(): Collection
     {
-        return $this->borrowed_equipments;
+        return $this->borrowedEquipmentsClub;
     }
 
     public function addBorrowedEquipment(Equipment $borrowedEquipment): static
     {
-        if (!$this->borrowed_equipments->contains($borrowedEquipment)) {
-            $this->borrowed_equipments->add($borrowedEquipment);
+        if (!$this->borrowedEquipmentsClub->contains($borrowedEquipment)) {
+            $this->borrowedEquipmentsClub->add($borrowedEquipment);
             $borrowedEquipment->setBorrowerClub($this);
         }
 
@@ -197,7 +206,7 @@ class Club implements \Stringable
     public function removeBorrowedEquipment(Equipment $borrowedEquipment): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->borrowed_equipments->removeElement($borrowedEquipment) && $borrowedEquipment->getBorrowerClub() === $this) {
+        if ($this->borrowedEquipmentsClub->removeElement($borrowedEquipment) && $borrowedEquipment->getBorrowerClub() === $this) {
             $borrowedEquipment->setBorrowerClub(null);
         }
 
@@ -218,18 +227,18 @@ class Club implements \Stringable
 
     public function getEquipmentManager(): ?User
     {
-        return $this->equipment_manager;
+        return $this->equipmentManager;
     }
 
     public function setEquipmentManager(?User $user): static
     {
         // Éviter la récursion : on ne met à jour que si l'état a changé
-        if ($this->equipment_manager === $user) {
+        if ($this->equipmentManager === $user) {
             return $this;
         }
 
-        $previous = $this->equipment_manager;
-        $this->equipment_manager = $user;
+        $previous = $this->equipmentManager;
+        $this->equipmentManager = $user;
 
         // Détacher l'ancien responsable
         if ($previous instanceof User && $previous->getClubWhereImEquipmentManager() === $this) {
@@ -247,5 +256,30 @@ class Club implements \Stringable
     public function __toString(): string
     {
         return $this->name;
+    }
+
+    /**
+     * @return Collection<int, ClubMember>
+     */
+    public function getClubMembers(): Collection
+    {
+        return $this->clubMembers;
+    }
+
+    public function addClubMember(ClubMember $clubMember): static
+    {
+        if (!$this->clubMembers->contains($clubMember)) {
+            $this->clubMembers->add($clubMember);
+            $clubMember->setClub($this);
+        }
+
+        return $this;
+    }
+
+    public function removeClubMember(ClubMember $clubMember): static
+    {
+        $this->clubMembers->removeElement($clubMember);
+
+        return $this;
     }
 }

@@ -37,13 +37,13 @@ class Federation implements \Stringable
      *
      * @var Collection<int, Equipment>
      */
-    #[ORM\OneToMany(targetEntity: Equipment::class, mappedBy: 'owner_federation')]
-    private Collection $owned_equipments;
+    #[ORM\OneToMany(targetEntity: Equipment::class, mappedBy: 'ownerFederation')]
+    private Collection $ownedEquipments;
 
     public function __construct()
     {
         $this->regions = new ArrayCollection();
-        $this->owned_equipments = new ArrayCollection();
+        $this->ownedEquipments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -108,7 +108,7 @@ class Federation implements \Stringable
      */
     public function getOwnedEquipments(): Collection
     {
-        return $this->owned_equipments;
+        return $this->ownedEquipments;
     }
 
     public function __toString(): string
