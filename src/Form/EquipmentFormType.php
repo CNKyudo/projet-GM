@@ -148,6 +148,20 @@ class EquipmentFormType extends AbstractType
             // Si plusieurs sont renseignés, on ne rejette plus : le contrôleur
             // applique la priorité fédération > région > club.
         });
+
+        // Validation cross-champs : borrowerClub et borrowerMember sont mutuellement exclusifs.
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $formEvent): void {
+            $form = $formEvent->getForm();
+
+            $borrowerClub   = $form->get('borrowerClub')->getData();
+            $borrowerMember = $form->get('borrowerMember')->getData();
+
+            if ($borrowerClub instanceof Club && $borrowerMember instanceof ClubMember) {
+                $form->get('borrowerMember')->addError(
+                    new FormError('Un équipement ne peut avoir qu\'un seul emprunteur : choisissez soit un club, soit un membre, pas les deux.')
+                );
+            }
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver): void

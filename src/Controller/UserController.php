@@ -7,7 +7,6 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Enum\UserRole;
 use App\Form\ChangePasswordFormType;
-use App\Form\UserClubAssignType;
 use App\Form\UserProfileType;
 use App\Repository\UserRepository;
 use App\Security\Voter\UserPermissionVoter;
@@ -21,8 +20,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class UserController extends AbstractController
 {
-    public function __construct(private readonly UserPasswordHasherInterface $userPasswordHasher, private readonly UserRepository $userRepository)
-    {
+    public function __construct(
+        private readonly UserPasswordHasherInterface $userPasswordHasher,
+        private readonly UserRepository $userRepository,
+    ) {
     }
 
     #[Route('/profile', name: 'user_profile', methods: ['GET'])]
@@ -32,8 +33,8 @@ final class UserController extends AbstractController
         $user = $this->getAuthenticatedUser();
 
         return $this->render('user/profile.html.twig', [
-            'user' => $user,
-            'roleLabels' => $this->mapRoleLabels($user->getRoles()),
+            'user'       => $user,
+            'roleLabels' => UserRole::labelsFromStrings($user->getRoles()),
         ]);
     }
 
@@ -59,10 +60,8 @@ final class UserController extends AbstractController
 
     #[Route('/profile/password', name: 'user_change_password', methods: ['GET', 'POST'])]
     #[IsGranted(UserPermissionVoter::EDIT_OWN_ACCOUNT_INFORMATION)]
-    public function changePassword(
-        Request $request,
-        EntityManagerInterface $entityManager,
-    ): Response {
+    public function changePassword(Request $request, EntityManagerInterface $entityManager): Response
+    {
         $user = $this->getAuthenticatedUser();
         $form = $this->createForm(ChangePasswordFormType::class);
         $form->handleRequest($request);
@@ -91,47 +90,13 @@ final class UserController extends AbstractController
         $users = $this->userRepository->findBy([], ['email' => 'ASC']);
         $roleLabelsByUserId = [];
         foreach ($users as $user) {
-            $roleLabelsByUserId[(int) $user->getId()] = $this->mapRoleLabels($user->getRoles());
+            $roleLabelsByUserId[(int) $user->getId()] = UserRole::labelsFromStrings($user->getRoles());
         }
 
         return $this->render('user/index.html.twig', [
-            'users' => $users,
+            'users'              => $users,
             'roleLabelsByUserId' => $roleLabelsByUserId,
         ]);
-    }
-
-    #[Route('/user/{id}/club', name: 'user_assign_club', requirements: ['id' => '\\d+'], methods: ['GET', 'POST'])]
-    #[IsGranted(UserPermissionVoter::ASSIGN_USER_TO_ANY_CLUB)]
-    public function assignClub(Request $request, User $targetUser, EntityManagerInterface $entityManager): Response
-    {
-        $form = $this->createForm(UserClubAssignType::class, $targetUser);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-            $this->addFlash('success', 'Club mis à jour pour cet utilisateur.');
-
-            return $this->redirectToRoute('user_index');
-        }
-
-        return $this->render('user/assign_club.html.twig', [
-            'targetUser' => $targetUser,
-            'form' => $form,
-            'roleLabels' => $this->mapRoleLabels($targetUser->getRoles()),
-        ]);
-    }
-
-    /**
-     * @param list<string> $roles
-     *
-     * @return list<string>
-     */
-    private function mapRoleLabels(array $roles): array
-    {
-        return array_map(
-            static fn (string $role): string => UserRole::tryFrom($role)?->label() ?? $role,
-            $roles,
-        );
     }
 
     private function getAuthenticatedUser(): User

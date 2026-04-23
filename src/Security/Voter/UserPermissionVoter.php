@@ -28,6 +28,8 @@ final class UserPermissionVoter extends Voter
 
     public const string ASSIGN_USER_TO_OWN_CLUB = 'ASSIGN_USER_TO_OWN_CLUB';
 
+    public const string ASSIGN_USER_ROLE = 'ASSIGN_USER_ROLE';
+
     // Gestion des clubs (sans sujet = création/transfert, avec sujet Club = edit/delete)
     public const string CREATE_CLUB = 'CREATE_CLUB';
 
@@ -88,6 +90,7 @@ final class UserPermissionVoter extends Voter
         self::EDIT_OWN_ACCOUNT_INFORMATION => 'canEditOwnAccountInformation',
         self::ASSIGN_USER_TO_ANY_CLUB => 'canAssignUserToAnyClub',
         self::ASSIGN_USER_TO_OWN_CLUB => 'canAssignUserToOwnClub',
+        self::ASSIGN_USER_ROLE => 'canAssignAnyRole',
         self::CREATE_CLUB => 'canCreateClub',
         self::TRANSFER_CLUB_PRESIDENCY => 'canTransferClubPresidency',
         self::CREATE_ADDRESS => 'canCreateAddress',

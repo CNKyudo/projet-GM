@@ -79,10 +79,15 @@
 										{% endif %}
 									</td>
 								<td class="px-5 py-4">
-									<div class="flex justify-end">
+								<div class="flex justify-end gap-2">
 										{% if is_granted('ASSIGN_USER_TO_ANY_CLUB') or is_granted('ASSIGN_USER_TO_OWN_CLUB') %}
-											<a class="btn btn-primary" href="{{ path('user_assign_club', {'id': user.id}) }}">
+											<a class="btn btn-secondary" href="{{ path('user_assign_club', {'id': user.id}) }}">
 												Attribuer un club
+											</a>
+										{% endif %}
+										{% if is_granted('ASSIGN_USER_ROLE') %}
+											<a class="btn btn-primary" href="{{ path('user_assign_role', {'id': user.id}) }}">
+												Attribuer un rôle
 											</a>
 										{% endif %}
 									</div>

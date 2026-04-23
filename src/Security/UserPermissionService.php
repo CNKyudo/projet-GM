@@ -18,7 +18,70 @@ final class UserPermissionService
 
     public function canAccessUserManagement(User $user): bool
     {
-        return $this->hasAnyRole($user, UserRole::ADMIN);
+        return $this->hasAtLeastRole($user, UserRole::CLUB_PRESIDENT);
+    }
+
+    /**
+     * Peut accéder à la page d'affectation de rôle pour au moins un rôle assignable.
+     */
+    public function canAssignAnyRole(User $user): bool
+    {
+        return $this->hasAtLeastRole($user, UserRole::CLUB_PRESIDENT);
+    }
+
+    /**
+     * Retourne la liste des rôles que $currentUser peut affecter.
+     *
+     * Droits :
+     *  - Transfert de présidence (son propre club) : CLUB_PRESIDENT, ADMIN
+     *  - Nomination d'un président de club         : CTK, CN, ADMIN
+     *  - Affectation de rôles régionaux            : PRESIDENT, MGR_CLUB, CTK, CN, ADMIN
+     *  - Affectation de rôles nationaux            : CN, ADMIN
+     *  - Rétrogradation (MEMBER / USER)            : ADMIN uniquement
+     *
+     * @return UserRole[]
+     */
+    public function getAssignableRoles(User $currentUser): array
+    {
+        $roles = [];
+
+        // Transfert de présidence (CLUB_PRESIDENT vers un membre de son club)
+        // + Nomination d'un président de club (CTK/CN/ADMIN vers n'importe quel club)
+        if ($this->hasAnyRole(
+            $currentUser,
+            UserRole::CLUB_PRESIDENT,
+            UserRole::EQUIPMENT_MANAGER_CTK,
+            UserRole::EQUIPMENT_MANAGER_CN,
+            UserRole::ADMIN
+        )) {
+            $roles[] = UserRole::CLUB_PRESIDENT;
+        }
+
+        // Affectation de rôles régionaux (ROLE_EQUIPMENT_MANAGER_CTK et ROLE_EQUIPMENT_MANAGER_CLUB)
+        if ($this->hasAnyRole(
+            $currentUser,
+            UserRole::CLUB_PRESIDENT,
+            UserRole::EQUIPMENT_MANAGER_CLUB,
+            UserRole::EQUIPMENT_MANAGER_CTK,
+            UserRole::EQUIPMENT_MANAGER_CN,
+            UserRole::ADMIN
+        )) {
+            $roles[] = UserRole::EQUIPMENT_MANAGER_CTK;
+            $roles[] = UserRole::EQUIPMENT_MANAGER_CLUB;
+        }
+
+        // Affectation de rôles nationaux (ROLE_EQUIPMENT_MANAGER_CN)
+        if ($this->hasAnyRole($currentUser, UserRole::EQUIPMENT_MANAGER_CN, UserRole::ADMIN)) {
+            $roles[] = UserRole::EQUIPMENT_MANAGER_CN;
+        }
+
+        // Rétrogradation vers MEMBER ou USER (ADMIN uniquement)
+        if ($this->hasAnyRole($currentUser, UserRole::ADMIN)) {
+            $roles[] = UserRole::MEMBER;
+            $roles[] = UserRole::USER;
+        }
+
+        return array_unique($roles, \SORT_REGULAR);
     }
 
     public function canEditOwnAccountInformation(User $user): bool
@@ -28,12 +91,12 @@ final class UserPermissionService
 
     public function canAssignUserToAnyClub(User $user): bool
     {
-        return $this->hasAnyRole($user, UserRole::CLUB_PRESIDENT, UserRole::EQUIPMENT_MANAGER_CTK, UserRole::ADMIN);
+        return $this->hasAnyRole($user, UserRole::CLUB_PRESIDENT, UserRole::EQUIPMENT_MANAGER_CLUB, UserRole::EQUIPMENT_MANAGER_CTK, UserRole::ADMIN);
     }
 
     public function canAssignUserToOwnClub(User $user): bool
     {
-        return $this->hasAnyRole($user, UserRole::CLUB_PRESIDENT, UserRole::EQUIPMENT_MANAGER_CTK, UserRole::ADMIN);
+        return $this->hasAnyRole($user, UserRole::CLUB_PRESIDENT, UserRole::EQUIPMENT_MANAGER_CLUB, UserRole::EQUIPMENT_MANAGER_CTK, UserRole::ADMIN);
     }
 
     // -----------------------------------------------------------------------

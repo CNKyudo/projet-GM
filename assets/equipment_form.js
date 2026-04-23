@@ -108,6 +108,31 @@ function initOwnerMutualExclusion(root) {
     })
 }
 
+/**
+ * Exclusion mutuelle entre borrower_club et borrower_member :
+ * sélectionner l'un efface automatiquement l'autre.
+ */
+function initBorrowerMutualExclusion(root) {
+    const clubSelect   = root.querySelector('select[name$="[borrowerClub]"]')
+    const memberSelect = root.querySelector('select[name$="[borrowerMember]"]')
+
+    if (!clubSelect || !memberSelect) {
+        return
+    }
+
+    clubSelect.addEventListener('change', function () {
+        if (clubSelect.value) {
+            memberSelect.value = ''
+        }
+    })
+
+    memberSelect.addEventListener('change', function () {
+        if (memberSelect.value) {
+            clubSelect.value = ''
+        }
+    })
+}
+
 function initEquipmentForm(root) {
     const equipmentType = getEquipmentTypeSelect(root)
 
@@ -115,6 +140,7 @@ function initEquipmentForm(root) {
     // On initialise quand même la logique d'exclusion mutuelle des propriétaires.
     if (!equipmentType) {
         initOwnerMutualExclusion(root)
+        initBorrowerMutualExclusion(root)
         return
     }
 
@@ -133,6 +159,7 @@ function initEquipmentForm(root) {
 
     refreshSections()
     initOwnerMutualExclusion(root)
+    initBorrowerMutualExclusion(root)
 }
 
 export function initEquipmentForms() {
