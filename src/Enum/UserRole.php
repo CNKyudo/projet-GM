@@ -30,6 +30,21 @@ enum UserRole: string
         ];
     }
 
+    /**
+     * Convertit une liste de valeurs de rôle (strings) en leurs labels lisibles.
+     *
+     * @param list<string> $roles
+     *
+     * @return list<string>
+     */
+    public static function labelsFromStrings(array $roles): array
+    {
+        return array_map(
+            static fn (string $role): string => self::tryFrom($role)?->label() ?? $role,
+            $roles,
+        );
+    }
+
     public function label(): string
     {
         return match ($this) {

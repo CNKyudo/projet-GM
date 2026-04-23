@@ -57,15 +57,29 @@
         <div class="mt-1 text-sm text-red-600">{{ form_errors(form.ownerClub) }}</div>
       </div>
 
-      <div>
-        <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
-          {{ form.borrowerClub.vars.label|default('Club emprunteur') }}
-        </label>
-        {{ form_widget(form.borrowerClub, {
-          attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 text-kyudo-gm-dark shadow-sm outline-none focus:border-kyudo-gm-light-grey focus:ring-2 focus:ring-kyudo-washed-blue' }
-        }) }}
-        <p class="mt-2 text-xs text-">Optionnel - si vide, l'équipement est considéré disponible.</p>
-        <div class="mt-1 text-sm text-red-600">{{ form_errors(form.borrowerClub) }}</div>
+      <div class="sm:col-span-2">
+        <p class="mb-2 text-sm font-semibold text-kyudo-gm-dark">Emprunteur</p>
+        <p class="mb-3 text-xs text-kyudo-gm-grey">Optionnel — si les deux champs sont vides, l'équipement est considéré disponible.</p>
+        <div class="grid gap-3 sm:grid-cols-2">
+          <div>
+            <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark" for="{{ form.borrowerClub.vars.id }}">
+              {{ form.borrowerClub.vars.label|default('Club emprunteur') }}
+            </label>
+            {{ form_widget(form.borrowerClub, {
+              attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 text-kyudo-gm-dark shadow-sm outline-none focus:border-kyudo-gm-light-grey focus:ring-2 focus:ring-kyudo-washed-blue' }
+            }) }}
+            <div class="mt-1 text-sm text-red-600">{{ form_errors(form.borrowerClub) }}</div>
+          </div>
+          <div>
+            <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark" for="{{ form.borrowerMember.vars.id }}">
+              {{ form.borrowerMember.vars.label|default('Membre emprunteur') }}
+            </label>
+            {{ form_widget(form.borrowerMember, {
+              attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 text-kyudo-gm-dark shadow-sm outline-none focus:border-kyudo-gm-light-grey focus:ring-2 focus:ring-kyudo-washed-blue' }
+            }) }}
+            <div class="mt-1 text-sm text-red-600">{{ form_errors(form.borrowerMember) }}</div>
+          </div>
+        </div>
       </div>
 
     </div>
