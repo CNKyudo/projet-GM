@@ -33,9 +33,18 @@ else
   echo "⚠️ Aucun .env.local trouvé dans $PROD_LINK, pensez à le créer !"
 fi
 
-mkdir -p "$RELEASE_DIR/var/log"
+mkdir -p "$RELEASE_DIR/var/cache" "$RELEASE_DIR/var/log"
 
 composer install --no-dev --classmap-authoritative --no-interaction --prefer-dist --no-scripts --no-progress
+
+echo "Permission management..."
+
+# Donner les droits de lecture/écriture/exécution (rwX) à www-data
+setfacl -R -m u:www-data:rwX "$RELEASE_DIR/var/cache" "$RELEASE_DIR/var/log"
+# Définir les ACL par défaut 
+setfacl -dR -m u:www-data:rwX "$RELEASE_DIR/var/cache" "$RELEASE_DIR/var/log"
+
+echo "✅ ACL configurées pour www-data sur var/cache et var/log"
 
 php bin/console cache:clear --env=prod
 php bin/console importmap:install --env=prod
