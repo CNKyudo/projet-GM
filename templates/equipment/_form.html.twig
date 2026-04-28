@@ -119,6 +119,22 @@
         {% endif %}
       </div>
 
+      <div id="support_makiwara_form_section" data-equipment-form-section="support_makiwara"
+        {% if (form.equipment_type is defined and form.equipment_type.vars.value != 'support_makiwara') or form.support_makiwara_form is not defined %}
+            class="hidden"
+        {% endif %}
+      >
+        {% if form.support_makiwara_form is defined %}
+          <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
+            {{ form.support_makiwara_form.hauteur.vars.label|default('Hauteur (m)') }}
+          </label>
+          {{ form_widget(form.support_makiwara_form.hauteur, {
+            attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
+          }) }}
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.support_makiwara_form.hauteur) }}</div>
+        {% endif %}
+      </div>
+
       <div id="makiwara_form_section" data-equipment-form-section="makiwara"
         {% if (form.equipment_type is defined and form.equipment_type.vars.value != 'makiwara') or form.makiwara_form is not defined %}
             class="hidden"

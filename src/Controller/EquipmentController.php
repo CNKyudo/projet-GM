@@ -9,6 +9,7 @@ use App\Entity\Federation;
 use App\Entity\Glove;
 use App\Entity\Makiwara;
 use App\Entity\Region;
+use App\Entity\SupportMakiwara;
 use App\Entity\User;
 use App\Entity\Yumi;
 use App\Enum\EquipmentLevel;
@@ -112,6 +113,7 @@ final class EquipmentController extends AbstractController
                 EquipmentType::YUMI => new Yumi(),
                 EquipmentType::GLOVE => new Glove(),
                 EquipmentType::MAKIWARA => new Makiwara(),
+                EquipmentType::SUPPORT_MAKIWARA => new SupportMakiwara(),
             };
 
             // Déterminer le niveau et le propriétaire selon les champs soumis
@@ -160,6 +162,11 @@ final class EquipmentController extends AbstractController
             if ($equipment instanceof Makiwara && $form->has('makiwara_form')) {
                 $makiwaraForm = $form->get('makiwara_form');
                 $equipment->setMaterial($makiwaraForm->get('material')->getData());
+            }
+
+            if ($equipment instanceof SupportMakiwara && $form->has('support_makiwara_form')) {
+                $supportMakiwaraForm = $form->get('support_makiwara_form');
+                $equipment->setHauteur($supportMakiwaraForm->get('hauteur')->getData());
             }
 
             $entityManager->persist($equipment);

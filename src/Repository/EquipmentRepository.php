@@ -12,6 +12,7 @@ use App\Service\Equipment\SearchStrategy\DefaultSearchStrategy;
 use App\Service\Equipment\SearchStrategy\GloveSearchStrategy;
 use App\Service\Equipment\SearchStrategy\MakiwaraSearchStrategy;
 use App\Service\Equipment\SearchStrategy\SearchStrategyInterface;
+use App\Service\Equipment\SearchStrategy\SupportMakiwaraSearchStrategy;
 use App\Service\Equipment\SearchStrategy\YumiSearchStrategy;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
@@ -28,6 +29,7 @@ class EquipmentRepository extends ServiceEntityRepository
         private readonly YumiSearchStrategy $yumiSearchStrategy,
         private readonly GloveSearchStrategy $gloveSearchStrategy,
         private readonly MakiwaraSearchStrategy $makiwaraSearchStrategy,
+        private readonly SupportMakiwaraSearchStrategy $supportMakiwaraSearchStrategy,
     ) {
         parent::__construct($registry, Equipment::class);
     }
@@ -67,6 +69,7 @@ class EquipmentRepository extends ServiceEntityRepository
             EquipmentType::YUMI => $this->yumiSearchStrategy,
             EquipmentType::GLOVE => $this->gloveSearchStrategy,
             EquipmentType::MAKIWARA => $this->makiwaraSearchStrategy,
+            EquipmentType::SUPPORT_MAKIWARA => $this->supportMakiwaraSearchStrategy,
             default => $this->defaultSearchStrategy,
         };
     }
