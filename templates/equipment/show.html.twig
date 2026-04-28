@@ -98,6 +98,13 @@
                   {{ equipment.yumiLength.value ?: '-' }}
                 </dd>
               </div>
+            {% elseif equipment.typeName == 'makiwara' %}
+              <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
+                <dt class="text-xs font-medium text-">Matériau</dt>
+                <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
+                  {{ equipment.material ?: '-' }}
+                </dd>
+              </div>
             {% endif %}
 
             <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">

@@ -21,6 +21,7 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
 #[DiscriminatorMap([
     'yumi' => Yumi::class,
     'glove' => Glove::class,
+    'makiwara' => Makiwara::class,
 ])]
 #[Loggable]
 

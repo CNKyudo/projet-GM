@@ -1,13 +1,13 @@
 .split-bg-materiel {
-  background-image: url('../pictures/materiel.jpg');
+  background-image: url('../../pictures/materiel.jpg');
 }
 
 .split-bg-club {
-  background-image: url('../pictures/club.JPG');
+  background-image: url('../../pictures/club.JPG');
 }
 
 .split-bg-admin {
-  background-image: url('../pictures/admin.jpg');
+  background-image: url('../../pictures/admin.jpg');
 }
 
 .split-banner {

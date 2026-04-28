@@ -10,6 +10,7 @@ use App\Entity\ClubMember;
 use App\Entity\Equipment;
 use App\Entity\Federation;
 use App\Entity\Glove;
+use App\Entity\Makiwara;
 use App\Entity\Region;
 use App\Entity\User;
 use App\Entity\Yumi;
@@ -80,6 +81,9 @@ class EquipmentFormType extends AbstractType
                     ->add('yumi_form', YumiFormType::class, [
                         'disabled' => true,
                     ])
+                    ->add('makiwara_form', MakiwaraFormType::class, [
+                        'disabled' => true,
+                    ])
                 ;
             } elseif ($data instanceof Equipment) {
                 // Reconstruire les champs owner* avec l'option `data` pour que le select
@@ -92,6 +96,8 @@ class EquipmentFormType extends AbstractType
                     $form->add('glove_form', GloveFormType::class);
                 } elseif ($data instanceof Yumi) {
                     $form->add('yumi_form', YumiFormType::class);
+                } elseif ($data instanceof Makiwara) {
+                    $form->add('makiwara_form', MakiwaraFormType::class);
                 }
             }
         });
@@ -112,6 +118,10 @@ class EquipmentFormType extends AbstractType
 
             $form->add('yumi_form', YumiFormType::class, [
                 'disabled' => $submittedType !== EquipmentType::YUMI->value,
+            ]);
+
+            $form->add('makiwara_form', MakiwaraFormType::class, [
+                'disabled' => $submittedType !== EquipmentType::MAKIWARA->value,
             ]);
         });
 

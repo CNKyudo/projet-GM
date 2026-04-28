@@ -46,6 +46,10 @@ function normalizeEquipmentType(selectElement) {
         return String(value || '').trim().toLowerCase()
     })
 
+    if (normalizedCandidates.some(function (value) { return value.includes('makiwara') })) {
+        return 'makiwara'
+    }
+
     if (normalizedCandidates.some(function (value) { return value.includes('glove') })) {
         return 'glove'
     }
@@ -57,23 +61,33 @@ function normalizeEquipmentType(selectElement) {
     return ''
 }
 
-function updateEquipmentSections(selectElement, gloveSection, yumiSection) {
+function updateEquipmentSections(selectElement, gloveSection, yumiSection, makiwaraSection) {
     const equipmentType = normalizeEquipmentType(selectElement)
+
+    if (equipmentType === 'makiwara') {
+        enableFormSection(makiwaraSection)
+        disableFormSection(gloveSection)
+        disableFormSection(yumiSection)
+        return
+    }
 
     if (equipmentType === 'glove') {
         enableFormSection(gloveSection)
         disableFormSection(yumiSection)
+        disableFormSection(makiwaraSection)
         return
     }
 
     if (equipmentType === 'yumi') {
         enableFormSection(yumiSection)
         disableFormSection(gloveSection)
+        disableFormSection(makiwaraSection)
         return
     }
 
     disableFormSection(gloveSection)
     disableFormSection(yumiSection)
+    disableFormSection(makiwaraSection)
 }
 
 /**
@@ -148,8 +162,10 @@ function initEquipmentForm(root) {
         || root.querySelector('#glove_form_section')
     const yumiFormSection = root.querySelector('[data-equipment-form-section="yumi"]')
         || root.querySelector('#yumi_form_section')
+    const makiwaraFormSection = root.querySelector('[data-equipment-form-section="makiwara"]')
+        || root.querySelector('#makiwara_form_section')
     const refreshSections = function () {
-        updateEquipmentSections(equipmentType, gloveFormSection, yumiFormSection)
+        updateEquipmentSections(equipmentType, gloveFormSection, yumiFormSection, makiwaraFormSection)
     }
 
     if (root.dataset.equipmentFormInit !== '1') {

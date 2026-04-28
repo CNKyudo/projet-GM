@@ -2,4 +2,5 @@ equipment:
   type:
     yumi: "Arc (Yumi)"
     glove: "Gant (Kake)"
+    makiwara: "Makiwara"
   choose_type: "Choisir un type..."
