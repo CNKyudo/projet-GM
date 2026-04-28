@@ -4,4 +4,9 @@ equipment:
     glove: "Gant (Kake)"
     makiwara: "Makiwara"
     support_makiwara: "Support makiwara"
+    yumitate: "Yumitate"
   choose_type: "Choisir un type..."
+yumitate:
+  orientation:
+    recto: "Recto"
+    recto_verso: "Recto-verso"

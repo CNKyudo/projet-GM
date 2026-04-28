@@ -112,6 +112,19 @@
                   {{ equipment.hauteur is not null ? equipment.hauteur : '-' }}
                 </dd>
               </div>
+            {% elseif equipment.typeName == 'yumitate' %}
+              <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
+                <dt class="text-xs font-medium text-">Nombre d'arcs</dt>
+                <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
+                  {{ equipment.nbArcs is not null ? equipment.nbArcs : '-' }}
+                </dd>
+              </div>
+              <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
+                <dt class="text-xs font-medium text-">Orientation</dt>
+                <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
+                  {{ equipment.orientation ? equipment.orientation.label|trans : '-' }}
+                </dd>
+              </div>
             {% endif %}
 
             <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">

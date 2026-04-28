@@ -23,6 +23,7 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
     'glove' => Glove::class,
     'makiwara' => Makiwara::class,
     'support_makiwara' => SupportMakiwara::class,
+    'yumitate' => Yumitate::class,
 ])]
 #[Loggable]
 
