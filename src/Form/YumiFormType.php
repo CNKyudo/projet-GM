@@ -11,6 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Length;
 
 /**
  * @extends AbstractType<Yumi>
@@ -23,6 +24,12 @@ class YumiFormType extends AbstractType
             ->add('material', TextType::class, [
                 'label' => 'Matériau',
                 'required' => true,
+                'constraints' => [
+                    new Length(max: 255),
+                ],
+                'attr' => [
+                    'maxlength' => 255,
+                ],
             ])
             ->add('strength', IntegerType::class, [
                 'label' => 'Force (kg)',

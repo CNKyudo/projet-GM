@@ -10,6 +10,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Length;
 
 /**
  * @extends AbstractType<Maku>
@@ -38,6 +39,12 @@ class MakuFormType extends AbstractType
             ->add('material', TextType::class, [
                 'label' => 'Matière',
                 'required' => true,
+                'constraints' => [
+                    new Length(max: 255),
+                ],
+                'attr' => [
+                    'maxlength' => 255,
+                ],
             ])
             ->add('poids', TextType::class, [
                 'label' => 'Poids (kg)',
@@ -50,6 +57,12 @@ class MakuFormType extends AbstractType
             ->add('accroche', TextType::class, [
                 'label' => 'Accroche',
                 'required' => false,
+                'constraints' => [
+                    new Length(max: 255),
+                ],
+                'attr' => [
+                    'maxlength' => 255,
+                ],
             ]);
 
         $frenchNumberTransformer = new FrenchNumberTransformer();
