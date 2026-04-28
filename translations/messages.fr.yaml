@@ -9,6 +9,13 @@ equipment:
     maku: "Maku"
     etafoam: "Etafoam"
   choose_type: "Choisir un type..."
+  state:
+    label: "État"
+    new: "Neuf"
+    used: "Usagé"
+    to_repair: "À réparer"
+  notes:
+    label: "Notes"
 makiwara:
   material:
     paille: "Paille"
