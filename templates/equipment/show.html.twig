@@ -66,6 +66,30 @@
               </dd>
             </div>
 
+            <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
+              <dt class="text-xs font-medium text-">{{ 'equipment.state.label'|trans }}</dt>
+              <dd class="mt-1">
+                <span class="inline-flex items-center rounded-full
+                   {% if equipment.state.value == constant('App\\Enum\\EquipmentState::NEW').value %}
+                    bg-emerald-50 text-emerald-800
+                  {% elseif equipment.state.value == constant('App\\Enum\\EquipmentState::USED').value %}
+                    bg-amber-50 text-amber-800
+                  {% elseif equipment.state.value == constant('App\\Enum\\EquipmentState::TO_REPAIR').value %}
+                    bg-red-100 text-red-900
+                  {% endif %}
+                  px-3 py-1 text-xs font-medium">
+                  {{ ('equipment.state.' ~ equipment.state.value)|trans }}
+                </span>
+              </dd>
+            </div>
+
+            {% if equipment.notes %}
+              <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
+                <dt class="text-xs font-medium text-">{{ 'equipment.notes.label'|trans }}</dt>
+                <dd class="mt-1 text-sm text-kyudo-gm-dark">{{ equipment.notes|nl2br }}</dd>
+              </div>
+            {% endif %}
+
             {% if equipment.typeName == 'glove' %}
               <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
                 <dt class="text-xs font-medium text-">Nombre de doigts</dt>

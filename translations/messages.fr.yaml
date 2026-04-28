@@ -3,3 +3,10 @@ equipment:
     yumi: "Arc (Yumi)"
     glove: "Gant (Kake)"
   choose_type: "Choisir un type..."
+  state:
+    label: "État"
+    new: "Neuf"
+    used: "Usagé"
+    to_repair: "À réparer"
+  notes:
+    label: "Notes"
