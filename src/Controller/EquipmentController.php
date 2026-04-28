@@ -172,7 +172,7 @@ final class EquipmentController extends AbstractController
 
             if ($equipment instanceof SupportMakiwara && $form->has('support_makiwara_form')) {
                 $supportMakiwaraForm = $form->get('support_makiwara_form');
-                $equipment->setHauteur($supportMakiwaraForm->get('hauteur')->getData());
+                $equipment->setHeight($supportMakiwaraForm->get('height')->getData());
             }
 
             if ($equipment instanceof Yumitate && $form->has('yumitate_form')) {
@@ -188,10 +188,10 @@ final class EquipmentController extends AbstractController
 
             if ($equipment instanceof Maku && $form->has('maku_form')) {
                 $makuForm = $form->get('maku_form');
-                $equipment->setLongueur($makuForm->get('longueur')->getData());
-                $equipment->setHauteur($makuForm->get('hauteur')->getData());
+                $equipment->setLength($makuForm->get('length')->getData());
+                $equipment->setHeight($makuForm->get('height')->getData());
                 $equipment->setMaterial($makuForm->get('material')->getData());
-                $equipment->setPoids($makuForm->get('poids')->getData());
+                $equipment->setWeight($makuForm->get('weight')->getData());
                 $equipment->setAccroche($makuForm->get('accroche')->getData());
             }
 

@@ -30,10 +30,10 @@ final class MakuSearchStrategy extends AbstractSearchStrategy
     ): void {
         $queryBuilder->andWhere(
             $queryBuilder->expr()->orX(
-                $queryBuilder->expr()->like(sprintf("CONCAT(%s.longueur, '')", $alias), ':term'),
-                $queryBuilder->expr()->like(sprintf("CONCAT(%s.hauteur, '')", $alias), ':term'),
+                $queryBuilder->expr()->like(sprintf("CONCAT(%s.length, '')", $alias), ':term'),
+                $queryBuilder->expr()->like(sprintf("CONCAT(%s.height, '')", $alias), ':term'),
                 $queryBuilder->expr()->like(sprintf('LOWER(%s.material)', $alias), ':term'),
-                $queryBuilder->expr()->like(sprintf("CONCAT(%s.poids, '')", $alias), ':term'),
+                $queryBuilder->expr()->like(sprintf("CONCAT(%s.weight, '')", $alias), ':term'),
                 $queryBuilder->expr()->like(sprintf('LOWER(%s.accroche)', $alias), ':term'),
                 $queryBuilder->expr()->like('LOWER(owner.name)', ':term'),
                 $queryBuilder->expr()->like('LOWER(borrower.name)', ':term')

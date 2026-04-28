@@ -19,7 +19,7 @@ class SupportMakiwaraFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('hauteur', TextType::class, [
+            ->add('height', TextType::class, [
                 'label' => 'Hauteur (m)',
                 'required' => true,
                 'attr' => [
@@ -28,7 +28,7 @@ class SupportMakiwaraFormType extends AbstractType
                 ],
             ]);
 
-        $builder->get('hauteur')
+        $builder->get('height')
             ->addModelTransformer(new FrenchNumberTransformer());
     }
 

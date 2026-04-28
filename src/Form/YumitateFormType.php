@@ -22,7 +22,7 @@ class YumitateFormType extends AbstractType
     {
         $builder
             ->add('nb_arcs', IntegerType::class, [
-                'label' => 'Nombre d\'arcs',
+                'label' => "Nombre d'arcs",
                 'constraints' => [
                     new Range(min: 0),
                 ],

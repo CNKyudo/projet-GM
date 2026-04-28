@@ -30,7 +30,7 @@ final class SupportMakiwaraSearchStrategy extends AbstractSearchStrategy
     ): void {
         $queryBuilder->andWhere(
             $queryBuilder->expr()->orX(
-                $queryBuilder->expr()->like(sprintf("CONCAT(%s.hauteur, '')", $alias), ':term'),
+                $queryBuilder->expr()->like(sprintf("CONCAT(%s.height, '')", $alias), ':term'),
                 $queryBuilder->expr()->like('LOWER(owner.name)', ':term'),
                 $queryBuilder->expr()->like('LOWER(borrower.name)', ':term')
             )

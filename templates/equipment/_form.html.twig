@@ -150,12 +150,12 @@
       >
         {% if form.support_makiwara_form is defined %}
           <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
-            {{ form.support_makiwara_form.hauteur.vars.label|default('Hauteur (m)') }}
+            {{ form.support_makiwara_form.height.vars.label|default('Hauteur (m)') }}
           </label>
-          {{ form_widget(form.support_makiwara_form.hauteur, {
+          {{ form_widget(form.support_makiwara_form.height, {
             attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
           }) }}
-          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.support_makiwara_form.hauteur) }}</div>
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.support_makiwara_form.height) }}</div>
         {% endif %}
       </div>
 
@@ -230,20 +230,20 @@
       >
         {% if form.maku_form is defined %}
           <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
-            {{ form.maku_form.longueur.vars.label|default('Longueur (m)') }}
+            {{ form.maku_form.length.vars.label|default('Longueur (m)') }}
           </label>
-          {{ form_widget(form.maku_form.longueur, {
+          {{ form_widget(form.maku_form.length, {
             attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
           }) }}
-          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.maku_form.longueur) }}</div>
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.maku_form.length) }}</div>
 
           <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
-            {{ form.maku_form.hauteur.vars.label|default('Hauteur (m)') }}
+            {{ form.maku_form.height.vars.label|default('Hauteur (m)') }}
           </label>
-          {{ form_widget(form.maku_form.hauteur, {
+          {{ form_widget(form.maku_form.height, {
             attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
           }) }}
-          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.maku_form.hauteur) }}</div>
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.maku_form.height) }}</div>
 
           <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
             {{ form.maku_form.material.vars.label|default('Matière') }}
@@ -254,12 +254,12 @@
           <div class="mt-1 text-sm text-red-600">{{ form_errors(form.maku_form.material) }}</div>
 
           <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
-            {{ form.maku_form.poids.vars.label|default('Poids (kg)') }}
+            {{ form.maku_form.weight.vars.label|default('Poids (kg)') }}
           </label>
-          {{ form_widget(form.maku_form.poids, {
+          {{ form_widget(form.maku_form.weight, {
             attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
           }) }}
-          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.maku_form.poids) }}</div>
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.maku_form.weight) }}</div>
 
           <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
             {{ form.maku_form.accroche.vars.label|default('Accroche') }}

@@ -15,11 +15,11 @@ class Maku extends Equipment
 {
     #[ORM\Column(type: Types::FLOAT, nullable: true)]
     #[Versioned]
-    private ?float $longueur = null;
+    private ?float $length = null;
 
     #[ORM\Column(type: Types::FLOAT, nullable: true)]
     #[Versioned]
-    private ?float $hauteur = null;
+    private ?float $height = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Versioned]
@@ -27,7 +27,7 @@ class Maku extends Equipment
 
     #[ORM\Column(type: Types::FLOAT, nullable: true)]
     #[Versioned]
-    private ?float $poids = null;
+    private ?float $weight = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Versioned]
@@ -38,26 +38,26 @@ class Maku extends Equipment
         return EquipmentType::MAKU;
     }
 
-    public function getLongueur(): ?float
+    public function getLength(): ?float
     {
-        return $this->longueur;
+        return $this->length;
     }
 
-    public function setLongueur(?float $longueur): static
+    public function setLength(?float $length): static
     {
-        $this->longueur = $longueur;
+        $this->length = $length;
 
         return $this;
     }
 
-    public function getHauteur(): ?float
+    public function getHeight(): ?float
     {
-        return $this->hauteur;
+        return $this->height;
     }
 
-    public function setHauteur(?float $hauteur): static
+    public function setHeight(?float $height): static
     {
-        $this->hauteur = $hauteur;
+        $this->height = $height;
 
         return $this;
     }
@@ -74,14 +74,14 @@ class Maku extends Equipment
         return $this;
     }
 
-    public function getPoids(): ?float
+    public function getWeight(): ?float
     {
-        return $this->poids;
+        return $this->weight;
     }
 
-    public function setPoids(?float $poids): static
+    public function setWeight(?float $weight): static
     {
-        $this->poids = $poids;
+        $this->weight = $weight;
 
         return $this;
     }

@@ -15,21 +15,21 @@ class SupportMakiwara extends Equipment
 {
     #[ORM\Column(type: Types::FLOAT, nullable: true)]
     #[Versioned]
-    private ?float $hauteur = null;
+    private ?float $height = null;
 
     public static function getType(): EquipmentType
     {
         return EquipmentType::SUPPORT_MAKIWARA;
     }
 
-    public function getHauteur(): ?float
+    public function getHeight(): ?float
     {
-        return $this->hauteur;
+        return $this->height;
     }
 
-    public function setHauteur(?float $hauteur): static
+    public function setHeight(?float $height): static
     {
-        $this->hauteur = $hauteur;
+        $this->height = $height;
 
         return $this;
     }
