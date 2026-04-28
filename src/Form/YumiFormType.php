@@ -7,6 +7,7 @@ namespace App\Form;
 use App\Entity\Yumi;
 use App\Enum\YumiLength;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -39,10 +40,12 @@ class YumiFormType extends AbstractType
                     'placeholder' => 'Force en kg',
                 ],
             ])
-            ->add('yumiLength', null, [
+            ->add('yumiLength', EnumType::class, [
+                'class' => YumiLength::class,
+                'choice_label' => fn (YumiLength $yumiLengthth): string => $yumiLengthth->label(),
                 'label' => 'Taille',
-                'required' => false,
-                'choices' => YumiLength::cases(),
+                'placeholder' => 'Choisir une taille...',
+                'required' => true,
             ]);
     }
 
