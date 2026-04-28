@@ -5,6 +5,7 @@ equipment:
     makiwara: "Makiwara"
     support_makiwara: "Support makiwara"
     yumitate: "Yumitate"
+    yatate: "Yatate"
   choose_type: "Choisir un type..."
 makiwara:
   material:

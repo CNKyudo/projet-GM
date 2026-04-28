@@ -13,6 +13,7 @@ use App\Entity\SupportMakiwara;
 use App\Entity\User;
 use App\Entity\Yumi;
 use App\Entity\Yumitate;
+use App\Entity\Yatate;
 use App\Enum\EquipmentLevel;
 use App\Enum\EquipmentType;
 use App\Form\EquipmentFormType;
@@ -116,6 +117,7 @@ final class EquipmentController extends AbstractController
                 EquipmentType::MAKIWARA => new Makiwara(),
                 EquipmentType::SUPPORT_MAKIWARA => new SupportMakiwara(),
                 EquipmentType::YUMITATE => new Yumitate(),
+                EquipmentType::YATATE => new Yatate(),
             };
 
             // Déterminer le niveau et le propriétaire selon les champs soumis
@@ -175,6 +177,11 @@ final class EquipmentController extends AbstractController
                 $yumitateForm = $form->get('yumitate_form');
                 $equipment->setNbArcs($yumitateForm->get('nb_arcs')->getData());
                 $equipment->setOrientation($yumitateForm->get('orientation')->getData());
+            }
+
+            if ($equipment instanceof Yatate && $form->has('yatate_form')) {
+                $yatateForm = $form->get('yatate_form');
+                $equipment->setNbFleches($yatateForm->get('nb_fleches')->getData());
             }
 
             $entityManager->persist($equipment);

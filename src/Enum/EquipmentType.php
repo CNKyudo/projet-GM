@@ -11,6 +11,7 @@ enum EquipmentType: string
     case MAKIWARA = 'makiwara';
     case SUPPORT_MAKIWARA = 'support_makiwara';
     case YUMITATE = 'yumitate';
+    case YATATE = 'yatate';
 
     public function label(): string
     {
@@ -20,6 +21,7 @@ enum EquipmentType: string
             self::MAKIWARA => 'equipment.type.makiwara',
             self::SUPPORT_MAKIWARA => 'equipment.type.support_makiwara',
             self::YUMITATE => 'equipment.type.yumitate',
+            self::YATATE => 'equipment.type.yatate',
         };
     }
 }

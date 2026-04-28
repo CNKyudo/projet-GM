@@ -16,6 +16,7 @@ use App\Entity\SupportMakiwara;
 use App\Entity\User;
 use App\Entity\Yumi;
 use App\Entity\Yumitate;
+use App\Entity\Yatate;
 use App\Enum\EquipmentType;
 use App\Repository\ClubRepository;
 use App\Security\UserPermissionService;
@@ -92,6 +93,9 @@ class EquipmentFormType extends AbstractType
                     ->add('yumitate_form', YumitateFormType::class, [
                         'disabled' => true,
                     ])
+                    ->add('yatate_form', YatateFormType::class, [
+                        'disabled' => true,
+                    ])
                 ;
             } elseif ($data instanceof Equipment) {
                 // Reconstruire les champs owner* avec l'option `data` pour que le select
@@ -110,6 +114,8 @@ class EquipmentFormType extends AbstractType
                     $form->add('support_makiwara_form', SupportMakiwaraFormType::class);
                 } elseif ($data instanceof Yumitate) {
                     $form->add('yumitate_form', YumitateFormType::class);
+                } elseif ($data instanceof Yatate) {
+                    $form->add('yatate_form', YatateFormType::class);
                 }
             }
         });
@@ -142,6 +148,10 @@ class EquipmentFormType extends AbstractType
 
             $form->add('yumitate_form', YumitateFormType::class, [
                 'disabled' => $submittedType !== EquipmentType::YUMITATE->value,
+            ]);
+
+            $form->add('yatate_form', YatateFormType::class, [
+                'disabled' => $submittedType !== EquipmentType::YATATE->value,
             ]);
         });
 

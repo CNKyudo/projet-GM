@@ -125,6 +125,13 @@
                   {{ equipment.orientation ? equipment.orientation.label|trans : '-' }}
                 </dd>
               </div>
+            {% elseif equipment.typeName == 'yatate' %}
+              <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
+                <dt class="text-xs font-medium text-">Nombre de flèches</dt>
+                <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
+                  {{ equipment.nbFleches is not null ? equipment.nbFleches : '-' }}
+                </dd>
+              </div>
             {% endif %}
 
             <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
