@@ -132,6 +132,37 @@
                   {{ equipment.nbFleches is not null ? equipment.nbFleches : '-' }}
                 </dd>
               </div>
+            {% elseif equipment.typeName == 'maku' %}
+              <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
+                <dt class="text-xs font-medium text-">Longueur (m)</dt>
+                <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
+                  {{ equipment.longueur is not null ? equipment.longueur : '-' }}
+                </dd>
+              </div>
+              <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
+                <dt class="text-xs font-medium text-">Hauteur (m)</dt>
+                <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
+                  {{ equipment.hauteur is not null ? equipment.hauteur : '-' }}
+                </dd>
+              </div>
+              <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
+                <dt class="text-xs font-medium text-">Matière</dt>
+                <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
+                  {{ equipment.material ?: '-' }}
+                </dd>
+              </div>
+              <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
+                <dt class="text-xs font-medium text-">Poids (kg)</dt>
+                <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
+                  {{ equipment.poids is not null ? equipment.poids : '-' }}
+                </dd>
+              </div>
+              <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
+                <dt class="text-xs font-medium text-">Accroche</dt>
+                <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
+                  {{ equipment.accroche ?: '-' }}
+                </dd>
+              </div>
             {% endif %}
 
             <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
