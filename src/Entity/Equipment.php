@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Enum\EquipmentLevel;
+use App\Enum\EquipmentState;
 use App\Enum\EquipmentType;
 use App\Repository\EquipmentRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -69,6 +70,14 @@ abstract class Equipment
     #[ORM\ManyToOne(inversedBy: 'borrowedEquipmentsMember')]
     #[Versioned]
     private ?ClubMember $borrowerMember = null;
+
+    #[ORM\Column(length: 50, enumType: EquipmentState::class)]
+    #[Versioned]
+    private EquipmentState $state = EquipmentState::NEW;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    #[Versioned]
+    private ?string $notes = null;
 
     public function getId(): ?int
     {
@@ -158,6 +167,30 @@ abstract class Equipment
     public function setBorrowerClub(?Club $club): static
     {
         $this->borrowerClub = $club;
+
+        return $this;
+    }
+
+    public function getState(): EquipmentState
+    {
+        return $this->state;
+    }
+
+    public function setState(EquipmentState $state): static
+    {
+        $this->state = $state;
+
+        return $this;
+    }
+
+    public function getNotes(): ?string
+    {
+        return $this->notes;
+    }
+
+    public function setNotes(?string $notes): static
+    {
+        $this->notes = $notes;
 
         return $this;
     }

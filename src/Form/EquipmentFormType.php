@@ -13,6 +13,7 @@ use App\Entity\Glove;
 use App\Entity\Region;
 use App\Entity\User;
 use App\Entity\Yumi;
+use App\Enum\EquipmentState;
 use App\Enum\EquipmentType;
 use App\Repository\ClubRepository;
 use App\Security\UserPermissionService;
@@ -25,6 +26,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -54,6 +56,18 @@ class EquipmentFormType extends AbstractType
                 'class' => ClubMember::class,
                 'choice_label' => 'fullName',
                 'placeholder' => '--- Aucun ---',
+                'required' => false,
+            ])
+            ->add('state', EnumType::class, [
+                'class' => EquipmentState::class,
+                'choice_label' => fn (EquipmentState $state): string => $state->label(),
+                'label' => 'equipment.state.label',
+                'translation_domain' => 'messages',
+                'required' => true,
+            ])
+            ->add('notes', TextareaType::class, [
+                'label' => 'equipment.notes.label',
+                'translation_domain' => 'messages',
                 'required' => false,
             ]);
 
