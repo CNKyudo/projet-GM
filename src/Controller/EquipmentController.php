@@ -162,7 +162,7 @@ final class EquipmentController extends AbstractController
                 $yumiForm = $form->get('yumi_form');
                 $equipment->setMaterial($yumiForm->get('material')->getData());
                 $equipment->setStrength($yumiForm->get('strength')->getData());
-                $equipment->setYumiLength($yumiForm->get('length')->getData());
+                $equipment->setYumiLength($yumiForm->get('yumiLength')->getData());
             }
 
             if ($equipment instanceof Makiwara && $form->has('makiwara_form')) {
