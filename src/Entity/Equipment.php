@@ -26,6 +26,7 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
     'yumitate' => Yumitate::class,
     'yatate' => Yatate::class,
     'maku' => Maku::class,
+    'etafoam' => Etafoam::class,
 ])]
 #[Loggable]
 

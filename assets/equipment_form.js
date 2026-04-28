@@ -74,11 +74,27 @@ function normalizeEquipmentType(selectElement) {
         return 'maku'
     }
 
+    if (normalizedCandidates.some(function (value) { return value.includes('etafoam') })) {
+        return 'etafoam'
+    }
+
     return ''
 }
 
-function updateEquipmentSections(selectElement, gloveSection, yumiSection, makiwaraSection, supportMakiwaraSection, yumitateSection, yatateSection, makuSection) {
+function updateEquipmentSections(selectElement, gloveSection, yumiSection, makiwaraSection, supportMakiwaraSection, yumitateSection, yatateSection, makuSection, etafoamSection) {
     const equipmentType = normalizeEquipmentType(selectElement)
+
+    if (equipmentType === 'etafoam') {
+        enableFormSection(etafoamSection)
+        disableFormSection(gloveSection)
+        disableFormSection(yumiSection)
+        disableFormSection(makiwaraSection)
+        disableFormSection(supportMakiwaraSection)
+        disableFormSection(yumitateSection)
+        disableFormSection(yatateSection)
+        disableFormSection(makuSection)
+        return
+    }
 
     if (equipmentType === 'maku') {
         enableFormSection(makuSection)
@@ -88,6 +104,7 @@ function updateEquipmentSections(selectElement, gloveSection, yumiSection, makiw
         disableFormSection(supportMakiwaraSection)
         disableFormSection(yumitateSection)
         disableFormSection(yatateSection)
+        disableFormSection(etafoamSection)
         return
     }
 
@@ -99,6 +116,7 @@ function updateEquipmentSections(selectElement, gloveSection, yumiSection, makiw
         disableFormSection(supportMakiwaraSection)
         disableFormSection(yumitateSection)
         disableFormSection(makuSection)
+        disableFormSection(etafoamSection)
         return
     }
 
@@ -110,6 +128,7 @@ function updateEquipmentSections(selectElement, gloveSection, yumiSection, makiw
         disableFormSection(supportMakiwaraSection)
         disableFormSection(yatateSection)
         disableFormSection(makuSection)
+        disableFormSection(etafoamSection)
         return
     }
 
@@ -121,6 +140,7 @@ function updateEquipmentSections(selectElement, gloveSection, yumiSection, makiw
         disableFormSection(yumitateSection)
         disableFormSection(yatateSection)
         disableFormSection(makuSection)
+        disableFormSection(etafoamSection)
         return
     }
 
@@ -132,6 +152,7 @@ function updateEquipmentSections(selectElement, gloveSection, yumiSection, makiw
         disableFormSection(yumitateSection)
         disableFormSection(yatateSection)
         disableFormSection(makuSection)
+        disableFormSection(etafoamSection)
         return
     }
 
@@ -143,6 +164,7 @@ function updateEquipmentSections(selectElement, gloveSection, yumiSection, makiw
         disableFormSection(yumitateSection)
         disableFormSection(yatateSection)
         disableFormSection(makuSection)
+        disableFormSection(etafoamSection)
         return
     }
 
@@ -154,6 +176,7 @@ function updateEquipmentSections(selectElement, gloveSection, yumiSection, makiw
         disableFormSection(yumitateSection)
         disableFormSection(yatateSection)
         disableFormSection(makuSection)
+        disableFormSection(etafoamSection)
         return
     }
 
@@ -164,6 +187,7 @@ function updateEquipmentSections(selectElement, gloveSection, yumiSection, makiw
     disableFormSection(yumitateSection)
     disableFormSection(yatateSection)
     disableFormSection(makuSection)
+    disableFormSection(etafoamSection)
 }
 
 /**
@@ -248,8 +272,10 @@ function initEquipmentForm(root) {
         || root.querySelector('#yatate_form_section')
     const makuFormSection = root.querySelector('[data-equipment-form-section="maku"]')
         || root.querySelector('#maku_form_section')
+    const etafoamFormSection = root.querySelector('[data-equipment-form-section="etafoam"]')
+        || root.querySelector('#etafoam_form_section')
     const refreshSections = function () {
-        updateEquipmentSections(equipmentType, gloveFormSection, yumiFormSection, makiwaraFormSection, supportMakiwaraFormSection, yumitateFormSection, yatateFormSection, makuFormSection)
+        updateEquipmentSections(equipmentType, gloveFormSection, yumiFormSection, makiwaraFormSection, supportMakiwaraFormSection, yumitateFormSection, yatateFormSection, makuFormSection, etafoamFormSection)
     }
 
     if (root.dataset.equipmentFormInit !== '1') {

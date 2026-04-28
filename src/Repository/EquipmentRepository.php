@@ -17,6 +17,7 @@ use App\Service\Equipment\SearchStrategy\YumiSearchStrategy;
 use App\Service\Equipment\SearchStrategy\YumitateSearchStrategy;
 use App\Service\Equipment\SearchStrategy\YatateSearchStrategy;
 use App\Service\Equipment\SearchStrategy\MakuSearchStrategy;
+use App\Service\Equipment\SearchStrategy\EtafoamSearchStrategy;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -36,6 +37,7 @@ class EquipmentRepository extends ServiceEntityRepository
         private readonly YumitateSearchStrategy $yumitateSearchStrategy,
         private readonly YatateSearchStrategy $yatateSearchStrategy,
         private readonly MakuSearchStrategy $makuSearchStrategy,
+        private readonly EtafoamSearchStrategy $etafoamSearchStrategy,
     ) {
         parent::__construct($registry, Equipment::class);
     }
@@ -79,6 +81,7 @@ class EquipmentRepository extends ServiceEntityRepository
             EquipmentType::YUMITATE => $this->yumitateSearchStrategy,
             EquipmentType::YATATE => $this->yatateSearchStrategy,
             EquipmentType::MAKU => $this->makuSearchStrategy,
+            EquipmentType::ETAFOAM => $this->etafoamSearchStrategy,
             default => $this->defaultSearchStrategy,
         };
     }

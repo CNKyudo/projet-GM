@@ -163,6 +163,25 @@
                   {{ equipment.accroche ?: '-' }}
                 </dd>
               </div>
+            {% elseif equipment.typeName == 'etafoam' %}
+              <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
+                <dt class="text-xs font-medium text-">Longueur (cm)</dt>
+                <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
+                  {{ equipment.length is not null ? equipment.length : '-' }}
+                </dd>
+              </div>
+              <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
+                <dt class="text-xs font-medium text-">Largeur (cm)</dt>
+                <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
+                  {{ equipment.width is not null ? equipment.width : '-' }}
+                </dd>
+              </div>
+              <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
+                <dt class="text-xs font-medium text-">Épaisseur (cm)</dt>
+                <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
+                  {{ equipment.thickness is not null ? equipment.thickness : '-' }}
+                </dd>
+              </div>
             {% endif %}
 
             <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">

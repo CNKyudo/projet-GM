@@ -271,6 +271,38 @@
         {% endif %}
       </div>
 
+      <div id="etafoam_form_section" data-equipment-form-section="etafoam"
+        {% if (form.equipment_type is defined and form.equipment_type.vars.value != 'etafoam') or form.etafoam_form is not defined %}
+            class="hidden"
+        {% endif %}
+      >
+        {% if form.etafoam_form is defined %}
+          <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
+            {{ form.etafoam_form.length.vars.label|default('Longueur (cm)') }}
+          </label>
+          {{ form_widget(form.etafoam_form.length, {
+            attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
+          }) }}
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.etafoam_form.length) }}</div>
+
+          <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
+            {{ form.etafoam_form.width.vars.label|default('Largeur (cm)') }}
+          </label>
+          {{ form_widget(form.etafoam_form.width, {
+            attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
+          }) }}
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.etafoam_form.width) }}</div>
+
+          <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
+            {{ form.etafoam_form.thickness.vars.label|default('Épaisseur (cm)') }}
+          </label>
+          {{ form_widget(form.etafoam_form.thickness, {
+            attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
+          }) }}
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.etafoam_form.thickness) }}</div>
+        {% endif %}
+      </div>
+
     </div>
   </section>
 
