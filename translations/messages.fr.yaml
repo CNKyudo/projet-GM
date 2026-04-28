@@ -6,6 +6,11 @@ equipment:
     support_makiwara: "Support makiwara"
     yumitate: "Yumitate"
   choose_type: "Choisir un type..."
+makiwara:
+  material:
+    paille: "Paille"
+    carton: "Carton"
+    mousse: "Mousse"
 yumitate:
   orientation:
     recto: "Recto"
