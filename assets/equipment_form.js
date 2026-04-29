@@ -82,112 +82,23 @@ function normalizeEquipmentType(selectElement) {
 }
 
 function updateEquipmentSections(selectElement, gloveSection, yumiSection, makiwaraSection, supportMakiwaraSection, yumitateSection, yatateSection, makuSection, etafoamSection) {
-    const equipmentType = normalizeEquipmentType(selectElement)
-
-    if (equipmentType === 'etafoam') {
-        enableFormSection(etafoamSection)
-        disableFormSection(gloveSection)
-        disableFormSection(yumiSection)
-        disableFormSection(makiwaraSection)
-        disableFormSection(supportMakiwaraSection)
-        disableFormSection(yumitateSection)
-        disableFormSection(yatateSection)
-        disableFormSection(makuSection)
-        return
+    var equipmentType = normalizeEquipmentType(selectElement)
+    var sections = {
+        glove: gloveSection,
+        yumi: yumiSection,
+        makiwara: makiwaraSection,
+        support_makiwara: supportMakiwaraSection,
+        yumitate: yumitateSection,
+        yatate: yatateSection,
+        maku: makuSection,
+        etafoam: etafoamSection,
     }
 
-    if (equipmentType === 'maku') {
-        enableFormSection(makuSection)
-        disableFormSection(gloveSection)
-        disableFormSection(yumiSection)
-        disableFormSection(makiwaraSection)
-        disableFormSection(supportMakiwaraSection)
-        disableFormSection(yumitateSection)
-        disableFormSection(yatateSection)
-        disableFormSection(etafoamSection)
-        return
-    }
+    Object.values(sections).forEach(disableFormSection)
 
-    if (equipmentType === 'yatate') {
-        enableFormSection(yatateSection)
-        disableFormSection(gloveSection)
-        disableFormSection(yumiSection)
-        disableFormSection(makiwaraSection)
-        disableFormSection(supportMakiwaraSection)
-        disableFormSection(yumitateSection)
-        disableFormSection(makuSection)
-        disableFormSection(etafoamSection)
-        return
+    if (equipmentType && sections[equipmentType]) {
+        enableFormSection(sections[equipmentType])
     }
-
-    if (equipmentType === 'yumitate') {
-        enableFormSection(yumitateSection)
-        disableFormSection(gloveSection)
-        disableFormSection(yumiSection)
-        disableFormSection(makiwaraSection)
-        disableFormSection(supportMakiwaraSection)
-        disableFormSection(yatateSection)
-        disableFormSection(makuSection)
-        disableFormSection(etafoamSection)
-        return
-    }
-
-    if (equipmentType === 'support_makiwara') {
-        enableFormSection(supportMakiwaraSection)
-        disableFormSection(gloveSection)
-        disableFormSection(yumiSection)
-        disableFormSection(makiwaraSection)
-        disableFormSection(yumitateSection)
-        disableFormSection(yatateSection)
-        disableFormSection(makuSection)
-        disableFormSection(etafoamSection)
-        return
-    }
-
-    if (equipmentType === 'makiwara') {
-        enableFormSection(makiwaraSection)
-        disableFormSection(gloveSection)
-        disableFormSection(yumiSection)
-        disableFormSection(supportMakiwaraSection)
-        disableFormSection(yumitateSection)
-        disableFormSection(yatateSection)
-        disableFormSection(makuSection)
-        disableFormSection(etafoamSection)
-        return
-    }
-
-    if (equipmentType === 'glove') {
-        enableFormSection(gloveSection)
-        disableFormSection(yumiSection)
-        disableFormSection(makiwaraSection)
-        disableFormSection(supportMakiwaraSection)
-        disableFormSection(yumitateSection)
-        disableFormSection(yatateSection)
-        disableFormSection(makuSection)
-        disableFormSection(etafoamSection)
-        return
-    }
-
-    if (equipmentType === 'yumi') {
-        enableFormSection(yumiSection)
-        disableFormSection(gloveSection)
-        disableFormSection(makiwaraSection)
-        disableFormSection(supportMakiwaraSection)
-        disableFormSection(yumitateSection)
-        disableFormSection(yatateSection)
-        disableFormSection(makuSection)
-        disableFormSection(etafoamSection)
-        return
-    }
-
-    disableFormSection(gloveSection)
-    disableFormSection(yumiSection)
-    disableFormSection(makiwaraSection)
-    disableFormSection(supportMakiwaraSection)
-    disableFormSection(yumitateSection)
-    disableFormSection(yatateSection)
-    disableFormSection(makuSection)
-    disableFormSection(etafoamSection)
 }
 
 /**
