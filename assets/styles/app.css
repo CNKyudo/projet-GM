@@ -8,6 +8,18 @@
 
 @import "./club_management/index.css";
 
+.split-bg-materiel {
+  background-image: url('../pictures/materiel.jpg');
+}
+
+.split-bg-club {
+  background-image: url('../pictures/club.JPG');
+}
+
+.split-bg-admin {
+  background-image: url('../pictures/admin.jpg');
+}
+
 .h-screen-with-navbar {
   min-height: calc(100vh - 64px);
 }
