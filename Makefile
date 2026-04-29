@@ -26,6 +26,12 @@ diff:
 migrate:
 	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:migrations:migrate --no-interaction
 
+reset-database:
+	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:database:drop --force
+	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:database:create
+	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:migrations:migrate --no-interaction
+	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:fixtures:load --no-interaction
+
 test-functional:
 	@echo "Preparing test database..."
 	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:database:create --env=test --if-not-exists
