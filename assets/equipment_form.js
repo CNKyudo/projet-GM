@@ -186,7 +186,17 @@ function initEquipmentForm(root) {
     const etafoamFormSection = root.querySelector('[data-equipment-form-section="etafoam"]')
         || root.querySelector('#etafoam_form_section')
     const refreshSections = function () {
-        updateEquipmentSections(equipmentType, gloveFormSection, yumiFormSection, makiwaraFormSection, supportMakiwaraFormSection, yumitateFormSection, yatateFormSection, makuFormSection, etafoamFormSection)
+        updateEquipmentSections(
+            equipmentType,
+            gloveFormSection,
+            yumiFormSection,
+            makiwaraFormSection,
+            supportMakiwaraFormSection,
+            yumitateFormSection,
+            yatateFormSection,
+            makuFormSection,
+            etafoamFormSection
+        )
     }
 
     if (root.dataset.equipmentFormInit !== '1') {
