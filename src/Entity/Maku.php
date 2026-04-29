@@ -15,7 +15,7 @@ class Maku extends Equipment
 {
     #[ORM\Column(type: Types::FLOAT, nullable: true)]
     #[Versioned]
-    private ?float $length = null;
+    private ?float $equipmentLength = null;
 
     #[ORM\Column(type: Types::FLOAT, nullable: true)]
     #[Versioned]
@@ -38,14 +38,14 @@ class Maku extends Equipment
         return EquipmentType::MAKU;
     }
 
-    public function getLength(): ?float
+    public function getEquipmentLength(): ?float
     {
-        return $this->length;
+        return $this->equipmentLength;
     }
 
-    public function setLength(?float $length): static
+    public function setEquipmentLength(?float $equipmentLength): static
     {
-        $this->length = $length;
+        $this->equipmentLength = $equipmentLength;
 
         return $this;
     }

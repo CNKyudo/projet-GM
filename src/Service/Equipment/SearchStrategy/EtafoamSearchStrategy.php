@@ -30,7 +30,7 @@ final class EtafoamSearchStrategy extends AbstractSearchStrategy
     ): void {
         $queryBuilder->andWhere(
             $queryBuilder->expr()->orX(
-                $queryBuilder->expr()->like(sprintf("CONCAT(%s.length, '')", $alias), ':term'),
+                $queryBuilder->expr()->like(sprintf("CONCAT(%s.equipment_length, '')", $alias), ':term'),
                 $queryBuilder->expr()->like(sprintf("CONCAT(%s.width, '')", $alias), ':term'),
                 $queryBuilder->expr()->like(sprintf("CONCAT(%s.thickness, '')", $alias), ':term'),
                 $queryBuilder->expr()->like('LOWER(owner.name)', ':term'),

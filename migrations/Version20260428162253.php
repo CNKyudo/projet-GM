@@ -28,7 +28,7 @@ final class Version20260428162253 extends AbstractMigration
         $this->addSql('ALTER TABLE equipment ADD nb_bows INT DEFAULT NULL');
         $this->addSql('ALTER TABLE equipment ADD orientation VARCHAR(255) DEFAULT NULL');
         $this->addSql('ALTER TABLE equipment ADD nb_arrows INT DEFAULT NULL');
-        $this->addSql('ALTER TABLE equipment ADD length DOUBLE PRECISION DEFAULT NULL');
+        $this->addSql('ALTER TABLE equipment ADD equipment_length DOUBLE PRECISION DEFAULT NULL');
         $this->addSql('ALTER TABLE equipment ADD weight DOUBLE PRECISION DEFAULT NULL');
         $this->addSql('ALTER TABLE equipment ADD attachment VARCHAR(255) DEFAULT NULL');
         $this->addSql('ALTER TABLE equipment ADD width DOUBLE PRECISION DEFAULT NULL');
@@ -46,7 +46,7 @@ final class Version20260428162253 extends AbstractMigration
         $this->addSql('ALTER TABLE equipment DROP nb_bows');
         $this->addSql('ALTER TABLE equipment DROP orientation');
         $this->addSql('ALTER TABLE equipment DROP nb_arrows');
-        $this->addSql('ALTER TABLE equipment DROP length');
+        $this->addSql('ALTER TABLE equipment DROP equipment_length');
         $this->addSql('ALTER TABLE equipment DROP weight');
         $this->addSql('ALTER TABLE equipment DROP attachment');
         $this->addSql('ALTER TABLE equipment DROP width');

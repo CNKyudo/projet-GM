@@ -15,7 +15,7 @@ class Etafoam extends Equipment
 {
     #[ORM\Column(type: Types::FLOAT, nullable: true)]
     #[Versioned]
-    private ?float $length = null;
+    private ?float $equipmentLength = null;
 
     #[ORM\Column(type: Types::FLOAT, nullable: true)]
     #[Versioned]
@@ -30,14 +30,14 @@ class Etafoam extends Equipment
         return EquipmentType::ETAFOAM;
     }
 
-    public function getLength(): ?float
+    public function getEquipmentLength(): ?float
     {
-        return $this->length;
+        return $this->equipmentLength;
     }
 
-    public function setLength(?float $length): static
+    public function setEquipmentLength(?float $equipmentLength): static
     {
-        $this->length = $length;
+        $this->equipmentLength = $equipmentLength;
 
         return $this;
     }

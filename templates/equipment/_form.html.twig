@@ -250,12 +250,12 @@
       >
         {% if form.maku_form is defined %}
           <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
-            {{ form.maku_form.length.vars.label|default('Longueur (m)') }}
+            {{ form.maku_form.equipmentLength.vars.label|default('Longueur (m)') }}
           </label>
-          {{ form_widget(form.maku_form.length, {
+          {{ form_widget(form.maku_form.equipmentLength, {
             attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
           }) }}
-          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.maku_form.length) }}</div>
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.maku_form.equipmentLength) }}</div>
 
           <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
             {{ form.maku_form.height.vars.label|default('Hauteur (m)') }}
@@ -298,12 +298,12 @@
       >
         {% if form.etafoam_form is defined %}
           <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
-            {{ form.etafoam_form.length.vars.label|default('Longueur (cm)') }}
+            {{ form.etafoam_form.equipmentLength.vars.label|default('Longueur (cm)') }}
           </label>
-          {{ form_widget(form.etafoam_form.length, {
+          {{ form_widget(form.etafoam_form.equipmentLength, {
             attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
           }) }}
-          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.etafoam_form.length) }}</div>
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.etafoam_form.equipmentLength) }}</div>
 
           <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
             {{ form.etafoam_form.width.vars.label|default('Largeur (cm)') }}

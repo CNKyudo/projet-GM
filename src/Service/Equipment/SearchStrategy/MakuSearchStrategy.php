@@ -30,7 +30,7 @@ final class MakuSearchStrategy extends AbstractSearchStrategy
     ): void {
         $queryBuilder->andWhere(
             $queryBuilder->expr()->orX(
-                $queryBuilder->expr()->like(sprintf("CONCAT(%s.length, '')", $alias), ':term'),
+                $queryBuilder->expr()->like(sprintf("CONCAT(%s.equipment_length, '')", $alias), ':term'),
                 $queryBuilder->expr()->like(sprintf("CONCAT(%s.height, '')", $alias), ':term'),
                 $queryBuilder->expr()->like(sprintf('LOWER(%s.material)', $alias), ':term'),
                 $queryBuilder->expr()->like(sprintf("CONCAT(%s.weight, '')", $alias), ':term'),

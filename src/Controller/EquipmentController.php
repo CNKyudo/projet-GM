@@ -190,7 +190,7 @@ final class EquipmentController extends AbstractController
 
             if ($equipment instanceof Maku && $form->has('maku_form')) {
                 $makuForm = $form->get('maku_form');
-                $equipment->setLength($makuForm->get('length')->getData());
+                $equipment->setEquipmentLength($makuForm->get('equipmentLength')->getData());
                 $equipment->setHeight($makuForm->get('height')->getData());
                 $equipment->setMaterial($makuForm->get('material')->getData());
                 $equipment->setWeight($makuForm->get('weight')->getData());
@@ -199,7 +199,7 @@ final class EquipmentController extends AbstractController
 
             if ($equipment instanceof Etafoam && $form->has('etafoam_form')) {
                 $etafoamForm = $form->get('etafoam_form');
-                $equipment->setLength($etafoamForm->get('length')->getData());
+                $equipment->setEquipmentLength($etafoamForm->get('equipmentLength')->getData());
                 $equipment->setWidth($etafoamForm->get('width')->getData());
                 $equipment->setThickness($etafoamForm->get('thickness')->getData());
             }

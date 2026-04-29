@@ -19,7 +19,7 @@ class EtafoamFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('length', IntegerType::class, [
+            ->add('equipmentLength', IntegerType::class, [
                 'label' => 'Longueur (cm)',
                 'constraints' => [
                     new Range(min: 0),

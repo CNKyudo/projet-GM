@@ -20,7 +20,7 @@ class MakuFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('length', TextType::class, [
+            ->add('equipmentLength', TextType::class, [
                 'label' => 'Longueur (m)',
                 'required' => true,
                 'attr' => [
@@ -66,7 +66,7 @@ class MakuFormType extends AbstractType
             ]);
 
         $frenchNumberTransformer = new FrenchNumberTransformer();
-        $builder->get('length')->addModelTransformer($frenchNumberTransformer);
+        $builder->get('equipmentLength')->addModelTransformer($frenchNumberTransformer);
         $builder->get('height')->addModelTransformer($frenchNumberTransformer);
         $builder->get('weight')->addModelTransformer($frenchNumberTransformer);
     }
