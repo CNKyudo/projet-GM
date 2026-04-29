@@ -146,12 +146,12 @@
       >
         {% if form.yumitate_form is defined %}
           <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
-            {{ form.yumitate_form.nb_arcs.vars.label|default('Nombre d\'arcs') }}
+            {{ form.yumitate_form.nb_bows.vars.label|default('Nombre d\'arcs') }}
           </label>
-          {{ form_widget(form.yumitate_form.nb_arcs, {
+          {{ form_widget(form.yumitate_form.nb_bows, {
             attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
           }) }}
-          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.yumitate_form.nb_arcs) }}</div>
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.yumitate_form.nb_bows) }}</div>
 
           <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
             {{ form.yumitate_form.orientation.vars.label|default('Orientation') }}
@@ -234,12 +234,12 @@
       >
         {% if form.yatate_form is defined %}
           <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
-            {{ form.yatate_form.nb_fleches.vars.label|default('Nombre de flèches') }}
+            {{ form.yatate_form.nb_arrows.vars.label|default('Nombre de flèches') }}
           </label>
-          {{ form_widget(form.yatate_form.nb_fleches, {
+          {{ form_widget(form.yatate_form.nb_arrows, {
             attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
           }) }}
-          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.yatate_form.nb_fleches) }}</div>
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.yatate_form.nb_arrows) }}</div>
         {% endif %}
       </div>
 
@@ -282,12 +282,12 @@
           <div class="mt-1 text-sm text-red-600">{{ form_errors(form.maku_form.weight) }}</div>
 
           <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
-            {{ form.maku_form.accroche.vars.label|default('Accroche') }}
+            {{ form.maku_form.attachment.vars.label|default('Accroche') }}
           </label>
-          {{ form_widget(form.maku_form.accroche, {
+          {{ form_widget(form.maku_form.attachment, {
             attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
           }) }}
-          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.maku_form.accroche) }}</div>
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.maku_form.attachment) }}</div>
         {% endif %}
       </div>
 

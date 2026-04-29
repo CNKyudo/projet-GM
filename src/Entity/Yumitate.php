@@ -15,7 +15,7 @@ class Yumitate extends Equipment
 {
     #[ORM\Column(nullable: true)]
     #[Versioned]
-    private ?int $nb_arcs = null;
+    private ?int $nb_bows = null;
 
     #[ORM\Column(length: 255, nullable: true, enumType: YumitateOrientation::class)]
     #[Versioned]
@@ -26,14 +26,14 @@ class Yumitate extends Equipment
         return EquipmentType::YUMITATE;
     }
 
-    public function getNbArcs(): ?int
+    public function getNbBows(): ?int
     {
-        return $this->nb_arcs;
+        return $this->nb_bows;
     }
 
-    public function setNbArcs(?int $nb_arcs): static
+    public function setNbBows(?int $nb_bows): static
     {
-        $this->nb_arcs = $nb_arcs;
+        $this->nb_bows = $nb_bows;
 
         return $this;
     }

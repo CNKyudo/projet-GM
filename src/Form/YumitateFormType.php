@@ -21,7 +21,7 @@ class YumitateFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('nb_arcs', IntegerType::class, [
+            ->add('nb_bows', IntegerType::class, [
                 'label' => "Nombre d'arcs",
                 'constraints' => [
                     new Range(min: 0),

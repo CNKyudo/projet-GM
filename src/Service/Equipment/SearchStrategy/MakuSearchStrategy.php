@@ -34,7 +34,7 @@ final class MakuSearchStrategy extends AbstractSearchStrategy
                 $queryBuilder->expr()->like(sprintf("CONCAT(%s.height, '')", $alias), ':term'),
                 $queryBuilder->expr()->like(sprintf('LOWER(%s.material)', $alias), ':term'),
                 $queryBuilder->expr()->like(sprintf("CONCAT(%s.weight, '')", $alias), ':term'),
-                $queryBuilder->expr()->like(sprintf('LOWER(%s.accroche)', $alias), ':term'),
+                $queryBuilder->expr()->like(sprintf('LOWER(%s.attachment)', $alias), ':term'),
                 $queryBuilder->expr()->like('LOWER(owner.name)', ':term'),
                 $queryBuilder->expr()->like('LOWER(borrower.name)', ':term')
             )

@@ -31,7 +31,7 @@ class Maku extends Equipment
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Versioned]
-    private ?string $accroche = null;
+    private ?string $attachment = null;
 
     public static function getType(): EquipmentType
     {
@@ -86,14 +86,14 @@ class Maku extends Equipment
         return $this;
     }
 
-    public function getAccroche(): ?string
+    public function getAttachment(): ?string
     {
-        return $this->accroche;
+        return $this->attachment;
     }
 
-    public function setAccroche(?string $accroche): static
+    public function setAttachment(?string $attachment): static
     {
-        $this->accroche = $accroche;
+        $this->attachment = $attachment;
 
         return $this;
     }

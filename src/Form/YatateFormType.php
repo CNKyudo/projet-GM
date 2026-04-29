@@ -19,7 +19,7 @@ class YatateFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('nb_fleches', IntegerType::class, [
+            ->add('nb_arrows', IntegerType::class, [
                 'label' => 'Nombre de flèches',
                 'constraints' => [
                     new Range(min: 0),

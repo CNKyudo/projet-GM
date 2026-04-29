@@ -30,7 +30,7 @@ final class YatateSearchStrategy extends AbstractSearchStrategy
     ): void {
         $queryBuilder->andWhere(
             $queryBuilder->expr()->orX(
-                $queryBuilder->expr()->like(sprintf("CONCAT(%s.nb_fleches, '')", $alias), ':term'),
+                $queryBuilder->expr()->like(sprintf("CONCAT(%s.nb_arrows, '')", $alias), ':term'),
                 $queryBuilder->expr()->like('LOWER(owner.name)', ':term'),
                 $queryBuilder->expr()->like('LOWER(borrower.name)', ':term')
             )

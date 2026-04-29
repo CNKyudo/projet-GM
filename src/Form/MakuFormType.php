@@ -54,7 +54,7 @@ class MakuFormType extends AbstractType
                     'inputmode' => 'decimal',
                 ],
             ])
-            ->add('accroche', TextType::class, [
+            ->add('attachment', TextType::class, [
                 'label' => 'Accroche',
                 'required' => false,
                 'constraints' => [

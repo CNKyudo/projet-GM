@@ -30,7 +30,7 @@ final class YumitateSearchStrategy extends AbstractSearchStrategy
     ): void {
         $queryBuilder->andWhere(
             $queryBuilder->expr()->orX(
-                $queryBuilder->expr()->like(sprintf("CONCAT(%s.nb_arcs, '')", $alias), ':term'),
+                $queryBuilder->expr()->like(sprintf("CONCAT(%s.nb_bows, '')", $alias), ':term'),
                 $queryBuilder->expr()->like(sprintf('LOWER(%s.orientation)', $alias), ':term'),
                 $queryBuilder->expr()->like('LOWER(owner.name)', ':term'),
                 $queryBuilder->expr()->like('LOWER(borrower.name)', ':term')

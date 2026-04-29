@@ -14,21 +14,21 @@ class Yatate extends Equipment
 {
     #[ORM\Column(nullable: true)]
     #[Versioned]
-    private ?int $nb_fleches = null;
+    private ?int $nb_arrows = null;
 
     public static function getType(): EquipmentType
     {
         return EquipmentType::YATATE;
     }
 
-    public function getNbFleches(): ?int
+    public function getNbArrows(): ?int
     {
-        return $this->nb_fleches;
+        return $this->nb_arrows;
     }
 
-    public function setNbFleches(?int $nb_fleches): static
+    public function setNbArrows(?int $nb_arrows): static
     {
-        $this->nb_fleches = $nb_fleches;
+        $this->nb_arrows = $nb_arrows;
 
         return $this;
     }

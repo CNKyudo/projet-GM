@@ -140,7 +140,7 @@
               <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
                 <dt class="text-xs font-medium text-">Nombre d'arcs</dt>
                 <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
-                  {{ equipment.nbArcs is not null ? equipment.nbArcs : '-' }}
+                  {{ equipment.nbBows is not null ? equipment.nbBows : '-' }}
                 </dd>
               </div>
               <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
@@ -153,7 +153,7 @@
               <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
                 <dt class="text-xs font-medium text-">Nombre de flèches</dt>
                 <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
-                  {{ equipment.nbFleches is not null ? equipment.nbFleches : '-' }}
+                  {{ equipment.nbArrows is not null ? equipment.nbArrows : '-' }}
                 </dd>
               </div>
             {% elseif equipment.typeName == 'maku' %}
@@ -184,7 +184,7 @@
               <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
                 <dt class="text-xs font-medium text-">Accroche</dt>
                 <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
-                  {{ equipment.accroche ?: '-' }}
+                  {{ equipment.attachment ?: '-' }}
                 </dd>
               </div>
             {% elseif equipment.typeName == 'etafoam' %}

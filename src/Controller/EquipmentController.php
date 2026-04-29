@@ -179,13 +179,13 @@ final class EquipmentController extends AbstractController
 
             if ($equipment instanceof Yumitate && $form->has('yumitate_form')) {
                 $yumitateForm = $form->get('yumitate_form');
-                $equipment->setNbArcs($yumitateForm->get('nb_arcs')->getData());
+                $equipment->setNbBows($yumitateForm->get('nb_bows')->getData());
                 $equipment->setOrientation($yumitateForm->get('orientation')->getData());
             }
 
             if ($equipment instanceof Yatate && $form->has('yatate_form')) {
                 $yatateForm = $form->get('yatate_form');
-                $equipment->setNbFleches($yatateForm->get('nb_fleches')->getData());
+                $equipment->setNbArrows($yatateForm->get('nb_arrows')->getData());
             }
 
             if ($equipment instanceof Maku && $form->has('maku_form')) {
@@ -194,7 +194,7 @@ final class EquipmentController extends AbstractController
                 $equipment->setHeight($makuForm->get('height')->getData());
                 $equipment->setMaterial($makuForm->get('material')->getData());
                 $equipment->setWeight($makuForm->get('weight')->getData());
-                $equipment->setAccroche($makuForm->get('accroche')->getData());
+                $equipment->setAttachment($makuForm->get('attachment')->getData());
             }
 
             if ($equipment instanceof Etafoam && $form->has('etafoam_form')) {
