@@ -8,38 +8,32 @@ use App\Entity\Club;
 use App\Entity\Region;
 use App\Entity\Equipment;
 use App\Enum\EquipmentType;
-use App\Service\Equipment\SearchStrategy\DefaultSearchStrategy;
-use App\Service\Equipment\SearchStrategy\GloveSearchStrategy;
-use App\Service\Equipment\SearchStrategy\MakiwaraSearchStrategy;
 use App\Service\Equipment\SearchStrategy\SearchStrategyInterface;
-use App\Service\Equipment\SearchStrategy\SupportMakiwaraSearchStrategy;
-use App\Service\Equipment\SearchStrategy\YumiSearchStrategy;
-use App\Service\Equipment\SearchStrategy\YumitateSearchStrategy;
-use App\Service\Equipment\SearchStrategy\YatateSearchStrategy;
-use App\Service\Equipment\SearchStrategy\MakuSearchStrategy;
-use App\Service\Equipment\SearchStrategy\EtafoamSearchStrategy;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 /**
  * @extends ServiceEntityRepository<Equipment>
  */
 class EquipmentRepository extends ServiceEntityRepository
 {
+    /** @var array<string, SearchStrategyInterface> */
+    private array $strategyMap = [];
+
+    /**
+     * @param iterable<SearchStrategyInterface> $strategies
+     */
     public function __construct(
         ManagerRegistry $registry,
-        private readonly DefaultSearchStrategy $defaultSearchStrategy,
-        private readonly YumiSearchStrategy $yumiSearchStrategy,
-        private readonly GloveSearchStrategy $gloveSearchStrategy,
-        private readonly MakiwaraSearchStrategy $makiwaraSearchStrategy,
-        private readonly SupportMakiwaraSearchStrategy $supportMakiwaraSearchStrategy,
-        private readonly YumitateSearchStrategy $yumitateSearchStrategy,
-        private readonly YatateSearchStrategy $yatateSearchStrategy,
-        private readonly MakuSearchStrategy $makuSearchStrategy,
-        private readonly EtafoamSearchStrategy $etafoamSearchStrategy,
+        #[AutowireIterator(SearchStrategyInterface::class)]
+        iterable $strategies,
     ) {
         parent::__construct($registry, Equipment::class);
+        foreach ($strategies as $strategy) {
+            $this->strategyMap[$strategy->getEquipmentType()->value ?? ''] = $strategy;
+        }
     }
 
     /**
@@ -73,16 +67,6 @@ class EquipmentRepository extends ServiceEntityRepository
      */
     private function getStrategyForType(?EquipmentType $equipmentType): SearchStrategyInterface
     {
-        return match ($equipmentType) {
-            EquipmentType::YUMI => $this->yumiSearchStrategy,
-            EquipmentType::GLOVE => $this->gloveSearchStrategy,
-            EquipmentType::MAKIWARA => $this->makiwaraSearchStrategy,
-            EquipmentType::SUPPORT_MAKIWARA => $this->supportMakiwaraSearchStrategy,
-            EquipmentType::YUMITATE => $this->yumitateSearchStrategy,
-            EquipmentType::YATATE => $this->yatateSearchStrategy,
-            EquipmentType::MAKU => $this->makuSearchStrategy,
-            EquipmentType::ETAFOAM => $this->etafoamSearchStrategy,
-            default => $this->defaultSearchStrategy,
-        };
+        return $this->strategyMap[$equipmentType->value ?? ''];
     }
 }

@@ -8,7 +8,9 @@ use App\Entity\Club;
 use App\Entity\Region;
 use App\Enum\EquipmentType;
 use Doctrine\ORM\QueryBuilder;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
+#[AutoconfigureTag]
 interface SearchStrategyInterface
 {
     /**
