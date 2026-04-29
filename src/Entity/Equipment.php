@@ -59,8 +59,6 @@ abstract class Equipment
      */
     #[ORM\ManyToOne(inversedBy: 'ownedEquipments')]
     #[Versioned]
-
-
     private ?Federation $ownerFederation = null;
 
     /**
