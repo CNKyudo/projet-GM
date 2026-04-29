@@ -67,6 +67,11 @@ class EquipmentRepository extends ServiceEntityRepository
      */
     private function getStrategyForType(?EquipmentType $equipmentType): SearchStrategyInterface
     {
-        return $this->strategyMap[$equipmentType->value ?? ''];
+        if (isset($this->strategyMap[$equipmentType->value ?? ''])) {
+            return $this->strategyMap[$equipmentType->value ?? ''];
+        }
+
+        // On retourne la stratégie par défaut si le type d'équipement n'a aucune stratégie dédiée
+        return $this->strategyMap[''];
     }
 }
