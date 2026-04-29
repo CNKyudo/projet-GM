@@ -18,9 +18,9 @@ equipment:
     label: "Notes"
 makiwara:
   material:
-    paille: "Paille"
-    carton: "Carton"
-    mousse: "Mousse"
+    straw: "Paille"
+    cardboard: "Carton"
+    foam: "Mousse"
 yumi:
   length:
     namisun: "Namisun"

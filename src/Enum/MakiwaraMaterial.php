@@ -6,16 +6,16 @@ namespace App\Enum;
 
 enum MakiwaraMaterial: string
 {
-    case PAILLE = 'paille';
-    case CARTON = 'carton';
-    case MOUSSE = 'mousse';
+    case STRAW = 'straw';
+    case CARDBOARD = 'cardboard';
+    case FOAM = 'foam';
 
     public function label(): string
     {
         return match($this) {
-            self::PAILLE => 'makiwara.material.paille',
-            self::CARTON => 'makiwara.material.carton',
-            self::MOUSSE => 'makiwara.material.mousse',
+            self::STRAW => 'makiwara.material.straw',
+            self::CARDBOARD => 'makiwara.material.cardboard',
+            self::FOAM => 'makiwara.material.foam',
         };
     }
 }
