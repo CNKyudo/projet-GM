@@ -10,7 +10,7 @@
         <div>
           <div class="text-sm font-medium text-">Équipement</div>
           <h1 class="mt-1 text-3xl font-semibold tracking-tight text-kyudo-gm-dark">
-            #{{ equipment.id }} - {{ equipment.typeName }}
+            #{{ equipment.id }} - {{ equipment.type.label|trans }}
           </h1>
           <p class="mt-1 text-kyudo-gm-grey">Propriétaire et emprunteur actuel.</p>
         </div>
@@ -46,22 +46,22 @@
 
             <div class="rounded-2xl bg-kyudo-gm-light-grey p-4">
               <dt class="text-xs font-medium text-">Type</dt>
-              <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">{{ equipment.typeName }}</dd>
+              <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">{{ equipment.type.label|trans }}</dd>
             </div>
 
             <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
               <dt class="text-xs font-medium text-">Propriétaire</dt>
-              <dd class="mt-1 flex flex-wrap items-center gap-2">
+              <dd class="mt-1 flex flex-wrap items-center">
                 {% set level = equipment.equipmentLevel.value %}
                 {% if level == 'national' %}
                   <span class="inline-flex items-center rounded-full bg-purple-100 px-2 py-0.5 text-xs font-semibold text-purple-800">National</span>
-                  <span class="text-sm font-semibold text-kyudo-gm-dark">- {{ equipment.ownerFederation ? equipment.ownerFederation.name : '-' }}</span>
+                  <span class="text-sm font-semibold text-kyudo-gm-dark">&nbsp;- {{ equipment.ownerFederation ? equipment.ownerFederation.name : '-' }}</span>
                 {% elseif level == 'regional' %}
                   <span class="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-800">Régional</span>
-                  <span class="text-sm font-semibold text-kyudo-gm-dark">- {{ equipment.ownerRegion ? equipment.ownerRegion.name : '-' }}</span>
+                  <span class="text-sm font-semibold text-kyudo-gm-dark">&nbsp;- {{ equipment.ownerRegion ? equipment.ownerRegion.name : '-' }}</span>
                 {% else %}
                   <span class="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-800">Club</span>
-                  <span class="text-sm font-semibold text-kyudo-gm-dark">- {{ equipment.ownerClub ? equipment.ownerClub.name : '-' }}</span>
+                  <span class="text-sm font-semibold text-kyudo-gm-dark">&nbsp;- {{ equipment.ownerClub ? equipment.ownerClub.name : '-' }}</span>
                 {% endif %}
               </dd>
             </div>
