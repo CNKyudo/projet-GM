@@ -193,15 +193,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
 
     public function setClubWhichImPresidentOf(?Club $club): static
     {
-        if ($this->clubWhichImPresidentOf instanceof Club && $this->clubWhichImPresidentOf !== $club) {
-            $this->clubWhichImPresidentOf->setPresident(null);
+        // Éviter la récursion : on ne met à jour que si l'état a changé
+        if ($this->clubWhichImPresidentOf === $club) {
+            return $this;
         }
 
+        $previous                     = $this->clubWhichImPresidentOf;
+        $this->clubWhichImPresidentOf = $club; // Affectation en premier pour couper la récursion
+
+        // Détacher de l'ancien club (la gestion du rôle est faite côté Club)
+        if ($previous instanceof Club && $previous->getPresident() === $this) {
+            $previous->setPresident(null);
+        }
+
+        // Attacher au nouveau club (la gestion du rôle est faite côté Club)
         if ($club instanceof Club && $club->getPresident() !== $this) {
             $club->setPresident($this);
         }
-
-        $this->clubWhichImPresidentOf = $club;
 
         return $this;
     }

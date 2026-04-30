@@ -58,6 +58,7 @@ use Doctrine\ORM\EntityManagerInterface;
  * - SHOW national : USER autorisé si dispo, refusé si prêté.
  * - CREATE utilise un check combiné : au moins un des 4 droits de création.
  * - EDIT utilise EDIT_EQUIPMENT avec sujet (canEditOwnClubEquipment ou canEditEquipmentFromOtherClub).
+ * - INDEX applique des filtres de visibilité par rôle (voir getVisibleEquipmentFiltersForUser).
  */
 final class EquipmentControllerTest extends AbstractWebTestCase
 {
@@ -78,6 +79,9 @@ final class EquipmentControllerTest extends AbstractWebTestCase
 
     /** ID du gant régional (owner_region = Région A) — emprunté */
     private int $gloveRegionalBorrowedId;
+
+    /** ID du gant régional (owner_region = Bretagne / Région C) — disponible */
+    private int $gloveRegionalCId;
 
     /** ID du gant national (owner_federation = Fédération) — disponible */
     private int $gloveNationalId;
@@ -116,6 +120,8 @@ final class EquipmentControllerTest extends AbstractWebTestCase
                 } else {
                     $this->gloveRegionalBorrowedId = $glove->getId();
                 }
+            } elseif ('Bretagne' === $glove->getOwnerRegion()?->getName()) {
+                $this->gloveRegionalCId = $glove->getId();
             } elseif ($glove->getOwnerFederation() instanceof Federation) {
                 // Deux gants nationaux : disponible et emprunté
                 if (!$glove->getBorrowerClub() instanceof Club && !$glove->getBorrowerMember() instanceof \App\Entity\ClubMember) {
@@ -175,12 +181,25 @@ final class EquipmentControllerTest extends AbstractWebTestCase
     }
 
     // -----------------------------------------------------------------------
-    // GET /equipment — tous les rôles (MEMBER+) voient l'intégralité des équipements
-    // (club, régional, national) sans restriction.
-    // Vérification : les 3 clubs (A, B, C) apparaissent dans la réponse.
-    // (Le droit d'accès par rôle est couvert par les tests testIndex*Granted/Denied.)
+    // GET /equipment — filtres de visibilité par rôle sur l'index
+    //
+    // Chaque rôle ne doit voir QUE les équipements auxquels il a accès.
+    // Les assertions utilisent l'URL /equipment/{id} qui apparaît dans les
+    // liens de la liste paginée.
+    //
+    // Rappel des fixtures :
+    //   Club A (Région A / Île-de-France) — member, president, mgr-club
+    //   Club B (Région B)                 — emprunté par Club C
+    //   Club C (Région A)                 — disponible
+    //   Club G (Région C / Bretagne)      — disponible
+    //   Régional Région A dispo           — gloveRegionalId
+    //   Régional Région A emprunté        — gloveRegionalBorrowedId
+    //   Régional Région C dispo           — gloveRegionalCId
+    //   National dispo                    — gloveNationalId
+    //   National emprunté                 — gloveNationalBorrowedId
     // -----------------------------------------------------------------------
 
+    // --- ADMIN : voit tout ---
     public function testIndexForAdminShowsAllClubsAndLevels(): void
     {
         $this->loginAs(AppFixtures::USER_ADMIN);
@@ -191,6 +210,191 @@ final class EquipmentControllerTest extends AbstractWebTestCase
         $this->assertStringContainsString(AppFixtures::CLUB_A, $content);
         $this->assertStringContainsString(AppFixtures::CLUB_B, $content);
         $this->assertStringContainsString(AppFixtures::CLUB_C, $content);
+    }
+
+    // --- MEMBER : propre club (tous) + CTK propre (dispo) + pas de national ---
+    public function testIndexMemberSeesOwnClubEquipment(): void
+    {
+        $this->loginAs(AppFixtures::USER_MEMBER);
+        $this->client->request(Request::METHOD_GET, '/equipment');
+        $this->assertResponseIsSuccessful();
+
+        $content = (string) $this->client->getResponse()->getContent();
+        // Club A = propre club → visible
+        $this->assertStringContainsString('/equipment/'.$this->gloveAId, $content);
+    }
+
+    public function testIndexMemberDoesNotSeeOtherClubEquipment(): void
+    {
+        // MEMBER ne voit pas les équipements d'autres clubs (même ou autre CTK)
+        $this->loginAs(AppFixtures::USER_MEMBER);
+        $this->client->request(Request::METHOD_GET, '/equipment');
+        $this->assertResponseIsSuccessful();
+
+        $content = (string) $this->client->getResponse()->getContent();
+        $this->assertStringNotContainsString('/equipment/'.$this->gloveBId, $content); // autre CTK, emprunté
+        $this->assertStringNotContainsString('/equipment/'.$this->gloveCId, $content); // même CTK, MEMBER n'accède pas aux autres clubs
+        $this->assertStringNotContainsString('/equipment/'.$this->gloveGId, $content); // autre CTK
+    }
+
+    public function testIndexMemberSeesOwnCtkRegionalAvailable(): void
+    {
+        // MEMBER voit les équipements régionaux disponibles de sa CTK (Région A)
+        $this->loginAs(AppFixtures::USER_MEMBER);
+        $this->client->request(Request::METHOD_GET, '/equipment');
+        $this->assertResponseIsSuccessful();
+
+        $content = (string) $this->client->getResponse()->getContent();
+        $this->assertStringContainsString('/equipment/'.$this->gloveRegionalId, $content);
+    }
+
+    public function testIndexMemberDoesNotSeeOwnCtkRegionalBorrowed(): void
+    {
+        // MEMBER ne voit pas les équipements régionaux empruntés (même sa CTK)
+        $this->loginAs(AppFixtures::USER_MEMBER);
+        $this->client->request(Request::METHOD_GET, '/equipment');
+        $this->assertResponseIsSuccessful();
+
+        $content = (string) $this->client->getResponse()->getContent();
+        $this->assertStringNotContainsString('/equipment/'.$this->gloveRegionalBorrowedId, $content);
+    }
+
+    public function testIndexMemberDoesNotSeeNationalEquipment(): void
+    {
+        // MEMBER ne voit aucun équipement national (ni disponible ni emprunté)
+        $this->loginAs(AppFixtures::USER_MEMBER);
+        $this->client->request(Request::METHOD_GET, '/equipment');
+        $this->assertResponseIsSuccessful();
+
+        $content = (string) $this->client->getResponse()->getContent();
+        $this->assertStringNotContainsString('/equipment/'.$this->gloveNationalId, $content);
+        $this->assertStringNotContainsString('/equipment/'.$this->gloveNationalBorrowedId, $content);
+    }
+
+    // --- PRESIDENT : propre club (tous) + même CTK clubs (dispo) + toutes régions (dispo) + pas de national ---
+    public function testIndexPresidentSeesSameCtkClubAvailable(): void
+    {
+        // Club C est en Région A (même CTK que Club A, président) → visible car disponible
+        $this->loginAs(AppFixtures::USER_PRESIDENT);
+        $this->client->request(Request::METHOD_GET, '/equipment');
+        $this->assertResponseIsSuccessful();
+
+        $content = (string) $this->client->getResponse()->getContent();
+        $this->assertStringContainsString('/equipment/'.$this->gloveCId, $content);
+    }
+
+    public function testIndexPresidentDoesNotSeeOtherCtkBorrowedClub(): void
+    {
+        // Club B est Région B (autre CTK), et son gant est emprunté → non visible
+        $this->loginAs(AppFixtures::USER_PRESIDENT);
+        $this->client->request(Request::METHOD_GET, '/equipment');
+        $this->assertResponseIsSuccessful();
+
+        $content = (string) $this->client->getResponse()->getContent();
+        $this->assertStringNotContainsString('/equipment/'.$this->gloveBId, $content);
+    }
+
+    public function testIndexPresidentDoesNotSeeOtherCtkAvailableClub(): void
+    {
+        // Club G est Région C (autre CTK) → PRESIDENT ne voit pas les clubs hors de sa CTK
+        $this->loginAs(AppFixtures::USER_PRESIDENT);
+        $this->client->request(Request::METHOD_GET, '/equipment');
+        $this->assertResponseIsSuccessful();
+
+        $content = (string) $this->client->getResponse()->getContent();
+        $this->assertStringNotContainsString('/equipment/'.$this->gloveGId, $content);
+    }
+
+    public function testIndexPresidentSeesAllCtkRegionalAvailable(): void
+    {
+        // PRESIDENT voit les équipements régionaux disponibles de TOUTES les CTK
+        $this->loginAs(AppFixtures::USER_PRESIDENT);
+        $this->client->request(Request::METHOD_GET, '/equipment');
+        $this->assertResponseIsSuccessful();
+
+        $content = (string) $this->client->getResponse()->getContent();
+        $this->assertStringContainsString('/equipment/'.$this->gloveRegionalId, $content);    // Région A, dispo
+        $this->assertStringContainsString('/equipment/'.$this->gloveRegionalCId, $content);   // Région C, dispo
+        $this->assertStringNotContainsString('/equipment/'.$this->gloveRegionalBorrowedId, $content); // Région A, emprunté
+    }
+
+    public function testIndexPresidentDoesNotSeeNationalEquipment(): void
+    {
+        $this->loginAs(AppFixtures::USER_PRESIDENT);
+        $this->client->request(Request::METHOD_GET, '/equipment');
+        $this->assertResponseIsSuccessful();
+
+        $content = (string) $this->client->getResponse()->getContent();
+        $this->assertStringNotContainsString('/equipment/'.$this->gloveNationalId, $content);
+        $this->assertStringNotContainsString('/equipment/'.$this->gloveNationalBorrowedId, $content);
+    }
+
+    // --- MGR_CTK : clubs de sa CTK (tous) + autres clubs (dispo) + ses régions (tous) + autres régions (dispo) ---
+    public function testIndexMgrCtkSeesOwnCtkBorrowedRegional(): void
+    {
+        // mgr-ctk gère Région A → voit les équipements régionaux empruntés de sa région
+        $this->loginAs(AppFixtures::USER_MANAGER_CTK);
+        $this->client->request(Request::METHOD_GET, '/equipment');
+        $this->assertResponseIsSuccessful();
+
+        $content = (string) $this->client->getResponse()->getContent();
+        $this->assertStringContainsString('/equipment/'.$this->gloveRegionalBorrowedId, $content);
+    }
+
+    public function testIndexMgrCtkSeesOtherCtkRegionalAvailable(): void
+    {
+        // mgr-ctk voit les équipements régionaux disponibles des autres CTK
+        $this->loginAs(AppFixtures::USER_MANAGER_CTK);
+        $this->client->request(Request::METHOD_GET, '/equipment');
+        $this->assertResponseIsSuccessful();
+
+        $content = (string) $this->client->getResponse()->getContent();
+        $this->assertStringContainsString('/equipment/'.$this->gloveRegionalCId, $content);
+    }
+
+    public function testIndexMgrCtkDoesNotSeeOtherCtkBorrowedClub(): void
+    {
+        // Club B (Région B) a son gant emprunté → CTK Île-de-France ne peut pas le voir
+        $this->loginAs(AppFixtures::USER_MANAGER_CTK);
+        $this->client->request(Request::METHOD_GET, '/equipment');
+        $this->assertResponseIsSuccessful();
+
+        $content = (string) $this->client->getResponse()->getContent();
+        $this->assertStringNotContainsString('/equipment/'.$this->gloveBId, $content);
+    }
+
+    public function testIndexMgrCtkSeesOtherCtkAvailableClub(): void
+    {
+        // Club G (Bretagne, Région C) a son gant disponible → CTK Île-de-France peut le voir
+        $this->loginAs(AppFixtures::USER_MANAGER_CTK);
+        $this->client->request(Request::METHOD_GET, '/equipment');
+        $this->assertResponseIsSuccessful();
+
+        $content = (string) $this->client->getResponse()->getContent();
+        $this->assertStringContainsString('/equipment/'.$this->gloveGId, $content);
+    }
+
+    public function testIndexMgrCtkDoesNotSeeNationalEquipment(): void
+    {
+        $this->loginAs(AppFixtures::USER_MANAGER_CTK);
+        $this->client->request(Request::METHOD_GET, '/equipment');
+        $this->assertResponseIsSuccessful();
+
+        $content = (string) $this->client->getResponse()->getContent();
+        $this->assertStringNotContainsString('/equipment/'.$this->gloveNationalId, $content);
+        $this->assertStringNotContainsString('/equipment/'.$this->gloveNationalBorrowedId, $content);
+    }
+
+    // --- MGR_CN : voit tout ---
+    public function testIndexMgrCnSeesNationalEquipment(): void
+    {
+        $this->loginAs(AppFixtures::USER_MANAGER_CN);
+        $this->client->request(Request::METHOD_GET, '/equipment');
+        $this->assertResponseIsSuccessful();
+
+        $content = (string) $this->client->getResponse()->getContent();
+        $this->assertStringContainsString('/equipment/'.$this->gloveNationalId, $content);
+        $this->assertStringContainsString('/equipment/'.$this->gloveNationalBorrowedId, $content);
     }
 
     // -----------------------------------------------------------------------

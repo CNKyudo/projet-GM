@@ -13,6 +13,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Callback;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * @extends AbstractType<Club>
@@ -62,7 +64,31 @@ class ClubType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Club::class,
+            'data_class'  => Club::class,
+            'constraints' => [
+                new Callback($this->validatePresidentAndEquipmentManager(...)),
+            ],
         ]);
+    }
+
+    /**
+     * Empêche qu'un même utilisateur soit à la fois président et gestionnaire
+     * matériel d'un club (rôles mutuellement exclusifs).
+     */
+    public function validatePresidentAndEquipmentManager(Club $club, ExecutionContextInterface $context): void
+    {
+        $president        = $club->getPresident();
+        $equipmentManager = $club->getEquipmentManager();
+
+        if (
+            $president instanceof User
+            && $equipmentManager instanceof User
+            && $president->getId() === $equipmentManager->getId()
+        ) {
+            $context
+                ->buildViolation('Un utilisateur ne peut pas être à la fois président et gestionnaire matériel d\'un club.')
+                ->atPath('equipmentManager')
+                ->addViolation();
+        }
     }
 }

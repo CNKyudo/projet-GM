@@ -39,12 +39,15 @@ class EquipmentRepository extends ServiceEntityRepository
     /**
      * Retourne un QueryBuilder construit par la bonne stratégie.
      *
-     * @param string             $query           Terme de recherche
-     * @param EquipmentType|null $equipmentType   Type d'équipement (null, YUMI, GLOVE)
-     * @param string             $status          Statut ('all', 'available', 'loaned')
-     * @param array<Club>|null   $restrictToClubs null = pas de restriction, [] = aucun résultat, [Club...] = filtre CLUB
-     * @param array<Region>|null $allowedRegions  null = pas de restriction REGIONAL, [] = aucun REGIONAL, [Region...] = filtre
-     * @param bool               $includeNational true = inclure les équipements NATIONAL
+     * @param string             $query                       Terme de recherche
+     * @param EquipmentType|null $equipmentType               Type d'équipement (null, YUMI, GLOVE)
+     * @param string             $status                      Statut global ('all', 'available', 'loaned')
+     * @param array<Club>|null   $restrictToClubs             null = aucune restriction ; [] = aucun ; [Club...] = filtre tous statuts
+     * @param array<Club>|null   $allowedClubsAvailableOnly   null = tous clubs disponibles ; [] = aucun ; [Club...] = filtre disponibles seulement
+     * @param array<Region>      $allowedRegions              [] = aucune ; [Region...] = ces régions (statut selon $onlyAvailableRegional)
+     * @param bool               $onlyAvailableRegional       true = $allowedRegions disponibles seulement
+     * @param bool               $includeAllAvailableRegional true = tous les REGIONAL disponibles (toutes régions)
+     * @param bool               $includeNational             true = inclure les équipements NATIONAL
      *
      * @return QueryBuilder Le QueryBuilder prêt à paginer
      */
@@ -53,13 +56,25 @@ class EquipmentRepository extends ServiceEntityRepository
         ?EquipmentType $equipmentType = null,
         string $status = 'all',
         ?array $restrictToClubs = null,
-        ?array $allowedRegions = [],
+        ?array $allowedClubsAvailableOnly = [],
+        array $allowedRegions = [],
+        bool $onlyAvailableRegional = false,
+        bool $includeAllAvailableRegional = false,
         bool $includeNational = false,
     ): QueryBuilder {
         $term = '' !== $query ? '%'.mb_strtolower($query).'%' : '';
         $searchStrategy = $this->getStrategyForType($equipmentType);
 
-        return $searchStrategy->buildQuery($term, $status, $restrictToClubs, $allowedRegions, $includeNational);
+        return $searchStrategy->buildQuery(
+            $term,
+            $status,
+            $restrictToClubs,
+            $allowedClubsAvailableOnly,
+            $allowedRegions,
+            $onlyAvailableRegional,
+            $includeAllAvailableRegional,
+            $includeNational,
+        );
     }
 
     /**
@@ -67,11 +82,7 @@ class EquipmentRepository extends ServiceEntityRepository
      */
     private function getStrategyForType(?EquipmentType $equipmentType): SearchStrategyInterface
     {
-        if (isset($this->strategyMap[$equipmentType->value ?? ''])) {
-            return $this->strategyMap[$equipmentType->value ?? ''];
-        }
-
         // On retourne la stratégie par défaut si le type d'équipement n'a aucune stratégie dédiée
-        return $this->strategyMap[''];
+        return $this->strategyMap[$equipmentType->value ?? ''] ?? $this->strategyMap[''];
     }
 }
