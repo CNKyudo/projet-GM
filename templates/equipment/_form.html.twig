@@ -139,6 +139,62 @@
         {% endif %}
       </div>
 
+      <div id="yumitate_form_section" data-equipment-form-section="yumitate"
+        {% if (form.equipment_type is defined and form.equipment_type.vars.value != 'yumitate') or form.yumitate_form is not defined %}
+            class="hidden"
+        {% endif %}
+      >
+        {% if form.yumitate_form is defined %}
+          <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
+            {{ form.yumitate_form.nb_bows.vars.label|default('Nombre d\'arcs') }}
+          </label>
+          {{ form_widget(form.yumitate_form.nb_bows, {
+            attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
+          }) }}
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.yumitate_form.nb_bows) }}</div>
+
+          <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
+            {{ form.yumitate_form.orientation.vars.label|default('Orientation') }}
+          </label>
+          {{ form_widget(form.yumitate_form.orientation, {
+            attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
+          }) }}
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.yumitate_form.orientation) }}</div>
+        {% endif %}
+      </div>
+
+      <div id="support_makiwara_form_section" data-equipment-form-section="support_makiwara"
+        {% if (form.equipment_type is defined and form.equipment_type.vars.value != 'support_makiwara') or form.support_makiwara_form is not defined %}
+            class="hidden"
+        {% endif %}
+      >
+        {% if form.support_makiwara_form is defined %}
+          <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
+            {{ form.support_makiwara_form.height.vars.label|default('Hauteur (m)') }}
+          </label>
+          {{ form_widget(form.support_makiwara_form.height, {
+            attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
+          }) }}
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.support_makiwara_form.height) }}</div>
+        {% endif %}
+      </div>
+
+      <div id="makiwara_form_section" data-equipment-form-section="makiwara"
+        {% if (form.equipment_type is defined and form.equipment_type.vars.value != 'makiwara') or form.makiwara_form is not defined %}
+            class="hidden"
+        {% endif %}
+      >
+        {% if form.makiwara_form is defined %}
+          <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
+            {{ form.makiwara_form.material.vars.label|default('Matériau') }}
+          </label>
+          {{ form_widget(form.makiwara_form.material, {
+            attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
+          }) }}
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.makiwara_form.material) }}</div>
+        {% endif %}
+      </div>
+
       <div id="yumi_form_section" data-equipment-form-section="yumi"
         {% if (form.equipment_type is defined and form.equipment_type.vars.value != 'yumi') or form.yumi_form is not defined %}
             class="hidden"
@@ -168,6 +224,102 @@
             attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
           }) }}
           <div class="mt-1 text-sm text-red-600">{{ form_errors(form.yumi_form.yumiLength) }}</div>
+        {% endif %}
+      </div>
+
+      <div id="yatate_form_section" data-equipment-form-section="yatate"
+        {% if (form.equipment_type is defined and form.equipment_type.vars.value != 'yatate') or form.yatate_form is not defined %}
+            class="hidden"
+        {% endif %}
+      >
+        {% if form.yatate_form is defined %}
+          <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
+            {{ form.yatate_form.nb_arrows.vars.label|default('Nombre de flèches') }}
+          </label>
+          {{ form_widget(form.yatate_form.nb_arrows, {
+            attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
+          }) }}
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.yatate_form.nb_arrows) }}</div>
+        {% endif %}
+      </div>
+
+      <div id="maku_form_section" data-equipment-form-section="maku"
+        {% if (form.equipment_type is defined and form.equipment_type.vars.value != 'maku') or form.maku_form is not defined %}
+            class="hidden"
+        {% endif %}
+      >
+        {% if form.maku_form is defined %}
+          <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
+            {{ form.maku_form.equipmentLength.vars.label|default('Longueur (m)') }}
+          </label>
+          {{ form_widget(form.maku_form.equipmentLength, {
+            attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
+          }) }}
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.maku_form.equipmentLength) }}</div>
+
+          <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
+            {{ form.maku_form.height.vars.label|default('Hauteur (m)') }}
+          </label>
+          {{ form_widget(form.maku_form.height, {
+            attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
+          }) }}
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.maku_form.height) }}</div>
+
+          <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
+            {{ form.maku_form.material.vars.label|default('Matière') }}
+          </label>
+          {{ form_widget(form.maku_form.material, {
+            attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
+          }) }}
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.maku_form.material) }}</div>
+
+          <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
+            {{ form.maku_form.weight.vars.label|default('Poids (kg)') }}
+          </label>
+          {{ form_widget(form.maku_form.weight, {
+            attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
+          }) }}
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.maku_form.weight) }}</div>
+
+          <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
+            {{ form.maku_form.attachment.vars.label|default('Accroche') }}
+          </label>
+          {{ form_widget(form.maku_form.attachment, {
+            attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
+          }) }}
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.maku_form.attachment) }}</div>
+        {% endif %}
+      </div>
+
+      <div id="etafoam_form_section" data-equipment-form-section="etafoam"
+        {% if (form.equipment_type is defined and form.equipment_type.vars.value != 'etafoam') or form.etafoam_form is not defined %}
+            class="hidden"
+        {% endif %}
+      >
+        {% if form.etafoam_form is defined %}
+          <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
+            {{ form.etafoam_form.equipmentLength.vars.label|default('Longueur (cm)') }}
+          </label>
+          {{ form_widget(form.etafoam_form.equipmentLength, {
+            attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
+          }) }}
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.etafoam_form.equipmentLength) }}</div>
+
+          <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
+            {{ form.etafoam_form.width.vars.label|default('Largeur (cm)') }}
+          </label>
+          {{ form_widget(form.etafoam_form.width, {
+            attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
+          }) }}
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.etafoam_form.width) }}</div>
+
+          <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
+            {{ form.etafoam_form.thickness.vars.label|default('Épaisseur (cm)') }}
+          </label>
+          {{ form_widget(form.etafoam_form.thickness, {
+            attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
+          }) }}
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.etafoam_form.thickness) }}</div>
         {% endif %}
       </div>
 

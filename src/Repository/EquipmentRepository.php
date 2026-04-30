@@ -8,26 +8,32 @@ use App\Entity\Club;
 use App\Entity\Region;
 use App\Entity\Equipment;
 use App\Enum\EquipmentType;
-use App\Service\Equipment\SearchStrategy\DefaultSearchStrategy;
-use App\Service\Equipment\SearchStrategy\GloveSearchStrategy;
 use App\Service\Equipment\SearchStrategy\SearchStrategyInterface;
-use App\Service\Equipment\SearchStrategy\YumiSearchStrategy;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 /**
  * @extends ServiceEntityRepository<Equipment>
  */
 class EquipmentRepository extends ServiceEntityRepository
 {
+    /** @var array<string, SearchStrategyInterface> */
+    private array $strategyMap = [];
+
+    /**
+     * @param iterable<SearchStrategyInterface> $strategies
+     */
     public function __construct(
         ManagerRegistry $registry,
-        private readonly DefaultSearchStrategy $defaultSearchStrategy,
-        private readonly YumiSearchStrategy $yumiSearchStrategy,
-        private readonly GloveSearchStrategy $gloveSearchStrategy,
+        #[AutowireIterator(SearchStrategyInterface::class)]
+        iterable $strategies,
     ) {
         parent::__construct($registry, Equipment::class);
+        foreach ($strategies as $strategy) {
+            $this->strategyMap[$strategy->getEquipmentType()->value ?? ''] = $strategy;
+        }
     }
 
     /**
@@ -61,10 +67,11 @@ class EquipmentRepository extends ServiceEntityRepository
      */
     private function getStrategyForType(?EquipmentType $equipmentType): SearchStrategyInterface
     {
-        return match ($equipmentType) {
-            EquipmentType::YUMI => $this->yumiSearchStrategy,
-            EquipmentType::GLOVE => $this->gloveSearchStrategy,
-            default => $this->defaultSearchStrategy,
-        };
+        if (isset($this->strategyMap[$equipmentType->value ?? ''])) {
+            return $this->strategyMap[$equipmentType->value ?? ''];
+        }
+
+        // On retourne la stratégie par défaut si le type d'équipement n'a aucune stratégie dédiée
+        return $this->strategyMap[''];
     }
 }

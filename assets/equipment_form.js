@@ -46,34 +46,59 @@ function normalizeEquipmentType(selectElement) {
         return String(value || '').trim().toLowerCase()
     })
 
+    if (normalizedCandidates.some(function (value) { return value.includes('support_makiwara') })) {
+        return 'support_makiwara'
+    }
+
+    if (normalizedCandidates.some(function (value) { return value.includes('makiwara') })) {
+        return 'makiwara'
+    }
+
     if (normalizedCandidates.some(function (value) { return value.includes('glove') })) {
         return 'glove'
+    }
+
+    if (normalizedCandidates.some(function (value) { return value.includes('yatate') })) {
+        return 'yatate'
+    }
+
+    if (normalizedCandidates.some(function (value) { return value.includes('yumitate') })) {
+        return 'yumitate'
     }
 
     if (normalizedCandidates.some(function (value) { return value.includes('yumi') })) {
         return 'yumi'
     }
 
+    if (normalizedCandidates.some(function (value) { return value.includes('maku') })) {
+        return 'maku'
+    }
+
+    if (normalizedCandidates.some(function (value) { return value.includes('etafoam') })) {
+        return 'etafoam'
+    }
+
     return ''
 }
 
-function updateEquipmentSections(selectElement, gloveSection, yumiSection) {
-    const equipmentType = normalizeEquipmentType(selectElement)
-
-    if (equipmentType === 'glove') {
-        enableFormSection(gloveSection)
-        disableFormSection(yumiSection)
-        return
+function updateEquipmentSections(selectElement, gloveSection, yumiSection, makiwaraSection, supportMakiwaraSection, yumitateSection, yatateSection, makuSection, etafoamSection) {
+    var equipmentType = normalizeEquipmentType(selectElement)
+    var sections = {
+        glove: gloveSection,
+        yumi: yumiSection,
+        makiwara: makiwaraSection,
+        support_makiwara: supportMakiwaraSection,
+        yumitate: yumitateSection,
+        yatate: yatateSection,
+        maku: makuSection,
+        etafoam: etafoamSection,
     }
 
-    if (equipmentType === 'yumi') {
-        enableFormSection(yumiSection)
-        disableFormSection(gloveSection)
-        return
-    }
+    Object.values(sections).forEach(disableFormSection)
 
-    disableFormSection(gloveSection)
-    disableFormSection(yumiSection)
+    if (equipmentType && sections[equipmentType]) {
+        enableFormSection(sections[equipmentType])
+    }
 }
 
 /**
@@ -148,8 +173,30 @@ function initEquipmentForm(root) {
         || root.querySelector('#glove_form_section')
     const yumiFormSection = root.querySelector('[data-equipment-form-section="yumi"]')
         || root.querySelector('#yumi_form_section')
+    const makiwaraFormSection = root.querySelector('[data-equipment-form-section="makiwara"]')
+        || root.querySelector('#makiwara_form_section')
+    const supportMakiwaraFormSection = root.querySelector('[data-equipment-form-section="support_makiwara"]')
+        || root.querySelector('#support_makiwara_form_section')
+    const yumitateFormSection = root.querySelector('[data-equipment-form-section="yumitate"]')
+        || root.querySelector('#yumitate_form_section')
+    const yatateFormSection = root.querySelector('[data-equipment-form-section="yatate"]')
+        || root.querySelector('#yatate_form_section')
+    const makuFormSection = root.querySelector('[data-equipment-form-section="maku"]')
+        || root.querySelector('#maku_form_section')
+    const etafoamFormSection = root.querySelector('[data-equipment-form-section="etafoam"]')
+        || root.querySelector('#etafoam_form_section')
     const refreshSections = function () {
-        updateEquipmentSections(equipmentType, gloveFormSection, yumiFormSection)
+        updateEquipmentSections(
+            equipmentType,
+            gloveFormSection,
+            yumiFormSection,
+            makiwaraFormSection,
+            supportMakiwaraFormSection,
+            yumitateFormSection,
+            yatateFormSection,
+            makuFormSection,
+            etafoamFormSection
+        )
     }
 
     if (root.dataset.equipmentFormInit !== '1') {

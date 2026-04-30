@@ -2,6 +2,12 @@ equipment:
   type:
     yumi: "Arc (Yumi)"
     glove: "Gant (Kake)"
+    makiwara: "Makiwara"
+    support_makiwara: "Support makiwara"
+    yumitate: "Yumitate"
+    yatate: "Yatate"
+    maku: "Maku"
+    etafoam: "Etafoam"
   choose_type: "Choisir un type..."
   state:
     label: "État"
@@ -10,3 +16,17 @@ equipment:
     to_repair: "À réparer"
   notes:
     label: "Notes"
+makiwara:
+  material:
+    straw: "Paille"
+    cardboard: "Carton"
+    foam: "Mousse"
+yumi:
+  length:
+    namisun: "Namisun"
+    nisun_nobi: "Nisun nobi"
+    yonsun_nobi: "Yonsun nobi"
+yumitate:
+  orientation:
+    recto: "Recto"
+    recto_verso: "Recto-verso"

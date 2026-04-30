@@ -9,19 +9,20 @@
 
 ## Commands (via Makefile)
 
-| Make target          | What it does |
-|----------------------|-------------|
-| `make up`            | Build & start containers, composer install, run migrations, recompile Tailwind |
-| `make down`          | Stop containers |
-| `make php`           | Open bash in the php-fpm container (as uid 1000) |
-| `make migrate`       | Generate a migration diff, then apply it |
-| `make tailwind`      | Rebuild Tailwind CSS |
-| `make tailwind-watch`| Rebuild Tailwind CSS in watch mode |
-| `make test-functional`| Prep test DB (create, migrate, load fixtures), then run `tests/Functional/` with `--testdox` |
-| `make fix`           | Run rector → php-cs-fixer → phpstan (in that order) |
-| `make csfixer`       | Run php-cs-fixer (short array syntax, @Symfony + @PSR12) |
-| `make phpstan`       | Run PHPStan level 7 on `src/` and `tests/` |
-| `make rector`        | Run Rector with PHP 8.4 + dead code + coding style presets |
+| Make target            | What it does                                                                                 |
+|------------------------|----------------------------------------------------------------------------------------------|
+| `make up`              | Build & start containers, composer install, run migrations, recompile Tailwind               |
+| `make down`            | Stop containers                                                                              |
+| `make php`             | Open bash in the php-fpm container (as uid 1000)                                             |
+| `make diff`            | Generate a migration diff                                                                    |
+| `make migrate`         | Runs the migrations<br/>                                                                          |
+| `make tailwind`        | Rebuild Tailwind CSS                                                                         |
+| `make tailwind-watch`  | Rebuild Tailwind CSS in watch mode                                                           |
+| `make test-functional` | Prep test DB (create, migrate, load fixtures), then run `tests/Functional/` with `--testdox` |
+| `make fix`             | Run rector → php-cs-fixer → phpstan (in that order)                                          |
+| `make csfixer`         | Run php-cs-fixer (short array syntax, @Symfony + @PSR12)                                     |
+| `make phpstan`         | Run PHPStan level 7 on `src/` and `tests/`                                                   |
+| `make rector`          | Run Rector with PHP 8.4 + dead code + coding style presets                                   |
 
 Tool config files live in `tools/` (e.g. `tools/phpstan.neon`, `tools/.php-cs-fixer.php`, `tools/rector.php`). The Makefile uses those paths. Composer scripts reference root-level paths that don't exist; always use `make` targets.
 

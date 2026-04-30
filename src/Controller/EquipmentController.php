@@ -7,9 +7,15 @@ namespace App\Controller;
 use App\Entity\Equipment;
 use App\Entity\Federation;
 use App\Entity\Glove;
+use App\Entity\Makiwara;
 use App\Entity\Region;
+use App\Entity\SupportMakiwara;
 use App\Entity\User;
 use App\Entity\Yumi;
+use App\Entity\Yumitate;
+use App\Entity\Yatate;
+use App\Entity\Maku;
+use App\Entity\Etafoam;
 use App\Enum\EquipmentLevel;
 use App\Enum\EquipmentType;
 use App\Form\EquipmentFormType;
@@ -110,6 +116,12 @@ final class EquipmentController extends AbstractController
             $equipment = match ($type) {
                 EquipmentType::YUMI => new Yumi(),
                 EquipmentType::GLOVE => new Glove(),
+                EquipmentType::MAKIWARA => new Makiwara(),
+                EquipmentType::SUPPORT_MAKIWARA => new SupportMakiwara(),
+                EquipmentType::YUMITATE => new Yumitate(),
+                EquipmentType::YATATE => new Yatate(),
+                EquipmentType::MAKU => new Maku(),
+                EquipmentType::ETAFOAM => new Etafoam(),
             };
 
             // Déterminer le niveau et le propriétaire selon les champs soumis
@@ -152,7 +164,44 @@ final class EquipmentController extends AbstractController
                 $yumiForm = $form->get('yumi_form');
                 $equipment->setMaterial($yumiForm->get('material')->getData());
                 $equipment->setStrength($yumiForm->get('strength')->getData());
-                $equipment->setYumiLength($yumiForm->get('length')->getData());
+                $equipment->setYumiLength($yumiForm->get('yumiLength')->getData());
+            }
+
+            if ($equipment instanceof Makiwara && $form->has('makiwara_form')) {
+                $makiwaraForm = $form->get('makiwara_form');
+                $equipment->setMaterial($makiwaraForm->get('material')->getData());
+            }
+
+            if ($equipment instanceof SupportMakiwara && $form->has('support_makiwara_form')) {
+                $supportMakiwaraForm = $form->get('support_makiwara_form');
+                $equipment->setHeight($supportMakiwaraForm->get('height')->getData());
+            }
+
+            if ($equipment instanceof Yumitate && $form->has('yumitate_form')) {
+                $yumitateForm = $form->get('yumitate_form');
+                $equipment->setNbBows($yumitateForm->get('nb_bows')->getData());
+                $equipment->setOrientation($yumitateForm->get('orientation')->getData());
+            }
+
+            if ($equipment instanceof Yatate && $form->has('yatate_form')) {
+                $yatateForm = $form->get('yatate_form');
+                $equipment->setNbArrows($yatateForm->get('nb_arrows')->getData());
+            }
+
+            if ($equipment instanceof Maku && $form->has('maku_form')) {
+                $makuForm = $form->get('maku_form');
+                $equipment->setEquipmentLength($makuForm->get('equipmentLength')->getData());
+                $equipment->setHeight($makuForm->get('height')->getData());
+                $equipment->setMaterial($makuForm->get('material')->getData());
+                $equipment->setWeight($makuForm->get('weight')->getData());
+                $equipment->setAttachment($makuForm->get('attachment')->getData());
+            }
+
+            if ($equipment instanceof Etafoam && $form->has('etafoam_form')) {
+                $etafoamForm = $form->get('etafoam_form');
+                $equipment->setEquipmentLength($etafoamForm->get('equipmentLength')->getData());
+                $equipment->setWidth($etafoamForm->get('width')->getData());
+                $equipment->setThickness($etafoamForm->get('thickness')->getData());
             }
 
             $entityManager->persist($equipment);

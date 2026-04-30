@@ -20,9 +20,17 @@ down:
 php:
 	$(DOCKER_COMPOSE_CMD) exec -u 1000 php-fpm bash
 
-migrate:
+diff:
 	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:migrations:diff
+
+migrate:
 	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:migrations:migrate --no-interaction
+
+reset-database:
+	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:database:drop --force
+	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:database:create
+	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:migrations:migrate --no-interaction
+	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:fixtures:load --no-interaction
 
 test-functional:
 	@echo "Preparing test database..."
