@@ -212,11 +212,11 @@
               <dt class="text-xs font-medium text-">Statut</dt>
               <dd class="mt-2">
                 {% if equipment.borrowerClub %}
-                  <span class="inline-flex items-center gap-2 rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-800">
+                  <span class="rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-800">
                     Prêté à <span class="font-semibold">{{ equipment.borrowerClub.name }}</span>
                   </span>
                 {% elseif equipment.borrowerMember %}
-                  <span class="inline-flex items-center gap-2 rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-800">
+                  <span class="rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-800">
                     Emprunté par <span class="font-semibold">{{ equipment.borrowerMember.fullName }}</span>
                   </span>
                 {% else %}
