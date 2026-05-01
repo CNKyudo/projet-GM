@@ -28,21 +28,34 @@ abstract class AbstractSearchStrategy implements SearchStrategyInterface
     ): void;
 
     /**
-     * @param Club[]|null   $restrictToClubs
-     * @param Region[]|null $allowedRegions
+     * @param Club[]|null $restrictToClubs
+     * @param Club[]|null $allowedClubsAvailableOnly
+     * @param Region[]    $allowedRegions
      */
     final public function buildQuery(
         string $searchTerm = '',
         string $status = 'all',
         ?array $restrictToClubs = null,
-        ?array $allowedRegions = [],
+        ?array $allowedClubsAvailableOnly = [],
+        array $allowedRegions = [],
+        bool $onlyAvailableRegional = false,
+        bool $includeAllAvailableRegional = false,
         bool $includeNational = false,
     ): QueryBuilder {
         $queryBuilder = $this->createBaseQueryBuilder();
         $alias = $queryBuilder->getRootAliases()[0];
 
         $this->applyStatusFilter($queryBuilder, $alias, $status);
-        $this->applyOwnershipFilter($queryBuilder, $alias, $restrictToClubs, $allowedRegions, $includeNational);
+        $this->applyOwnershipFilter(
+            $queryBuilder,
+            $alias,
+            $restrictToClubs,
+            $allowedClubsAvailableOnly,
+            $allowedRegions,
+            $onlyAvailableRegional,
+            $includeAllAvailableRegional,
+            $includeNational,
+        );
 
         if ('' !== $searchTerm) {
             $this->applySpecificSearchConditions($queryBuilder, $alias, $searchTerm);
@@ -52,7 +65,7 @@ abstract class AbstractSearchStrategy implements SearchStrategyInterface
     }
 
     /**
-     * Applique le filtre de statut (available / loaned) selon borrowerClub et borrowerMember.
+     * Applique le filtre de statut global (available / loaned) selon borrowerClub et borrowerMember.
      */
     protected function applyStatusFilter(QueryBuilder $queryBuilder, string $alias, string $status): void
     {
@@ -66,25 +79,34 @@ abstract class AbstractSearchStrategy implements SearchStrategyInterface
     /**
      * Applique le filtre de visibilité selon les clubs, régions et niveau national autorisés.
      *
-     * @param Club[]|null   $restrictToClubs null = pas de restriction ; [] = aucun résultat ; [Club...] = filtre
-     * @param Region[]|null $allowedRegions  null = pas de restriction REGIONAL ; [] = aucun REGIONAL ; [Region...] = filtre
-     * @param bool          $includeNational true = inclure les équipements NATIONAL
+     * @param Club[]|null $restrictToClubs             null = aucune restriction (admin/CN) ;
+     *                                                 [] = aucun club ; [Club...] = filtre tous statuts
+     * @param Club[]|null $allowedClubsAvailableOnly   null = tous clubs disponibles seulement ;
+     *                                                 [] = aucun ; [Club...] = ces clubs disponibles seulement
+     * @param Region[]    $allowedRegions              [] = aucune ; [Region...] = ces régions (statut selon $onlyAvailableRegional)
+     * @param bool        $onlyAvailableRegional       true = $allowedRegions filtrés sur disponibles seulement
+     * @param bool        $includeAllAvailableRegional true = ajoute tous les REGIONAL disponibles (toutes régions)
+     * @param bool        $includeNational             true = inclure les équipements NATIONAL
      */
     protected function applyOwnershipFilter(
         QueryBuilder $queryBuilder,
         string $alias,
         ?array $restrictToClubs,
-        ?array $allowedRegions,
+        ?array $allowedClubsAvailableOnly,
+        array $allowedRegions,
+        bool $onlyAvailableRegional,
+        bool $includeAllAvailableRegional,
         bool $includeNational,
     ): void {
-        // null = pas de restriction du tout (admin / CN) → on n'ajoute aucune clause
+        // null = aucune restriction (admin / CN) → on n'ajoute aucune clause WHERE
         if (null === $restrictToClubs) {
             return;
         }
 
         $orParts = [];
+        $available = sprintf('%s.borrowerClub IS NULL AND %s.borrowerMember IS NULL', $alias, $alias);
 
-        // --- Niveau CLUB ---
+        // --- Niveau CLUB : clubs avec accès tous statuts ---
         if ([] !== $restrictToClubs) {
             $queryBuilder->setParameter('allowedClubs', $restrictToClubs);
             $queryBuilder->setParameter('levelClub', EquipmentLevel::CLUB);
@@ -94,13 +116,48 @@ abstract class AbstractSearchStrategy implements SearchStrategyInterface
             );
         }
 
-        // --- Niveau REGIONAL ---
-        if (null !== $allowedRegions && [] !== $allowedRegions) {
+        // --- Niveau CLUB : clubs visibles uniquement si disponibles ---
+        if (null === $allowedClubsAvailableOnly) {
+            // null = tous les clubs disponibles (sans restriction de club)
+            $queryBuilder->setParameter('levelClubAvail', EquipmentLevel::CLUB);
+            $orParts[] = $queryBuilder->expr()->andX(
+                $queryBuilder->expr()->eq($alias.'.equipmentLevel', ':levelClubAvail'),
+                $queryBuilder->expr()->andX($available)
+            );
+        } elseif ([] !== $allowedClubsAvailableOnly) {
+            $queryBuilder->setParameter('allowedClubsAvail', $allowedClubsAvailableOnly);
+            $queryBuilder->setParameter('levelClubAvailList', EquipmentLevel::CLUB);
+            $orParts[] = $queryBuilder->expr()->andX(
+                $queryBuilder->expr()->eq($alias.'.equipmentLevel', ':levelClubAvailList'),
+                $queryBuilder->expr()->in($alias.'.ownerClub', ':allowedClubsAvail'),
+                $queryBuilder->expr()->andX($available)
+            );
+        }
+
+        // --- Niveau REGIONAL : régions spécifiques (tous statuts ou disponibles seulement) ---
+        if ([] !== $allowedRegions) {
             $queryBuilder->setParameter('allowedRegions', $allowedRegions);
             $queryBuilder->setParameter('levelRegional', EquipmentLevel::REGIONAL);
+            if ($onlyAvailableRegional) {
+                $orParts[] = $queryBuilder->expr()->andX(
+                    $queryBuilder->expr()->eq($alias.'.equipmentLevel', ':levelRegional'),
+                    $queryBuilder->expr()->in($alias.'.ownerRegion', ':allowedRegions'),
+                    $queryBuilder->expr()->andX($available)
+                );
+            } else {
+                $orParts[] = $queryBuilder->expr()->andX(
+                    $queryBuilder->expr()->eq($alias.'.equipmentLevel', ':levelRegional'),
+                    $queryBuilder->expr()->in($alias.'.ownerRegion', ':allowedRegions')
+                );
+            }
+        }
+
+        // --- Niveau REGIONAL : toutes régions disponibles ---
+        if ($includeAllAvailableRegional) {
+            $queryBuilder->setParameter('levelRegionalAll', EquipmentLevel::REGIONAL);
             $orParts[] = $queryBuilder->expr()->andX(
-                $queryBuilder->expr()->eq($alias.'.equipmentLevel', ':levelRegional'),
-                $queryBuilder->expr()->in($alias.'.ownerRegion', ':allowedRegions')
+                $queryBuilder->expr()->eq($alias.'.equipmentLevel', ':levelRegionalAll'),
+                $queryBuilder->expr()->andX($available)
             );
         }
 

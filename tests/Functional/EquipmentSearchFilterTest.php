@@ -188,12 +188,15 @@ final class EquipmentSearchFilterTest extends AbstractWebTestCase
 
     // -----------------------------------------------------------------------
     // E. Filtre status=loaned
-    // gloveB (Club B → emprunté par Club C) + yumiD (emprunté par USER_MEMBER).
+    // Admin : gloveB + yumiD + gloveNatBorrowed + gloveRegABorrowed → LOANED_COUNT=4.
+    // Member (Club A / Île-de-France) : ne voit que son club + régional dispo →
+    //   Club A n'a aucun équipement prêté → 0 résultat.
     // -----------------------------------------------------------------------
 
     public function testFilterLoaned(): void
     {
-        $this->loginAs(AppFixtures::USER_MEMBER);
+        // Admin voit tous les équipements prêtés
+        $this->loginAs(AppFixtures::USER_ADMIN);
         $crawler = $this->requestIndex(['status' => 'loaned']);
         $this->assertResponseIsSuccessful();
         $this->assertSame(self::LOANED_COUNT, $this->countEquipmentRows($crawler));
@@ -202,6 +205,16 @@ final class EquipmentSearchFilterTest extends AbstractWebTestCase
         $content = (string) $this->client->getResponse()->getContent();
         $this->assertStringContainsString(AppFixtures::CLUB_B, $content);
         $this->assertStringContainsString(AppFixtures::CLUB_C, $content);
+    }
+
+    public function testFilterLoanedAsMember(): void
+    {
+        // MEMBER (Club A, Région A) : seuls les équipements de Club A sont visibles,
+        // et les régionaux de Région A disponibles. Club A n'a aucun équipement prêté → 0.
+        $this->loginAs(AppFixtures::USER_MEMBER);
+        $crawler = $this->requestIndex(['status' => 'loaned']);
+        $this->assertResponseIsSuccessful();
+        $this->assertSame(0, $this->countEquipmentRows($crawler));
     }
 
     // -----------------------------------------------------------------------
@@ -251,13 +264,24 @@ final class EquipmentSearchFilterTest extends AbstractWebTestCase
 
     public function testSearchByClubAName(): void
     {
-        // "paris" → Club A (Paris Marais) + Club D (Ryushin Dojo Paris)
-        // gloveA1, gloveA2, yumiA1, yumiA2, yumiD → 5
-        // + gloveRegABorrowed (borrowerClub=Club A → "Kyudo Paris Marais") → 6
-        $this->loginAs(AppFixtures::USER_MEMBER);
+        // Admin : "paris" → Club A + Club D + gloveRegABorrowed (borrowerClub=Club A)
+        // gloveA1, gloveA2, yumiA1, yumiA2, yumiD → 5 + gloveRegABorrowed → 6
+        $this->loginAs(AppFixtures::USER_ADMIN);
         $crawler = $this->requestIndex(['q' => 'paris']);
         $this->assertResponseIsSuccessful();
         $this->assertSame(6, $this->countEquipmentRows($crawler));
+        $this->assertStringContainsString(AppFixtures::CLUB_A, (string) $this->client->getResponse()->getContent());
+    }
+
+    public function testSearchByClubANameAsMember(): void
+    {
+        // MEMBER (Club A, Région A) : voit uniquement Club A + régionaux dispo de Région A.
+        // "paris" → Club A : gloveA1, gloveA2, yumiA1, yumiA2 → 4
+        // (yumiD=Club D non visible ; gloveRegABorrowed=régional emprunté non visible)
+        $this->loginAs(AppFixtures::USER_MEMBER);
+        $crawler = $this->requestIndex(['q' => 'paris']);
+        $this->assertResponseIsSuccessful();
+        $this->assertSame(4, $this->countEquipmentRows($crawler));
         $this->assertStringContainsString(AppFixtures::CLUB_A, (string) $this->client->getResponse()->getContent());
     }
 

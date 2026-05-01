@@ -20,6 +20,7 @@ use App\Enum\EquipmentLevel;
 use App\Enum\EquipmentType;
 use App\Form\EquipmentFormType;
 use App\Repository\EquipmentRepository;
+use App\Security\EquipmentVisibilityFilterResolver;
 use App\Security\Voter\UserPermissionVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -33,8 +34,11 @@ final class EquipmentController extends AbstractController
 {
     private const int ITEMS_PER_PAGE = 20;
 
-    public function __construct(private readonly EquipmentRepository $equipmentRepository, private readonly PaginatorInterface $paginator)
-    {
+    public function __construct(
+        private readonly EquipmentRepository $equipmentRepository,
+        private readonly PaginatorInterface $paginator,
+        private readonly EquipmentVisibilityFilterResolver $visibilityFilterResolver,
+    ) {
     }
 
     #[Route('/equipment', name: 'equipment.index')]
@@ -51,10 +55,23 @@ final class EquipmentController extends AbstractController
             $status = 'all';
         }
 
-        // Tous les rôles autorisés (MEMBER et au-dessus) voient l'intégralité des équipements
-        // (club, régional, national). Aucune restriction de visibilité sur l'index.
-        // null = pas de restriction → applyOwnershipFilter retourne tout sans filtre.
-        $queryBuilder = $this->equipmentRepository->findBySearchStrategy($q, $equipmentTypeObj, $status, null, null, true);
+        /** @var User $currentUser */
+        $currentUser = $this->getUser();
+
+        // Calcul des filtres de visibilité selon le rôle de l'utilisateur
+        $filters = $this->visibilityFilterResolver->resolve($currentUser);
+
+        $queryBuilder = $this->equipmentRepository->findBySearchStrategy(
+            $q,
+            $equipmentTypeObj,
+            $status,
+            $filters['restrictToClubs'],
+            $filters['allowedClubsAvailableOnly'],
+            $filters['allowedRegions'],
+            $filters['onlyAvailableRegional'],
+            $filters['includeAllAvailableRegional'],
+            $filters['includeNational'],
+        );
 
         $pagination = $this->paginator->paginate(
             $queryBuilder,

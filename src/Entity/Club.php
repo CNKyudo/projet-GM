@@ -101,7 +101,23 @@ class Club implements \Stringable
 
     public function setPresident(?User $user): static
     {
-        $this->president = $user;
+        // Éviter la récursion : on ne met à jour que si l'état a changé
+        if ($this->president === $user) {
+            return $this;
+        }
+
+        $previous        = $this->president;
+        $this->president = $user; // Affectation en premier pour couper la récursion
+
+        // Détacher l'ancien président côté User
+        if ($previous instanceof User && $previous->getClubWhichImPresidentOf() === $this) {
+            $previous->setClubWhichImPresidentOf(null);
+        }
+
+        // Attacher le nouveau président côté User
+        if ($user instanceof User && $user->getClubWhichImPresidentOf() !== $this) {
+            $user->setClubWhichImPresidentOf($this);
+        }
 
         return $this;
     }
@@ -237,15 +253,15 @@ class Club implements \Stringable
             return $this;
         }
 
-        $previous = $this->equipmentManager;
-        $this->equipmentManager = $user;
+        $previous                = $this->equipmentManager;
+        $this->equipmentManager  = $user; // Affectation en premier pour couper la récursion
 
-        // Détacher l'ancien responsable
+        // Détacher l'ancien gestionnaire côté User
         if ($previous instanceof User && $previous->getClubWhereImEquipmentManager() === $this) {
             $previous->setClubWhereImEquipmentManager(null);
         }
 
-        // Attacher le nouveau responsable
+        // Attacher le nouveau gestionnaire côté User
         if ($user instanceof User && $user->getClubWhereImEquipmentManager() !== $this) {
             $user->setClubWhereImEquipmentManager($this);
         }

@@ -283,6 +283,7 @@
                 <div class="w-40 h-40 rounded-xl border-2 border-dashed border-kyudo-gm-light-grey flex items-center justify-center text-kyudo-gm-grey text-xs text-center p-4">
                   Aucun QR code généré
                 </div>
+                {% if is_granted('CREATE_QRCODE') %}
                 <form method="post" action="{{ path('qr_code.generate_for_equipment', {'equipmentId': equipment.id}) }}">
                   <input type="hidden" name="_token" value="{{ csrf_token('generate_qr_' ~ equipment.id) }}">
                   <button
@@ -292,6 +293,7 @@
                     + Générer un QR code
                   </button>
                 </form>
+                {% endif %}
               </div>
             {% endif %}
           </div>

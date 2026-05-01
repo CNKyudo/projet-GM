@@ -10,6 +10,7 @@ use App\Form\ClubMemberFormType;
 use App\Form\ClubType;
 use App\Repository\ClubRepository;
 use App\Security\Voter\UserPermissionVoter;
+use App\Service\ClubRoleManager;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,8 +26,11 @@ class ClubController extends AbstractController
 {
     private const int ITEMS_PER_PAGE = 20;
 
-    public function __construct(private readonly ClubRepository $clubRepository, private readonly PaginatorInterface $paginator)
-    {
+    public function __construct(
+        private readonly ClubRepository $clubRepository,
+        private readonly PaginatorInterface $paginator,
+        private readonly ClubRoleManager $clubRoleManager,
+    ) {
     }
 
     #[Route('/club/', name: 'club_index', methods: ['GET'])]
@@ -56,6 +60,7 @@ class ClubController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             try {
+                $this->clubRoleManager->syncClubRoles(null, $club->getPresident(), null, $club->getEquipmentManager());
                 $entityManager->persist($club);
                 $entityManager->flush();
             } catch (UniqueConstraintViolationException $e) {
@@ -99,11 +104,15 @@ class ClubController extends AbstractController
     {
         $this->denyAccessUnlessGranted(UserPermissionVoter::EDIT_CLUB, $club);
 
+        $previousPresident = $club->getPresident();
+        $previousManager   = $club->getEquipmentManager();
+
         $form = $this->createForm(ClubType::class, $club);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             try {
+                $this->clubRoleManager->syncClubRoles($previousPresident, $club->getPresident(), $previousManager, $club->getEquipmentManager());
                 $entityManager->flush();
             } catch (UniqueConstraintViolationException $e) {
                 $this->addUniqueConstraintError($form, $e);

@@ -6,7 +6,11 @@ namespace App\Tests\Functional;
 
 use App\Entity\Club;
 use App\DataFixtures\AppFixtures;
+use App\Entity\User;
+use App\Enum\UserRole;
 use App\Repository\ClubRepository;
+use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Tests fonctionnels : ClubController.
@@ -245,5 +249,179 @@ final class ClubControllerTest extends AbstractWebTestCase
         // PRESIDENT ne peut PAS éditer un club qui n'est pas le sien
         $this->loginAs(AppFixtures::USER_PRESIDENT);
         $this->assertGetDenied('/club/'.$this->clubBId.'/edit');
+    }
+
+    // -----------------------------------------------------------------------
+    // Synchronisation des rôles lors du transfert de présidence
+    // -----------------------------------------------------------------------
+
+    /**
+     * Quand l'admin change le président du Club A, l'ancien président perd
+     * ROLE_CLUB_PRESIDENT et redevient ROLE_MEMBER (il est membre du club).
+     * Le nouveau président gagne ROLE_CLUB_PRESIDENT.
+     */
+    public function testTransferPresidencyUpdatesRoles(): void
+    {
+        $container = self::getContainer();
+        /** @var UserRepository $userRepo */
+        $userRepo = $container->get(UserRepository::class);
+        /** @var ClubRepository $clubRepo */
+        $clubRepo = $container->get(ClubRepository::class);
+
+        $clubA          = $clubRepo->findOneBy(['name' => AppFixtures::CLUB_A]);
+        $oldPresident   = $userRepo->findOneBy(['email' => AppFixtures::USER_PRESIDENT]);
+        $newPresident   = $userRepo->findOneBy(['email' => AppFixtures::USER_MEMBER]);
+        $this->assertInstanceOf(Club::class, $clubA);
+        $this->assertInstanceOf(User::class, $oldPresident);
+        $this->assertInstanceOf(User::class, $newPresident);
+
+        $this->loginAs(AppFixtures::USER_ADMIN);
+
+        $crawler = $this->client->request('GET', '/club/'.$clubA->getId().'/edit');
+        $form    = $crawler->selectButton('Enregistrer')->form();
+        $form['club[president]'] = (string) $newPresident->getId();
+        $this->client->submit($form);
+
+        $this->assertResponseRedirects();
+
+        /** @var EntityManagerInterface $em */
+        $em = $container->get(EntityManagerInterface::class);
+        $em->clear();
+
+        // L'ancien président perd ROLE_CLUB_PRESIDENT
+        $refreshedOldPresident = $userRepo->findOneBy(['email' => AppFixtures::USER_PRESIDENT]);
+        $this->assertInstanceOf(User::class, $refreshedOldPresident);
+        $this->assertNotContains(
+            UserRole::CLUB_PRESIDENT->value,
+            $refreshedOldPresident->getRoles(),
+            'L\'ancien président ne doit plus avoir ROLE_CLUB_PRESIDENT.'
+        );
+        // Et retrouve ROLE_MEMBER (il reste membre du club)
+        $this->assertContains(
+            UserRole::MEMBER->value,
+            $refreshedOldPresident->getRoles(),
+            'L\'ancien président doit retrouver ROLE_MEMBER.'
+        );
+
+        // Le nouveau président gagne ROLE_CLUB_PRESIDENT
+        $refreshedNewPresident = $userRepo->findOneBy(['email' => AppFixtures::USER_MEMBER]);
+        $this->assertInstanceOf(User::class, $refreshedNewPresident);
+        $this->assertContains(
+            UserRole::CLUB_PRESIDENT->value,
+            $refreshedNewPresident->getRoles(),
+            'Le nouveau président doit avoir ROLE_CLUB_PRESIDENT.'
+        );
+        // Et ne cumule pas avec ROLE_EQUIPMENT_MANAGER_CLUB
+        $this->assertNotContains(
+            UserRole::EQUIPMENT_MANAGER_CLUB->value,
+            $refreshedNewPresident->getRoles(),
+            'Le nouveau président ne doit pas avoir ROLE_EQUIPMENT_MANAGER_CLUB en même temps.'
+        );
+    }
+
+    // -----------------------------------------------------------------------
+    // Synchronisation des rôles lors du transfert du gestionnaire matériel
+    // -----------------------------------------------------------------------
+
+    /**
+     * Quand l'admin change le gestionnaire matériel du Club A, l'ancien
+     * gestionnaire perd ROLE_EQUIPMENT_MANAGER_CLUB et redevient ROLE_MEMBER.
+     * Le nouveau gestionnaire gagne ROLE_EQUIPMENT_MANAGER_CLUB.
+     */
+    public function testTransferEquipmentManagerUpdatesRoles(): void
+    {
+        $container = self::getContainer();
+        /** @var UserRepository $userRepo */
+        $userRepo = $container->get(UserRepository::class);
+        /** @var ClubRepository $clubRepo */
+        $clubRepo = $container->get(ClubRepository::class);
+
+        $clubA          = $clubRepo->findOneBy(['name' => AppFixtures::CLUB_A]);
+        $oldManager     = $userRepo->findOneBy(['email' => AppFixtures::USER_MANAGER_CLUB]);
+        $newManager     = $userRepo->findOneBy(['email' => AppFixtures::USER_MEMBER]);
+        $this->assertInstanceOf(Club::class, $clubA);
+        $this->assertInstanceOf(User::class, $oldManager);
+        $this->assertInstanceOf(User::class, $newManager);
+
+        $this->loginAs(AppFixtures::USER_ADMIN);
+
+        $crawler = $this->client->request('GET', '/club/'.$clubA->getId().'/edit');
+        $form    = $crawler->selectButton('Enregistrer')->form();
+        $form['club[equipmentManager]'] = (string) $newManager->getId();
+        $this->client->submit($form);
+
+        $this->assertResponseRedirects();
+
+        /** @var EntityManagerInterface $em */
+        $em = $container->get(EntityManagerInterface::class);
+        $em->clear();
+
+        // L'ancien gestionnaire perd ROLE_EQUIPMENT_MANAGER_CLUB
+        $refreshedOldManager = $userRepo->findOneBy(['email' => AppFixtures::USER_MANAGER_CLUB]);
+        $this->assertInstanceOf(User::class, $refreshedOldManager);
+        $this->assertNotContains(
+            UserRole::EQUIPMENT_MANAGER_CLUB->value,
+            $refreshedOldManager->getRoles(),
+            "L'ancien gestionnaire ne doit plus avoir ROLE_EQUIPMENT_MANAGER_CLUB."
+        );
+        $this->assertContains(
+            UserRole::MEMBER->value,
+            $refreshedOldManager->getRoles(),
+            "L'ancien gestionnaire doit retrouver ROLE_MEMBER."
+        );
+
+        // Le nouveau gestionnaire gagne ROLE_EQUIPMENT_MANAGER_CLUB
+        $refreshedNewManager = $userRepo->findOneBy(['email' => AppFixtures::USER_MEMBER]);
+        $this->assertInstanceOf(User::class, $refreshedNewManager);
+        $this->assertContains(
+            UserRole::EQUIPMENT_MANAGER_CLUB->value,
+            $refreshedNewManager->getRoles(),
+            'Le nouveau gestionnaire doit avoir ROLE_EQUIPMENT_MANAGER_CLUB.'
+        );
+        // Et ne cumule pas avec ROLE_CLUB_PRESIDENT
+        $this->assertNotContains(
+            UserRole::CLUB_PRESIDENT->value,
+            $refreshedNewManager->getRoles(),
+            'Le nouveau gestionnaire ne doit pas avoir ROLE_CLUB_PRESIDENT en même temps.'
+        );
+    }
+
+    // -----------------------------------------------------------------------
+    // Validation : cumul président + gestionnaire matériel interdit
+    // -----------------------------------------------------------------------
+
+    /**
+     * Le formulaire doit rejeter le cas où le même utilisateur est désigné
+     * à la fois président et gestionnaire matériel d'un club.
+     */
+    public function testCannotCumulatePresidentAndEquipmentManagerRoles(): void
+    {
+        $container = self::getContainer();
+        /** @var UserRepository $userRepo */
+        $userRepo = $container->get(UserRepository::class);
+        /** @var ClubRepository $clubRepo */
+        $clubRepo = $container->get(ClubRepository::class);
+
+        $clubA    = $clubRepo->findOneBy(['name' => AppFixtures::CLUB_A]);
+        $userMember = $userRepo->findOneBy(['email' => AppFixtures::USER_MEMBER]);
+        $this->assertInstanceOf(Club::class, $clubA);
+        $this->assertInstanceOf(User::class, $userMember);
+
+        $this->loginAs(AppFixtures::USER_ADMIN);
+
+        $crawler = $this->client->request('GET', '/club/'.$clubA->getId().'/edit');
+        $form    = $crawler->selectButton('Enregistrer')->form();
+
+        // Même utilisateur pour les deux rôles
+        $form['club[president]']        = (string) $userMember->getId();
+        $form['club[equipmentManager]'] = (string) $userMember->getId();
+        $this->client->submit($form);
+
+        // Le formulaire doit être ré-affiché avec une erreur de validation (422 Unprocessable Entity)
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSelectorTextContains(
+            'body',
+            'Un utilisateur ne peut pas être à la fois président et gestionnaire matériel'
+        );
     }
 }
