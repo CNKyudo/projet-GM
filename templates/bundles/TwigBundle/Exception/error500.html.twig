@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
+		<title>Erreur serveur – France Kyudo</title>
+		<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+		<link rel="stylesheet" href="{{ asset('styles/app.css') }}">
+	</head>
+	<body>
+		<div class="flex flex-col md:flex-row h-screen bg-kyudo-white">
+			<div class="absolute inset-0 md:static md:flex-2 bg-kyudo-equipment bg-cover bg-center">
+				<div class="absolute inset-0 bg-black/40 md:hidden"></div>
+			</div>
+			<div class="relative z-10 flex min-h-screen md:min-h-0 md:flex-1 justify-center items-start p-6 md:p-8 md:bg-kyudo-royal-blue">
+				<div class="flex flex-col items-center w-full max-w-sm">
+					<a href="/">
+						<img class="block md:hidden w-full max-w-sm rounded-xl mt-6 mb-4" src="{{ asset('pictures/FRANCE_KYUDO_LOGOTYPE_RVB_PRINCIPAL BLEU.png') }}" alt="France Kyudo">
+						<img class="hidden md:block w-full max-w-sm rounded-xl mt-6 mb-4" src="{{ asset('pictures/FRANCE_KYUDO_LOGOTYPE_RVB_PRINCIPAL BLANC.png') }}" alt="France Kyudo">
+					</a>
+					<div class="w-full rounded-xl bg-kyudo-white backdrop-blur md:backdrop-blur-0 p-6 shadow-2xl text-center">
+						<div class="flex justify-center mb-4">
+							<span class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 text-red-600">
+								<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+									<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+								</svg>
+							</span>
+						</div>
+						<p class="text-5xl font-extrabold text-kyudo-royal-blue mb-2">500</p>
+						<h1 class="text-xl font-bold text-kyudo-blue mb-3">Erreur serveur</h1>
+						<p class="text-sm text-kyudo-gm-grey mb-6">
+							Une erreur inattendue s'est produite. Veuillez réessayer dans quelques instants.
+						</p>
+						<div class="flex flex-col gap-3">
+							<a href="/" class="w-full py-2 px-4 rounded-md bg-kyudo-royal-blue text-kyudo-white font-semibold text-center hover:bg-kyudo-blue transition-colors duration-200 shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-kyudo-royal-blue">
+								Retour à l'accueil
+							</a>
+							<button onclick="history.back()" class="cursor-pointer w-full py-2 px-4 rounded-md border border-kyudo-gm-light-grey text-kyudo-royal-blue font-semibold text-center hover:bg-gray-50 transition-colors duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-kyudo-royal-blue">
+								Page précédente
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
