@@ -36,10 +36,6 @@ test-functional:
 	@echo "Preparing test database..."
 	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:database:create --env=test --if-not-exists
 	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:migrations:migrate --env=test --no-interaction
-	@echo "Loading fixtures..."
-	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:query:sql "SET session_replication_role = replica" --env=test
-	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:fixtures:load --env=test --no-interaction --purge-with-truncate
-	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:query:sql "SET session_replication_role = DEFAULT" --env=test
 	@echo "Running functional tests..."
 	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/phpunit tests/Functional/ --testdox
 
