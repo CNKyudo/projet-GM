@@ -21,7 +21,7 @@
     <h1>{{ equipmentLabel }}</h1>
     <div class="subtitle">Propriétaire : {{ ownerLabel }}</div>
     <div class="qr-wrapper">
-        <img src="file://{{ tmpFile }}" alt="QR Code">
+        <img src="data:image/png;base64,{{ pngBase64 }}" alt="QR Code">
     </div>
     <div class="info">Scannez ce QR code pour accéder aux détails de l'équipement.</div>
     <div class="url">{{ url }}</div>

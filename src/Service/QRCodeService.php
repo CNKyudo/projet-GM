@@ -65,7 +65,7 @@ class QRCodeService
 
     /**
      * Génère un PDF contenant le QR code en PNG (via endroid/qr-code + GD) et les infos de l'équipement.
-     * Le PNG est écrit dans un fichier temporaire référencé via file:// pour Dompdf.
+     * Le PNG est encodé en base64 et intégré directement dans le HTML (pas de fichier temporaire).
      * Retourne le contenu binaire du PDF.
      */
     public function generatePdf(QRCode $qrCode): string
@@ -88,36 +88,27 @@ class QRCodeService
 
         // Génération PNG via endroid/qr-code (utilise GD, pas Imagick)
         $endroidQr = new EndroidQrCode(data: $url, size: 300, margin: 10);
-        $pngContent = new PngWriter()->write($endroidQr)->getString();
+        $pngBase64 = base64_encode(new PngWriter()->write($endroidQr)->getString());
 
-        // Fichier temporaire PNG référencé via file:// par Dompdf
-        $tmpFile = tempnam(sys_get_temp_dir(), 'qr_').'.png';
-        file_put_contents($tmpFile, $pngContent);
+        $html = $this->twig->render('qr-code.pdf.twig', [
+            'equipmentLabel' => $equipmentLabel,
+            'ownerLabel' => $ownerLabel,
+            'pngBase64' => $pngBase64,
+            'url' => $url,
+        ]);
 
-        try {
-            $html = $this->twig->render('qr-code.pdf.twig', [
-                'equipmentLabel' => $equipmentLabel,
-                'ownerLabel' => $ownerLabel,
-                'tmpFile' => $tmpFile,
-                'url' => $url,
-            ]);
+        $options = new Options();
+        $options->set('defaultFont', 'Arial');
+        $options->setChroot([sys_get_temp_dir()]);
+        $options->setIsRemoteEnabled(false);
+        $options->setIsHtml5ParserEnabled(true);
 
-            $options = new Options();
-            $options->set('defaultFont', 'Arial');
-            $options->setChroot([sys_get_temp_dir(), '/var/www/project']);
+        $dompdf = new Dompdf($options);
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
 
-            $dompdf = new Dompdf($options);
-            $dompdf->loadHtml($html);
-            $dompdf->setPaper('A4', 'portrait');
-            $dompdf->render();
-
-            return $dompdf->output();
-        } finally {
-            // Nettoyage garanti même en cas d'exception
-            if (file_exists($tmpFile)) {
-                unlink($tmpFile);
-            }
-        }
+        return $dompdf->output();
     }
 
     /**
