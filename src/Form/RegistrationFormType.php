@@ -11,6 +11,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotCompromisedPassword;
+use Symfony\Component\Validator\Constraints\PasswordStrength;
 
 /**
  * @extends AbstractType<User>
@@ -27,13 +29,14 @@ class RegistrationFormType extends AbstractType
                 'mapped' => false,
                 'attr' => ['autocomplete' => 'new-password'],
                 'constraints' => [
-                    new NotBlank(message: 'Please enter a password'),
+                    new NotBlank(message: 'Entrez un mode de passe'),
                     new Length(
-                        min: 6,
-                        // max length allowed by Symfony for security reasons
+                        min: 12,
                         max: 4096,
-                        minMessage: 'Your password should be at least {{ limit }} characters',
+                        minMessage: 'Votre mot de passe doit contenir au moins {{ limit }} caractères',
                     ),
+                    new PasswordStrength(),
+                    new NotCompromisedPassword(),
                 ],
             ])
         ;
