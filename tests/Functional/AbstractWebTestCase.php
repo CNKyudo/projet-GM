@@ -14,12 +14,15 @@ use Doctrine\Common\DataFixtures\Loader;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension;
 
 /**
  * Classe de base pour les tests fonctionnels.
  *
+ * Les fixtures sont chargées une seule fois au lancement de la suite puis
+ * chaque test est isolé via la transaction DAMA (rollback automatique).
+ *
  * Fournit :
- *   - le rechargement des fixtures avant chaque test
  *   - un helper loginAs(email) pour simuler une session authentifiée
  *   - un helper assertAccessGranted / assertAccessDenied
  */
@@ -27,18 +30,27 @@ abstract class AbstractWebTestCase extends WebTestCase
 {
     protected KernelBrowser $client;
 
-    protected function setUp(): void
-    {
-        $this->client = static::createClient();
-        $this->loadFixtures();
-    }
+    private static bool $fixturesLoaded = false;
 
-    // -----------------------------------------------------------------------
-    // Fixtures
-    // -----------------------------------------------------------------------
-
-    private function loadFixtures(): void
+    /**
+     * Load fixtures once per test suite run then rely on DAMA transaction
+     * rollback for per-test isolation.
+     *
+     * skipTransaction() ensures the kernel boots with normal (non-static)
+     * connections so fixtures are committed to the real DB outside the
+     * per-test transaction wrapper. the dama extension will re-enable
+     * static connections before the first test runs.
+     */
+    public static function setUpBeforeClass(): void
     {
+        if (self::$fixturesLoaded) {
+            return;
+        }
+
+        // Disable static connections so fixtures are committed permanently
+        PHPUnitExtension::skipTransaction();
+
+        static::bootKernel();
         $container = static::getContainer();
 
         /** @var ManagerRegistry $doctrine */
@@ -47,13 +59,10 @@ abstract class AbstractWebTestCase extends WebTestCase
         $objectManager = $doctrine->getManager();
 
         $loader = new Loader();
+        /** @var AppFixtures $fixture */
         $fixture = $container->get(AppFixtures::class);
-        $this->assertInstanceOf(AppFixtures::class, $fixture);
         $loader->addFixture($fixture);
 
-        // Sur PostgreSQL, TRUNCATE CASCADE est bloqué par les FK inter-tables.
-        // On désactive temporairement les FK via session_replication_role,
-        // puis on recharge avec TRUNCATE pour réinitialiser les séquences.
         $connection = $objectManager->getConnection();
         $connection->executeStatement('SET session_replication_role = replica');
 
@@ -64,6 +73,18 @@ abstract class AbstractWebTestCase extends WebTestCase
         $ormExecutor->execute($loader->getFixtures());
 
         $connection->executeStatement('SET session_replication_role = DEFAULT');
+
+        static::ensureKernelShutdown();
+        self::$fixturesLoaded = true;
+    }
+
+    protected function setUp(): void
+    {
+        $this->client = static::createClient();
+
+        /** @var ManagerRegistry $doctrine */
+        $doctrine = static::getContainer()->get('doctrine');
+        $doctrine->getManager()->clear();
     }
 
     // -----------------------------------------------------------------------
