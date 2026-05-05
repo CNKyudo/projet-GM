@@ -12,6 +12,8 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Callback;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use App\Repository\ClubRepository;
 
 /**
@@ -61,8 +63,28 @@ class UserClubAssignType extends AbstractType
         $resolver->setDefaults([
             'data_class'   => User::class,
             'current_user' => null,
+            'constraints'  => [
+                new Callback($this->validatePresidentAndEquipmentManager(...)),
+            ],
         ]);
         $resolver->setAllowedTypes('current_user', ['null', User::class]);
+    }
+
+    /**
+     * Empêche qu'un même utilisateur soit à la fois président et gestionnaire
+     * matériel (deux clubs différents).
+     */
+    public function validatePresidentAndEquipmentManager(User $user, ExecutionContextInterface $context): void
+    {
+        if (
+            $user->getClubWhichImPresidentOf() instanceof Club
+            && $user->getClubWhereImEquipmentManager() instanceof Club
+        ) {
+            $context
+                ->buildViolation('Un utilisateur ne peut pas être à la fois président et gestionnaire matériel.')
+                ->atPath('clubWhereImEquipmentManager')
+                ->addViolation();
+        }
     }
 
     /**
