@@ -21,13 +21,12 @@ class ClubRepository extends ServiceEntityRepository
 
     public function findBySearchTerm(
         string $query = '',
-    ): QueryBuilder
-    {
+    ): QueryBuilder {
         $term = '' !== $query ? '%'.mb_strtolower($query, 'UTF-8').'%' : '';
 
         $queryBuilder = $this->createQueryBuilder('c');
 
-        if ($term !== '') {
+        if ('' !== $term) {
             $queryBuilder
                 ->where('LOWER(c.name) LIKE :term')
                 ->setParameter('term', $term)
