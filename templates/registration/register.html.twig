@@ -22,23 +22,35 @@
 					<h1 class="text-2xl font-bold mb-6 text-center text-kyudo-royal-blue">Créer un compte</h1>
 
 
-					{{ form_errors(registrationForm) }}
+				{{ form_start(registrationForm) }}
 
-			{{ form_start(registrationForm) }}
-			<div class="mb-4">
-				{{ form_row(registrationForm.email, {
-                            attr: {
-                                'class': 'block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-kyudo-royal-blue focus:border-kyudo-royal-blue'
-                                }
-                        }) }}
-			</div>
+				{% if registrationForm.vars.errors|length %}
+					<div class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 mb-4">
+						{{ form_errors(registrationForm) }}
+					</div>
+				{% endif %}
+
 					<div class="mb-4">
-						{{ form_row(registrationForm.plainPassword, {
-                                label: 'Mot de passe',
-                                attr: {
-                                    'class': 'block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-kyudo-royal-blue focus:border-kyudo-royal-blue'
-                                    }
-                            }) }}
+						<label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
+							{{ registrationForm.email.vars.label|default('Email') }}
+						</label>
+						{{ form_widget(registrationForm.email, {
+							attr: {
+								'class': 'block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-kyudo-royal-blue focus:border-kyudo-royal-blue'
+							}
+						}) }}
+						<div class="mt-1 text-sm text-red-600">{{ form_errors(registrationForm.email) }}</div>
+					</div>
+					<div class="mb-4">
+						<label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
+							Mot de passe
+						</label>
+						{{ form_widget(registrationForm.plainPassword, {
+							attr: {
+								'class': 'block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-kyudo-royal-blue focus:border-kyudo-royal-blue'
+							}
+						}) }}
+						<div class="mt-1 text-sm text-red-600">{{ form_errors(registrationForm.plainPassword) }}</div>
 					</div>
 					<div class="flex flex-col gap-4 mt-2">
 						<button type="submit" class="cursor-pointer w-full py-2 px-4 rounded-md bg-kyudo-royal-blue text-(--color-kyudo-white) font-semibold hover:bg-kyudo-blue transition-colors duration-200 shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-kyudo-royal-blue">Créer un compte</button>
