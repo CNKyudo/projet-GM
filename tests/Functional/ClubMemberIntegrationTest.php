@@ -106,7 +106,7 @@ final class ClubMemberIntegrationTest extends AbstractWebTestCase
         $crawler = $this->client->request('GET', '/register');
         $form = $crawler->selectButton('Créer un compte')->form([
             'registration_form[email]'        => $email,
-            'registration_form[plainPassword]' => AppFixtures::PASSWORD,
+            'registration_form[plainPassword]' => 'Password!123456',
         ]);
         $this->client->submit($form);
 
