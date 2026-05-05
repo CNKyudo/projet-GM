@@ -114,6 +114,8 @@ final class EquipmentController extends AbstractController
         /** @var User $currentUser */
         $currentUser = $this->getUser();
 
+        $backHref = $this->resolveBackHrefFromSession($request, 'equipment_create_back_href');
+
         $form = $this->createForm(EquipmentFormType::class, null, [
             'current_user' => $currentUser,
         ]);
@@ -127,7 +129,7 @@ final class EquipmentController extends AbstractController
 
                 return $this->render('equipment/create.html.twig', [
                     'form' => $form,
-                    'backHref' => $this->resolveBackHref($request),
+                    'backHref' => $backHref,
                 ]);
             }
 
@@ -230,8 +232,6 @@ final class EquipmentController extends AbstractController
             return $this->redirectToRoute('equipment.index');
         }
 
-        $backHref = $this->resolveBackHref($request);
-
         return $this->render('equipment/create.html.twig', [
             'form' => $form,
             'backHref' => $backHref,
@@ -245,6 +245,8 @@ final class EquipmentController extends AbstractController
 
         /** @var User $currentUser */
         $currentUser = $this->getUser();
+
+        $backHref = $this->resolveBackHrefFromSession($request, 'equipment_edit_back_href', $equipment);
 
         $form = $this->createForm(EquipmentFormType::class, $equipment, [
             'current_user' => $currentUser,
@@ -290,13 +292,25 @@ final class EquipmentController extends AbstractController
             return $this->redirectToRoute('equipment.index');
         }
 
-        $backHref = $this->resolveBackHref($request, $equipment);
-
         return $this->render('equipment/edit.html.twig', [
             'equipments' => $equipment,
             'form' => $form,
             'backHref' => $backHref,
         ]);
+    }
+
+    private function resolveBackHrefFromSession(Request $request, string $sessionKey, ?Equipment $equipment = null): string
+    {
+        $session = $request->getSession();
+
+        if ($request->isMethod('GET')) {
+            $backHref = $this->resolveBackHref($request, $equipment);
+            $session->set($sessionKey, $backHref);
+
+            return $backHref;
+        }
+
+        return $session->get($sessionKey) ?: $this->resolveBackHref($request, $equipment);
     }
 
     private function resolveBackHref(Request $request, ?Equipment $equipment = null): string
