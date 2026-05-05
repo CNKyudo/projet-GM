@@ -42,30 +42,60 @@ final class UserClubAssignController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $uow = $entityManager->getUnitOfWork();
+            // For inverse-side OneToOne fields, Symfony won't call the setter when null is submitted
+            // so we must explicitly clear them if the submitted value is null
+            $submittedPresidentClub    = $form->get('clubWhichImPresidentOf')->getData();
+            $submittedEquipmentManagerClub = $form->get('clubWhereImEquipmentManager')->getData();
+
+            if (null === $submittedPresidentClub && $prevClubWhichImPresidentOf instanceof Club) {
+                $targetUser->setClubWhichImPresidentOf(null);
+            }
+            if (null === $submittedEquipmentManagerClub && $prevClubWhereImEquipmentManager instanceof Club) {
+                $targetUser->setClubWhereImEquipmentManager(null);
+            }
 
             $newClubWhichImPresidentOf = $targetUser->getClubWhichImPresidentOf();
             $newClubWhereImEquipmentManagerOf   = $targetUser->getClubWhereImEquipmentManager();
 
-            if (null !== $newClubWhichImPresidentOf) {
-                $previousPresidentOfClub = $this->resolvePreviousPresident($uow->getOriginalEntityData(...), $newClubWhichImPresidentOf, $targetUser);
+            if ($newClubWhichImPresidentOf instanceof Club) {
+                $previousPresidentOfClub = $entityManager
+                    ->createQuery('SELECT u FROM App\Entity\User u JOIN u.clubWhichImPresidentOf c WHERE c.id = :id')
+                    ->setParameter('id', $newClubWhichImPresidentOf->getId())
+                    ->getOneOrNullResult();
             } else {
-                $previousPresidentOfClub = $targetUser;
+                $previousPresidentOfClub = $prevClubWhichImPresidentOf instanceof Club ? $targetUser : null;
             }
             $newPresidentOfClub      = $newClubWhichImPresidentOf instanceof Club ? $targetUser : null;
 
-            if (null !== $newClubWhereImEquipmentManagerOf) {
-                $previousManagerOfClub = $this->resolvePreviousManager($uow->getOriginalEntityData(...), $newClubWhereImEquipmentManagerOf, $targetUser);
+            if ($newClubWhereImEquipmentManagerOf instanceof Club) {
+                $previousManagerOfClub = $entityManager
+                    ->createQuery('SELECT u FROM App\Entity\User u JOIN u.clubWhereImEquipmentManager c WHERE c.id = :id')
+                    ->setParameter('id', $newClubWhereImEquipmentManagerOf->getId())
+                    ->getOneOrNullResult();
             } else {
-                $previousManagerOfClub = $targetUser;
+                $previousManagerOfClub = $prevClubWhereImEquipmentManager instanceof Club ? $targetUser : null;
             }
             $newManagerOfClub      = $newClubWhereImEquipmentManagerOf instanceof Club ? $targetUser : null;
 
-            dump($previousPresidentOfClub, $newPresidentOfClub, $previousManagerOfClub, $newManagerOfClub);
-
             try {
                 $this->clubRoleManager->syncClubRoles($previousPresidentOfClub, $newPresidentOfClub, $previousManagerOfClub, $newManagerOfClub);
-                dd($targetUser);
+
+                // Force owning-side update regardless of what handleRequest() did to mark the fields as dirty so Doctrine flushes them
+                if ($newClubWhichImPresidentOf instanceof Club) {
+                    $newClubWhichImPresidentOf->setPresident($targetUser);
+                }
+                if ($newClubWhereImEquipmentManagerOf instanceof Club) {
+                    $newClubWhereImEquipmentManagerOf->setEquipmentManager($targetUser);
+                }
+
+                // Clear old clubs' owning side
+                if ($prevClubWhichImPresidentOf instanceof Club) {
+                    $prevClubWhichImPresidentOf->setPresident(null);
+                }
+                if ($prevClubWhereImEquipmentManager instanceof Club) {
+                    $prevClubWhereImEquipmentManager->setEquipmentManager(null);
+                }
+
                 $entityManager->flush();
 
                 $this->addFlash('success', 'Club mis à jour pour cet utilisateur.');
@@ -81,39 +111,5 @@ final class UserClubAssignController extends AbstractController
             'form'       => $form,
             'roleLabels' => UserRole::labelsFromStrings($targetUser->getRoles()),
         ]);
-    }
-
-    /**
-     * Détermine l'ancien président dont le rôle doit être révoqué.
-     * Après handleRequest(), le nouveau club a déjà son president remplacé par le setter en cascade.
-     * On utilise UnitOfWork::getOriginalEntityData() pour retrouver l'ancienne valeur.
-     *
-     * @param callable(Club):array|null $originalData
-     */
-    private function resolvePreviousPresident(callable $originalData, ?Club $club, User $targetUser): ?User
-    {
-        if ($club instanceof Club) {
-            $original = $originalData($club);
-            $oldPresident = $original['president'] ?? null;
-
-            return $oldPresident instanceof User ? $oldPresident : null;
-        }
-
-        return null;
-    }
-
-    /**
-     * @param callable(Club):array|null $originalData
-     */
-    private function resolvePreviousManager(callable $originalData, ?Club $club, User $targetUser): ?User
-    {
-        if ($club instanceof Club) {
-            $original = $originalData($club);
-            $oldManager = $original['equipmentManager'] ?? null;
-
-            return $oldManager instanceof User ? $oldManager : null;
-        }
-
-        return null;
     }
 }
