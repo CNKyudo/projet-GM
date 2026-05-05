@@ -77,33 +77,29 @@ final class UserClubAssignController extends AbstractController
             }
             $newManagerOfClub      = $newClubWhereImEquipmentManagerOf instanceof Club ? $targetUser : null;
 
-            try {
-                $this->clubRoleManager->syncClubRoles($previousPresidentOfClub, $newPresidentOfClub, $previousManagerOfClub, $newManagerOfClub);
+            $this->clubRoleManager->syncClubRoles($previousPresidentOfClub, $newPresidentOfClub, $previousManagerOfClub, $newManagerOfClub);
 
-                // Force owning-side update regardless of what handleRequest() did to mark the fields as dirty so Doctrine flushes them
-                if ($newClubWhichImPresidentOf instanceof Club) {
-                    $newClubWhichImPresidentOf->setPresident($targetUser);
-                }
-                if ($newClubWhereImEquipmentManagerOf instanceof Club) {
-                    $newClubWhereImEquipmentManagerOf->setEquipmentManager($targetUser);
-                }
-
-                // Clear old clubs' owning side
-                if ($prevClubWhichImPresidentOf instanceof Club) {
-                    $prevClubWhichImPresidentOf->setPresident(null);
-                }
-                if ($prevClubWhereImEquipmentManager instanceof Club) {
-                    $prevClubWhereImEquipmentManager->setEquipmentManager(null);
-                }
-
-                $entityManager->flush();
-
-                $this->addFlash('success', 'Club mis à jour pour cet utilisateur.');
-
-                return $this->redirectToRoute('user_index');
-            } catch (UniqueConstraintViolationException) {
-                $form->addError(new FormError('Ce club a déjà un président ou un gestionnaire matériel assigné.'));
+            // Force owning-side update regardless of what handleRequest() did to mark the fields as dirty so Doctrine flushes them
+            if ($newClubWhichImPresidentOf instanceof Club) {
+                $newClubWhichImPresidentOf->setPresident($targetUser);
             }
+            if ($newClubWhereImEquipmentManagerOf instanceof Club) {
+                $newClubWhereImEquipmentManagerOf->setEquipmentManager($targetUser);
+            }
+
+            // Clear old clubs' owning side
+            if ($prevClubWhichImPresidentOf instanceof Club) {
+                $prevClubWhichImPresidentOf->setPresident(null);
+            }
+            if ($prevClubWhereImEquipmentManager instanceof Club) {
+                $prevClubWhereImEquipmentManager->setEquipmentManager(null);
+            }
+
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Club mis à jour pour cet utilisateur.');
+
+            return $this->redirectToRoute('user_index');
         }
 
         return $this->render('user/assign_club.html.twig', [
