@@ -127,6 +127,7 @@ final class EquipmentController extends AbstractController
 
                 return $this->render('equipment/create.html.twig', [
                     'form' => $form,
+                    'backHref' => $this->resolveBackHref($request),
                 ]);
             }
 
@@ -229,8 +230,11 @@ final class EquipmentController extends AbstractController
             return $this->redirectToRoute('equipment.index');
         }
 
+        $backHref = $this->resolveBackHref($request);
+
         return $this->render('equipment/create.html.twig', [
             'form' => $form,
+            'backHref' => $backHref,
         ]);
     }
 
@@ -286,9 +290,31 @@ final class EquipmentController extends AbstractController
             return $this->redirectToRoute('equipment.index');
         }
 
+        $backHref = $this->resolveBackHref($request, $equipment);
+
         return $this->render('equipment/edit.html.twig', [
             'equipments' => $equipment,
             'form' => $form,
+            'backHref' => $backHref,
         ]);
+    }
+
+    private function resolveBackHref(Request $request, ?Equipment $equipment = null): string
+    {
+        $referer = $request->headers->get('referer');
+
+        if (null !== $referer) {
+            $refererPath = parse_url($referer, PHP_URL_PATH);
+
+            if (null !== $equipment) {
+                $showPath = $this->generateUrl('equipment.show', ['id' => $equipment->getId()]);
+
+                if ($refererPath === $showPath) {
+                    return $refererPath;
+                }
+            }
+        }
+
+        return $this->generateUrl('equipment.index');
     }
 }
