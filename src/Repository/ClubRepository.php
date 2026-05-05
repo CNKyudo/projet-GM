@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Entity\Club;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -16,6 +17,26 @@ class ClubRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Club::class);
+    }
+
+    public function findBySearchTerm(
+        string $query = '',
+    ): QueryBuilder
+    {
+        $term = '' !== $query ? '%'.mb_strtolower($query, 'UTF-8').'%' : '';
+
+        $queryBuilder = $this->createQueryBuilder('c');
+
+        if ($term !== '') {
+            $queryBuilder
+                ->where('LOWER(c.name) LIKE :term')
+                ->setParameter('term', $term)
+            ;
+        }
+
+        $queryBuilder->orderBy('c.id', 'DESC');
+
+        return $queryBuilder;
     }
 
     //    /**
