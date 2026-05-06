@@ -37,7 +37,10 @@ class ClubController extends AbstractController
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function index(Request $request): Response
     {
-        $queryBuilder = $this->clubRepository->createQueryBuilder('c')->orderBy('c.id', 'DESC');
+        $q = trim((string) $request->query->get('q', ''));
+        $page = $request->query->getInt('page', 1);
+        $view = trim((string) $request->query->get('view', 'cards'));
+        $queryBuilder = $this->clubRepository->findBySearchTerm($q);
 
         $pagination = $this->paginator->paginate(
             $queryBuilder,
@@ -47,6 +50,9 @@ class ClubController extends AbstractController
 
         return $this->render('club/index.html.twig', [
             'clubs' => $pagination,
+            'q' => $q,
+            'view' => $view,
+            'page' => $page,
         ]);
     }
 
