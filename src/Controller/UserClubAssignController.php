@@ -10,10 +10,8 @@ use App\Enum\UserRole;
 use App\Form\UserClubAssignType;
 use App\Security\Voter\UserPermissionVoter;
 use App\Service\ClubRoleManager;
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -50,6 +48,7 @@ final class UserClubAssignController extends AbstractController
             if (null === $submittedPresidentClub && $prevClubWhichImPresidentOf instanceof Club) {
                 $targetUser->setClubWhichImPresidentOf(null);
             }
+
             if (null === $submittedEquipmentManagerClub && $prevClubWhereImEquipmentManager instanceof Club) {
                 $targetUser->setClubWhereImEquipmentManager(null);
             }
@@ -65,6 +64,7 @@ final class UserClubAssignController extends AbstractController
             } else {
                 $previousPresidentOfClub = $prevClubWhichImPresidentOf instanceof Club ? $targetUser : null;
             }
+
             $newPresidentOfClub      = $newClubWhichImPresidentOf instanceof Club ? $targetUser : null;
 
             if ($newClubWhereImEquipmentManagerOf instanceof Club) {
@@ -75,6 +75,7 @@ final class UserClubAssignController extends AbstractController
             } else {
                 $previousManagerOfClub = $prevClubWhereImEquipmentManager instanceof Club ? $targetUser : null;
             }
+
             $newManagerOfClub      = $newClubWhereImEquipmentManagerOf instanceof Club ? $targetUser : null;
 
             $this->clubRoleManager->syncClubRoles($previousPresidentOfClub, $newPresidentOfClub, $previousManagerOfClub, $newManagerOfClub);
@@ -83,6 +84,7 @@ final class UserClubAssignController extends AbstractController
             if ($newClubWhichImPresidentOf instanceof Club) {
                 $newClubWhichImPresidentOf->setPresident($targetUser);
             }
+
             if ($newClubWhereImEquipmentManagerOf instanceof Club) {
                 $newClubWhereImEquipmentManagerOf->setEquipmentManager($targetUser);
             }
@@ -91,6 +93,7 @@ final class UserClubAssignController extends AbstractController
             if ($prevClubWhichImPresidentOf instanceof Club) {
                 $prevClubWhichImPresidentOf->setPresident(null);
             }
+
             if ($prevClubWhereImEquipmentManager instanceof Club) {
                 $prevClubWhereImEquipmentManager->setEquipmentManager(null);
             }

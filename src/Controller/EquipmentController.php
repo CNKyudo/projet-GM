@@ -244,7 +244,7 @@ final class EquipmentController extends AbstractController
         /** @var User $currentUser */
         $currentUser = $this->getUser();
 
-        $backHref = $this->resolveBackHrefFromSession($request, 'equipment_edit_back_href_' . $equipment->getId(), $equipment);
+        $backHref = $this->resolveBackHrefFromSession($request, 'equipment_edit_back_href_'.$equipment->getId(), $equipment);
 
         $form = $this->createForm(EquipmentFormType::class, $equipment, [
             'current_user' => $currentUser,
@@ -318,7 +318,7 @@ final class EquipmentController extends AbstractController
         if (null !== $referer) {
             $refererPath = parse_url($referer, PHP_URL_PATH);
 
-            if (null !== $equipment) {
+            if ($equipment instanceof Equipment) {
                 $showPath = $this->generateUrl('equipment.show', ['id' => $equipment->getId()]);
 
                 if ($refererPath === $showPath) {
