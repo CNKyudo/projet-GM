@@ -29,6 +29,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class EquipmentController extends AbstractController
 {
@@ -38,6 +39,7 @@ final class EquipmentController extends AbstractController
         private readonly EquipmentRepository $equipmentRepository,
         private readonly PaginatorInterface $paginator,
         private readonly EquipmentVisibilityFilterResolver $visibilityFilterResolver,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -225,7 +227,7 @@ final class EquipmentController extends AbstractController
             $entityManager->persist($equipment);
             $entityManager->flush();
 
-            $this->addFlash('success', ucfirst($equipment->getTypeName()).' ajouté !');
+            $this->addFlash('success', $this->translator->trans('equipment.type.'.$equipment->getTypeName()).' ajouté !');
 
             return $this->redirectToRoute('equipment.index');
         }
