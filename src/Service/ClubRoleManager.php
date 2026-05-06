@@ -78,10 +78,6 @@ final class ClubRoleManager
      */
     private function applyPresidentRole(User $user): void
     {
-        if ($this->hasSuperiorRole($user)) {
-            return;
-        }
-
         $roles   = $this->stripBaseRoles($user->getRoles());
         $roles   = array_values(array_filter($roles, fn (string $r): bool => UserRole::EQUIPMENT_MANAGER_CLUB->value !== $r));
         $roles[] = UserRole::CLUB_PRESIDENT->value;
@@ -96,10 +92,6 @@ final class ClubRoleManager
      */
     private function applyEquipmentManagerRole(User $user): void
     {
-        if ($this->hasSuperiorRole($user)) {
-            return;
-        }
-
         $roles   = $this->stripBaseRoles($user->getRoles());
         $roles   = array_values(array_filter($roles, fn (string $r): bool => UserRole::CLUB_PRESIDENT->value !== $r));
         $roles[] = UserRole::EQUIPMENT_MANAGER_CLUB->value;

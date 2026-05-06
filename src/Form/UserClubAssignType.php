@@ -11,6 +11,9 @@ use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Repository\ClubRepository;
 
@@ -53,6 +56,17 @@ class UserClubAssignType extends AbstractType
                 'by_reference'  => false,
                 'query_builder' => $clubQb,
             ])
+            ->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event): void {
+                $form = $event->getForm();
+                $presidentClub = $form->get('clubWhichImPresidentOf')->getData();
+                $equipmentManagerClub = $form->get('clubWhereImEquipmentManager')->getData();
+
+                if ($presidentClub instanceof Club && $equipmentManagerClub instanceof Club) {
+                    $form->get('clubWhereImEquipmentManager')->addError(
+                        new FormError('Un utilisateur ne peut pas être à la fois président et gestionnaire matériel.')
+                    );
+                }
+            })
         ;
     }
 
