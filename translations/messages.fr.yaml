@@ -9,6 +9,7 @@ equipment:
     maku: "Maku"
     etafoam: "Etafoam"
   choose_type: "Choisir un type..."
+  added: "{type} ajouté !"
   state:
     label: "État"
     new: "Neuf"

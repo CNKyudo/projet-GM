@@ -227,7 +227,7 @@ final class EquipmentController extends AbstractController
             $entityManager->persist($equipment);
             $entityManager->flush();
 
-            $this->addFlash('success', $this->translator->trans('equipment.type.'.$equipment->getTypeName()).' ajouté !');
+            $this->addFlash('success', $this->translator->trans('equipment.added', ['{type}' => $this->translator->trans('equipment.type.'.$equipment->getTypeName())]));
 
             return $this->redirectToRoute('equipment.index');
         }
