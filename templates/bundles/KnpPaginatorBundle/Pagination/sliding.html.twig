@@ -1,0 +1,45 @@
+{# Custom Sliding pagination with Tailwind + kyudo colors #}
+{% if pageCount > 1 %}
+    <nav class="inline-flex rounded-2xl ring-1 ring-kyudo-gm-light-grey overflow-hidden" aria-label="Pagination">
+        {% if first is defined and current != first %}
+            <a href="{{ path(route, knp_pagination_query(query, first, options)) }}"
+               class="flex items-center justify-center bg-kyudo-white px-3 py-2 text-sm font-medium text-kyudo-gm-dark border-r border-kyudo-gm-light-grey hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white) transition-colors">
+                ««
+            </a>
+        {% endif %}
+
+        {% if previous is defined %}
+            <a rel="prev" href="{{ path(route, knp_pagination_query(query, previous, options)) }}"
+               class="flex items-center justify-center bg-kyudo-white px-3 py-2 text-sm font-medium text-kyudo-gm-dark border-r border-kyudo-gm-light-grey hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white) transition-colors">
+                «
+            </a>
+        {% endif %}
+
+        {% for page in pagesInRange %}
+            {% if page != current %}
+                <a href="{{ path(route, knp_pagination_query(query, page, options)) }}"
+                   class="flex items-center justify-center bg-kyudo-white px-3.5 py-2 text-sm font-medium text-kyudo-gm-dark border-r border-kyudo-gm-light-grey hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white) transition-colors">
+                    {{ page }}
+                </a>
+            {% else %}
+                <span class="flex items-center justify-center bg-kyudo-blue px-3.5 py-2 text-sm font-semibold text-(--color-kyudo-white) border-r border-kyudo-gm-light-grey">
+                    {{ page }}
+                </span>
+            {% endif %}
+        {% endfor %}
+
+        {% if next is defined %}
+            <a rel="next" href="{{ path(route, knp_pagination_query(query, next, options)) }}"
+               class="flex items-center justify-center bg-kyudo-white px-3 py-2 text-sm font-medium text-kyudo-gm-dark border-r border-kyudo-gm-light-grey hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white) transition-colors">
+                »
+            </a>
+        {% endif %}
+
+        {% if last is defined and current != last %}
+            <a href="{{ path(route, knp_pagination_query(query, last, options)) }}"
+               class="flex items-center justify-center bg-kyudo-white px-3 py-2 text-sm font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white) transition-colors">
+                »»
+            </a>
+        {% endif %}
+    </nav>
+{% endif %}
