@@ -1,3 +1,4 @@
+
 DOCKER_VERSION := $(shell docker version --format '{{.Server.Version}}')
 DOCKER_COMPOSE_CMD := $(shell [ "$(DOCKER_VERSION)" \< "20.10.6" ] && echo docker-compose || echo docker compose)
 
@@ -35,7 +36,12 @@ reset-database:
 test-functional:
 	@echo "Preparing test database..."
 	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:database:create --env=test --if-not-exists
-	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:migrations:migrate --env=test --no-interaction
+	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:migrations:migrate --env=test --no-interaction || { \
+		>&2 echo "Migration failed. Dropping and recreating test database..."; \
+		$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:database:drop --env=test --force --if-exists; \
+		$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:database:create --env=test; \
+		$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:migrations:migrate --env=test --no-interaction; \
+	}
 	@echo "Running functional tests..."
 	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/phpunit tests/Functional/ --testdox
 
