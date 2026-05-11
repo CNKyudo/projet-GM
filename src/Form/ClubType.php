@@ -7,6 +7,7 @@ namespace App\Form;
 use App\Entity\Club;
 use App\Entity\Region;
 use App\Entity\User;
+use App\Repository\ClubRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -21,6 +22,11 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  */
 class ClubType extends AbstractType
 {
+    public function __construct(
+        private readonly ClubRepository $clubRepository,
+    ) {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
 
@@ -44,9 +50,9 @@ class ClubType extends AbstractType
             ->add('equipmentManager', EntityType::class, [
                 'class' => User::class,
                 'choice_value' => 'id',
-                'placeholder' => '--- choisir un gestionnaire matériel ---',
+                'placeholder' => '--- choisir un responsable matériel ---',
                 'required' => false,
-                'label' => 'Gestionnaire matériel',
+                'label' => 'Responsable matériel',
             ])
             ->add('email', EmailType::class, [
                 'label' => 'E-mail',
@@ -72,23 +78,53 @@ class ClubType extends AbstractType
     }
 
     /**
-     * Empêche qu'un même utilisateur soit à la fois président et gestionnaire
-     * matériel d'un club (rôles mutuellement exclusifs).
+     * Empêche :
+     * 1. Qu'un même utilisateur soit à la fois président et gestionnaire
+     *    matériel d'un club (rôles mutuellement exclusifs).
+     * 2. Qu'un utilisateur déjà président d'un club soit désigné gestionnaire
+     *    matériel d'un autre club, et vice versa.
      */
     public function validatePresidentAndEquipmentManager(Club $club, ExecutionContextInterface $context): void
     {
         $president        = $club->getPresident();
         $equipmentManager = $club->getEquipmentManager();
 
+        // Même utilisateur pour les deux rôles dans le même club
         if (
             $president instanceof User
             && $equipmentManager instanceof User
             && $president->getId() === $equipmentManager->getId()
         ) {
             $context
-                ->buildViolation('Un utilisateur ne peut pas être à la fois président et gestionnaire matériel d\'un club.')
+                ->buildViolation('Un utilisateur ne peut pas être à la fois président et responsable matériel d\'un club.')
                 ->atPath('equipmentManager')
                 ->addViolation();
+
+            return;
+        }
+
+        $clubId = $club->getId();
+
+        // Un président ne peut pas être responsable matériel d'un autre club
+        if ($president instanceof User) {
+            $otherClub = $this->clubRepository->findOneByEquipmentManagerExcluding($president, $clubId);
+            if ($otherClub instanceof Club) {
+                $context
+                    ->buildViolation('Cet utilisateur est déjà responsable matériel d\'un club.')
+                    ->atPath('president')
+                    ->addViolation();
+            }
+        }
+
+        // Un responsable matériel ne peut pas être président d'un autre club
+        if ($equipmentManager instanceof User) {
+            $otherClub = $this->clubRepository->findOneByPresidentExcluding($equipmentManager, $clubId);
+            if ($otherClub instanceof Club) {
+                $context
+                    ->buildViolation('Cet utilisateur est déjà président d\'un club.')
+                    ->atPath('equipmentManager')
+                    ->addViolation();
+            }
         }
     }
 }

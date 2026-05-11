@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Club;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -17,6 +18,34 @@ class ClubRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Club::class);
+    }
+
+    public function findOneByEquipmentManagerExcluding(User $user, ?int $excludeClubId = null): ?Club
+    {
+        $qb = $this->createQueryBuilder('c')
+            ->andWhere('c.equipmentManager = :user')
+            ->setParameter('user', $user);
+
+        if (null !== $excludeClubId) {
+            $qb->andWhere('c.id != :excludeId')
+                ->setParameter('excludeId', $excludeClubId);
+        }
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    public function findOneByPresidentExcluding(User $user, ?int $excludeClubId = null): ?Club
+    {
+        $qb = $this->createQueryBuilder('c')
+            ->andWhere('c.president = :user')
+            ->setParameter('user', $user);
+
+        if (null !== $excludeClubId) {
+            $qb->andWhere('c.id != :excludeId')
+                ->setParameter('excludeId', $excludeClubId);
+        }
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 
     public function findBySearchTerm(
