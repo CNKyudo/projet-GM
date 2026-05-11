@@ -432,7 +432,7 @@ final class ClubControllerTest extends AbstractWebTestCase
 
     /**
      * Le formulaire doit rejeter le cas où on tente de désigner comme
-     * gestionnaire matériel d'un club un utilisateur déjà président d'un autre club.
+     * responsable matériel d'un club un utilisateur déjà président d'un autre club.
      */
     public function testCannotSetPresidentAsEquipmentManagerOfOtherClub(): void
     {
@@ -448,7 +448,7 @@ final class ClubControllerTest extends AbstractWebTestCase
         $this->assertInstanceOf(Club::class, $clubB);
         $this->assertInstanceOf(User::class, $president);
 
-        // Club B (Lyon) a déjà un gestionnaire matériel (managerLyon).
+        // Club B (Lyon) a déjà un responsable matériel (managerLyon).
         // On essaie d'y mettre le président du Club A.
         $this->loginAs(AppFixtures::USER_ADMIN);
 
@@ -468,7 +468,7 @@ final class ClubControllerTest extends AbstractWebTestCase
 
     /**
      * Le formulaire doit rejeter le cas où on tente de désigner comme
-     * président d'un club un utilisateur déjà gestionnaire matériel d'un autre club.
+     * président d'un club un utilisateur déjà responsable matériel d'un autre club.
      */
     public function testCannotSetEquipmentManagerAsPresidentOfOtherClub(): void
     {
@@ -485,7 +485,7 @@ final class ClubControllerTest extends AbstractWebTestCase
         $this->assertInstanceOf(User::class, $equipmentManager);
 
         // Club B (Lyon) a déjà un président (presidentLyon).
-        // On essaie d'y mettre le gestionnaire matériel du Club A.
+        // On essaie d'y mettre le responsable matériel du Club A.
         $this->loginAs(AppFixtures::USER_ADMIN);
 
         $crawler = $this->client->request('GET', '/club/'.$clubB->getId().'/edit');

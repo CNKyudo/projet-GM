@@ -79,9 +79,9 @@ class ClubType extends AbstractType
 
     /**
      * Empêche :
-     * 1. Qu'un même utilisateur soit à la fois président et gestionnaire
+     * 1. Qu'un même utilisateur soit à la fois président et responsable
      *    matériel d'un club (rôles mutuellement exclusifs).
-     * 2. Qu'un utilisateur déjà président d'un club soit désigné gestionnaire
+     * 2. Qu'un utilisateur déjà président d'un club soit désigné responsable
      *    matériel d'un autre club, et vice versa.
      */
     public function validatePresidentAndEquipmentManager(Club $club, ExecutionContextInterface $context): void
