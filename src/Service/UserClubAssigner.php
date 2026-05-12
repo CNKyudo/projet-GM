@@ -6,6 +6,7 @@ namespace App\Service;
 
 use App\Entity\Club;
 use App\Entity\User;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
 
@@ -14,6 +15,7 @@ final readonly class UserClubAssigner
     public function __construct(
         private EntityManagerInterface $entityManager,
         private ClubRoleManager $clubRoleManager,
+        private UserRepository $userRepository,
     ) {
     }
 
@@ -57,6 +59,8 @@ final readonly class UserClubAssigner
         if ($prevManagerClub instanceof Club) {
             $prevManagerClub->setEquipmentManager(null);
         }
+
+        $this->entityManager->flush();
     }
 
     /**
@@ -79,7 +83,7 @@ final readonly class UserClubAssigner
     private function resolvePreviousPresident(?Club $newPresidentClub, ?Club $prevPresidentClub, User $targetUser): ?User
     {
         if ($newPresidentClub instanceof Club) {
-            return $this->findPresidentOfClub($newPresidentClub);
+            return $this->userRepository->findPresidentOfClub($newPresidentClub);
         }
 
         return $prevPresidentClub instanceof Club ? $targetUser : null;
@@ -88,25 +92,9 @@ final readonly class UserClubAssigner
     private function resolvePreviousManager(?Club $newManagerClub, ?Club $prevManagerClub, User $targetUser): ?User
     {
         if ($newManagerClub instanceof Club) {
-            return $this->findEquipmentManagerOfClub($newManagerClub);
+            return $this->userRepository->findEquipmentManagerOfClub($newManagerClub);
         }
 
         return $prevManagerClub instanceof Club ? $targetUser : null;
-    }
-
-    private function findPresidentOfClub(Club $club): ?User
-    {
-        return $this->entityManager
-            ->createQuery('SELECT u FROM App\Entity\User u JOIN u.clubWhichImPresidentOf c WHERE c.id = :id')
-            ->setParameter('id', $club->getId())
-            ->getOneOrNullResult();
-    }
-
-    private function findEquipmentManagerOfClub(Club $club): ?User
-    {
-        return $this->entityManager
-            ->createQuery('SELECT u FROM App\Entity\User u JOIN u.clubWhereImEquipmentManager c WHERE c.id = :id')
-            ->setParameter('id', $club->getId())
-            ->getOneOrNullResult();
     }
 }
