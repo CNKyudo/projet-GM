@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\ClubMember;
 use App\Entity\Equipment;
 use App\Entity\Federation;
 use App\Entity\Glove;
@@ -20,6 +21,7 @@ use App\Enum\EquipmentLevel;
 use App\Enum\EquipmentType;
 use App\Form\EquipmentFormType;
 use App\Repository\EquipmentRepository;
+use App\Repository\UserRepository;
 use App\Security\EquipmentVisibilityFilterResolver;
 use App\Security\Voter\UserPermissionVoter;
 use Doctrine\ORM\EntityManagerInterface;
@@ -40,6 +42,7 @@ final class EquipmentController extends AbstractController
         private readonly PaginatorInterface $paginator,
         private readonly EquipmentVisibilityFilterResolver $visibilityFilterResolver,
         private readonly TranslatorInterface $translator,
+        private readonly UserRepository $userRepository,
     ) {
     }
 
@@ -63,6 +66,8 @@ final class EquipmentController extends AbstractController
         // Calcul des filtres de visibilité selon le rôle de l'utilisateur
         $filters = $this->visibilityFilterResolver->resolve($currentUser);
 
+        $borrowedUserId = $request->query->getInt('borrowed', 0);
+
         $queryBuilder = $this->equipmentRepository->findBySearchStrategy(
             $q,
             $equipmentTypeObj,
@@ -75,6 +80,19 @@ final class EquipmentController extends AbstractController
             $filters['includeNational'],
         );
 
+        if ($borrowedUserId > 0) {
+            $borrowerMember = $this->resolveBorrowerMember($borrowedUserId);
+            $alias = $queryBuilder->getRootAliases()[0];
+
+            if ($borrowerMember instanceof ClubMember) {
+                $queryBuilder
+                    ->andWhere(sprintf('%s.borrowerMember = :borrowerMember', $alias))
+                    ->setParameter('borrowerMember', $borrowerMember);
+            } else {
+                $queryBuilder->andWhere('1 = 0');
+            }
+        }
+
         $pagination = $this->paginator->paginate(
             $queryBuilder,
             $request->query->getInt('page', 1),
@@ -86,6 +104,7 @@ final class EquipmentController extends AbstractController
             'q' => $q,
             'equipmentType' => $equipmentType,
             'status' => $status,
+            'borrowed' => $borrowedUserId,
         ]);
     }
 
@@ -330,5 +349,12 @@ final class EquipmentController extends AbstractController
         }
 
         return $this->generateUrl('equipment.index');
+    }
+
+    private function resolveBorrowerMember(int $userId): ?ClubMember
+    {
+        $user = $this->userRepository->find($userId);
+
+        return $user?->getClubMember();
     }
 }

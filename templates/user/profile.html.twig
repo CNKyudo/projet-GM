@@ -59,7 +59,7 @@
 									à votre compte.
 								</p>
 							</div>
-							<a class="text-sm font-medium text-kyudo-royal-blue underline" href="{{ path('equipment.index') }}">Voir tous les équipements</a>
+							<a class="text-sm font-medium text-kyudo-royal-blue underline" href="{{ path('equipment.index', {borrowed: user.id}) }}">Voir tous mes emprunts</a>
 						</div>
 
 						{% if user.borrowedEquipments|length > 0 %}
