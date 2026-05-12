@@ -478,7 +478,7 @@ final class ClubControllerTest extends AbstractWebTestCase
         /** @var ClubRepository $clubRepo */
         $clubRepo = $container->get(ClubRepository::class);
 
-        $clubB           = $clubRepo->findOneBy(['name' => AppFixtures::CLUB_B]);
+        $clubB            = $clubRepo->findOneBy(['name' => AppFixtures::CLUB_B]);
         $equipmentManager = $userRepo->findOneBy(['email' => AppFixtures::USER_MANAGER_CLUB]);
 
         $this->assertInstanceOf(Club::class, $clubB);
