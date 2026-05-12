@@ -34,6 +34,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 final class EquipmentController extends AbstractController
 {
     private const int ITEMS_PER_PAGE = 20;
+    
+    private const string SESSION_INDEX_URL = 'equipment_index_url';
 
     public function __construct(
         private readonly EquipmentRepository $equipmentRepository,
@@ -56,6 +58,8 @@ final class EquipmentController extends AbstractController
         if (!in_array($status, ['all', 'available', 'loaned'], true)) {
             $status = 'all';
         }
+
+        $request->getSession()->set(self::SESSION_INDEX_URL, $request->getRequestUri());
 
         /** @var User $currentUser */
         $currentUser = $this->getUser();
@@ -90,12 +94,13 @@ final class EquipmentController extends AbstractController
     }
 
     #[Route('/equipment/{id}', name: 'equipment.show', requirements: ['id' => '\d+'])]
-    public function show(Equipment $equipment): Response
+    public function show(Equipment $equipment, Request $request): Response
     {
         $this->denyAccessUnlessGranted(UserPermissionVoter::VIEW_EQUIPMENT, $equipment);
 
         return $this->render('equipment/show.html.twig', [
             'equipment' => $equipment,
+            'backHref' => $this->getEquipmentIndexUrl($request),
         ]);
     }
 
@@ -229,12 +234,14 @@ final class EquipmentController extends AbstractController
 
             $this->addFlash('success', $this->translator->trans('equipment.added', ['{type}' => $this->translator->trans('equipment.type.'.$equipment->getTypeName())]));
 
-            return $this->redirectToRoute('equipment.index');
+            return $this->redirect($this->getEquipmentIndexUrl($request));
         }
+
+        $backHref = $this->getEquipmentIndexUrl($request);
 
         return $this->render('equipment/create.html.twig', [
             'form' => $form,
-            'backHref' => null,
+            'backHref' => $backHref,
         ]);
     }
 
@@ -289,7 +296,7 @@ final class EquipmentController extends AbstractController
             $entityManager->flush();
             $this->addFlash('success', 'Équipement modifié.');
 
-            return $this->redirectToRoute('equipment.index');
+            return $this->redirect($this->getEquipmentIndexUrl($request));
         }
 
         return $this->render('equipment/edit.html.twig', [
@@ -327,8 +334,21 @@ final class EquipmentController extends AbstractController
                     return $refererPath;
                 }
             }
+
+            $indexPath = $this->generateUrl('equipment.index');
+
+            if ($refererPath === $indexPath) {
+                $refererQuery = parse_url($referer, PHP_URL_QUERY);
+
+                return $indexPath.($refererQuery ? '?'.$refererQuery : '');
+            }
         }
 
-        return $this->generateUrl('equipment.index');
+        return $this->getEquipmentIndexUrl($request);
+    }
+
+    private function getEquipmentIndexUrl(Request $request): string
+    {
+        return $request->getSession()->get(self::SESSION_INDEX_URL) ?: $this->generateUrl('equipment.index');
     }
 }

@@ -61,6 +61,109 @@ final class EquipmentBackButtonTest extends AbstractWebTestCase
         $this->assertNull($backLink->attr('data-history-back'), 'The back button should NOT use data-history-back');
     }
 
+    // -----------------------------------------------------------------------
+    // FE-0006 — Bouton retour garde les arguments de recherche
+    // -----------------------------------------------------------------------
+
+    public function testShowPageBackButtonPreservesSearchFilters(): void
+    {
+        $this->loginAs(AppFixtures::USER_ADMIN);
+
+        $indexUrlWithFilters = '/equipment?q=test&equipmentType=glove&status=available';
+        $this->client->request(Request::METHOD_GET, $indexUrlWithFilters);
+        $this->assertResponseIsSuccessful();
+
+        $crawler = $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gloveAId);
+        $this->assertResponseIsSuccessful();
+
+        $backHref = $crawler->selectLink('Retour à la liste')->attr('href');
+        $this->assertSame($indexUrlWithFilters, $backHref, 'Back button should preserve search filters from index');
+    }
+
+    public function testShowPageBackButtonPreservesPageNumber(): void
+    {
+        $this->loginAs(AppFixtures::USER_ADMIN);
+
+        $indexUrlWithPage = '/equipment?page=2&equipmentType=glove';
+        $this->client->request(Request::METHOD_GET, $indexUrlWithPage);
+        $this->assertResponseIsSuccessful();
+
+        $crawler = $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gloveAId);
+        $this->assertResponseIsSuccessful();
+
+        $backHref = $crawler->selectLink('Retour à la liste')->attr('href');
+        $this->assertSame($indexUrlWithPage, $backHref);
+    }
+
+    public function testCreatePageBackButtonPreservesSearchFilters(): void
+    {
+        $this->loginAs(AppFixtures::USER_ADMIN);
+
+        $indexUrlWithFilters = '/equipment?q=test&status=loaned';
+        $this->client->request(Request::METHOD_GET, $indexUrlWithFilters);
+        $this->assertResponseIsSuccessful();
+
+        $crawler = $this->client->request(Request::METHOD_GET, '/equipment/create');
+        $this->assertResponseIsSuccessful();
+
+        $backHref = $crawler->selectLink('Retour à la liste')->attr('href');
+        $this->assertSame($indexUrlWithFilters, $backHref, 'Create page back button should preserve search filters');
+
+        $cancelHref = $crawler->selectLink('Annuler')->attr('href');
+        $this->assertSame($indexUrlWithFilters, $cancelHref, 'Create page cancel button should preserve search filters');
+    }
+
+    public function testEditPageFromListWithFiltersPreservesFilters(): void
+    {
+        $this->loginAs(AppFixtures::USER_ADMIN);
+
+        $indexUrlWithFilters = '/equipment?q=test&equipmentType=glove';
+        $this->client->request(Request::METHOD_GET, $indexUrlWithFilters);
+        $this->assertResponseIsSuccessful();
+
+        $editUrl = '/equipment/'.$this->gloveAId.'/edit';
+        $crawler = $this->client->request(Request::METHOD_GET, $editUrl, [], [], [
+            'HTTP_REFERER' => $indexUrlWithFilters,
+        ]);
+        $this->assertResponseIsSuccessful();
+
+        $backHref = $crawler->selectLink('Retour')->attr('href');
+        $this->assertSame($indexUrlWithFilters, $backHref, 'Edit page back button should preserve index search filters');
+    }
+
+    public function testEditRedirectsToIndexWithFiltersAfterSuccess(): void
+    {
+        $this->loginAs(AppFixtures::USER_ADMIN);
+
+        $indexUrlWithFilters = '/equipment?q=test&equipmentType=glove';
+        $this->client->request(Request::METHOD_GET, $indexUrlWithFilters);
+        $this->assertResponseIsSuccessful();
+
+        $editUrl = '/equipment/'.$this->gloveAId.'/edit';
+        $this->client->request(Request::METHOD_GET, $editUrl, [], [], [
+            'HTTP_REFERER' => $indexUrlWithFilters,
+        ]);
+
+        $crawler = $this->client->request(Request::METHOD_GET, $editUrl);
+        $form = $crawler->selectButton('Enregistrer')->form();
+        $this->client->submit($form);
+
+        $this->assertResponseRedirects();
+        $this->assertStringContainsString('q=test', (string) $this->client->getResponse()->headers->get('Location'));
+        $this->assertStringContainsString('equipmentType=glove', (string) $this->client->getResponse()->headers->get('Location'));
+    }
+
+    public function testWithoutPriorIndexVisitBackButtonDefaultsToIndex(): void
+    {
+        $this->loginAs(AppFixtures::USER_ADMIN);
+
+        $crawler = $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gloveAId);
+        $this->assertResponseIsSuccessful();
+
+        $backHref = $crawler->selectLink('Retour à la liste')->attr('href');
+        $this->assertSame('/equipment', $backHref, 'Without prior index visit, back button defaults to /equipment');
+    }
+
     public function testEditPageFromShowPageBackButtonLinksToShowPage(): void
     {
         $this->loginAs(AppFixtures::USER_ADMIN);

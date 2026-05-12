@@ -18,7 +18,7 @@
         </div>
 
         <a
-          href="{{ path('equipment.index') }}"
+          href="{{ backHref|default(path('equipment.index')) }}"
           class="inline-flex items-center justify-center rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 font-medium text-kyudo-gm-dark hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)"
         >
           Retour à la liste
