@@ -11,6 +11,7 @@ use App\Enum\UserRole;
 use App\Repository\ClubRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Tests fonctionnels : ClubController.
@@ -402,7 +403,7 @@ final class ClubControllerTest extends AbstractWebTestCase
         /** @var ClubRepository $clubRepo */
         $clubRepo = $container->get(ClubRepository::class);
 
-        $clubA    = $clubRepo->findOneBy(['name' => AppFixtures::CLUB_A]);
+        $clubA      = $clubRepo->findOneBy(['name' => AppFixtures::CLUB_A]);
         $userMember = $userRepo->findOneBy(['email' => AppFixtures::USER_MEMBER]);
         $this->assertInstanceOf(Club::class, $clubA);
         $this->assertInstanceOf(User::class, $userMember);
@@ -421,7 +422,83 @@ final class ClubControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(422);
         $this->assertSelectorTextContains(
             'body',
-            'Un utilisateur ne peut pas être à la fois président et gestionnaire matériel'
+            'Un utilisateur ne peut pas être à la fois président et responsable matériel'
+        );
+    }
+
+    // -----------------------------------------------------------------------
+    // Validation : cumul inter-club interdit
+    // -----------------------------------------------------------------------
+
+    /**
+     * Le formulaire doit rejeter le cas où on tente de désigner comme
+     * responsable matériel d'un club un utilisateur déjà président d'un autre club.
+     */
+    public function testCannotSetPresidentAsEquipmentManagerOfOtherClub(): void
+    {
+        $container = self::getContainer();
+        /** @var UserRepository $userRepo */
+        $userRepo = $container->get(UserRepository::class);
+        /** @var ClubRepository $clubRepo */
+        $clubRepo = $container->get(ClubRepository::class);
+
+        $clubB     = $clubRepo->findOneBy(['name' => AppFixtures::CLUB_B]);
+        $president = $userRepo->findOneBy(['email' => AppFixtures::USER_PRESIDENT]);
+
+        $this->assertInstanceOf(Club::class, $clubB);
+        $this->assertInstanceOf(User::class, $president);
+
+        // Club B (Lyon) a déjà un responsable matériel (managerLyon).
+        // On essaie d'y mettre le président du Club A.
+        $this->loginAs(AppFixtures::USER_ADMIN);
+
+        $crawler = $this->client->request('GET', '/club/'.$clubB->getId().'/edit');
+        $form    = $crawler->selectButton('Enregistrer')->form();
+
+        $form['club[equipmentManager]'] = (string) $president->getId();
+        $this->client->submit($form);
+
+        // Doit échouer en validation
+        $this->assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $this->assertSelectorTextContains(
+            'body',
+            'Cet utilisateur est déjà président d\'un club.'
+        );
+    }
+
+    /**
+     * Le formulaire doit rejeter le cas où on tente de désigner comme
+     * président d'un club un utilisateur déjà responsable matériel d'un autre club.
+     */
+    public function testCannotSetEquipmentManagerAsPresidentOfOtherClub(): void
+    {
+        $container = self::getContainer();
+        /** @var UserRepository $userRepo */
+        $userRepo = $container->get(UserRepository::class);
+        /** @var ClubRepository $clubRepo */
+        $clubRepo = $container->get(ClubRepository::class);
+
+        $clubB            = $clubRepo->findOneBy(['name' => AppFixtures::CLUB_B]);
+        $equipmentManager = $userRepo->findOneBy(['email' => AppFixtures::USER_MANAGER_CLUB]);
+
+        $this->assertInstanceOf(Club::class, $clubB);
+        $this->assertInstanceOf(User::class, $equipmentManager);
+
+        // Club B (Lyon) a déjà un président (presidentLyon).
+        // On essaie d'y mettre le responsable matériel du Club A.
+        $this->loginAs(AppFixtures::USER_ADMIN);
+
+        $crawler = $this->client->request('GET', '/club/'.$clubB->getId().'/edit');
+        $form    = $crawler->selectButton('Enregistrer')->form();
+
+        $form['club[president]'] = (string) $equipmentManager->getId();
+        $this->client->submit($form);
+
+        // Doit échouer en validation
+        $this->assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $this->assertSelectorTextContains(
+            'body',
+            'Cet utilisateur est déjà responsable matériel d\'un club.'
         );
     }
 }
