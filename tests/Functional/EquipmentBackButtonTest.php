@@ -62,7 +62,7 @@ final class EquipmentBackButtonTest extends AbstractWebTestCase
     }
 
     // -----------------------------------------------------------------------
-    // FE-0006 — Bouton retour garde les arguments de recherche
+    // Bouton retour garde les arguments de recherche
     // -----------------------------------------------------------------------
 
     public function testShowPageBackButtonPreservesSearchFilters(): void

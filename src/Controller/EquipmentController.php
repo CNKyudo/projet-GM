@@ -334,14 +334,6 @@ final class EquipmentController extends AbstractController
                     return $refererPath;
                 }
             }
-
-            $indexPath = $this->generateUrl('equipment.index');
-
-            if ($refererPath === $indexPath) {
-                $refererQuery = parse_url($referer, PHP_URL_QUERY);
-
-                return $indexPath.($refererQuery ? '?'.$refererQuery : '');
-            }
         }
 
         return $this->getEquipmentIndexUrl($request);
