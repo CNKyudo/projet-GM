@@ -934,6 +934,102 @@ final class EquipmentControllerTest extends AbstractWebTestCase
         );
     }
 
+    // -----------------------------------------------------------------------
+    // GET /equipment/{id} — modification history timeline
+    // -----------------------------------------------------------------------
+    public function testShowEquipmentHistoryTimelineSectionRenders(): void
+    {
+        $this->loginAs(AppFixtures::USER_ADMIN);
+        $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gloveAId);
+        $this->assertResponseIsSuccessful();
+
+        $content = (string) $this->client->getResponse()->getContent();
+        $this->assertStringContainsString('Historique des modifications', $content);
+    }
+
+    public function testShowEquipmentHistoryTimelineShowsCreateEntry(): void
+    {
+        $this->loginAs(AppFixtures::USER_ADMIN);
+        $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gloveAId);
+        $this->assertResponseIsSuccessful();
+
+        $content = (string) $this->client->getResponse()->getContent();
+        $this->assertStringContainsString('Création', $content);
+    }
+
+    public function testShowEquipmentHistoryTimelineShowsUpdateAfterEdit(): void
+    {
+        $this->loginAs(AppFixtures::USER_ADMIN);
+
+        $container = self::getContainer();
+        /** @var EntityManagerInterface $em */
+        $em = $container->get(EntityManagerInterface::class);
+        /** @var Glove $glove */
+        $glove = $em->getRepository(Glove::class)->find($this->gloveAId);
+        $this->assertInstanceOf(Glove::class, $glove);
+
+        $this->client->request(Request::METHOD_POST, '/equipment/'.$this->gloveAId.'/edit', [
+            'equipment_form' => [
+                'ownerClub'       => (string) $glove->getOwnerClub()->getId(),
+                'state'           => $glove->getState()->value,
+                'borrowerClub'    => '',
+                'borrowerMember'  => '',
+                'notes'           => 'Timeline test note',
+                'glove_form'      => [
+                    'nb_fingers' => (string) $glove->getNbFingers(),
+                    'size'       => (string) $glove->getSize(),
+                ],
+            ],
+        ]);
+
+        $this->assertResponseRedirects('/equipment');
+
+        $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gloveAId);
+        $this->assertResponseIsSuccessful();
+
+        $content = (string) $this->client->getResponse()->getContent();
+        $this->assertStringContainsString('Modification', $content);
+        $this->assertStringContainsString('Timeline test note', $content);
+    }
+
+    public function testShowEquipmentHistoryTimelineHandlesEntityAssociationChange(): void
+    {
+        $this->loginAs(AppFixtures::USER_ADMIN);
+
+        $container = self::getContainer();
+        /** @var EntityManagerInterface $em */
+        $em = $container->get(EntityManagerInterface::class);
+        /** @var \App\Entity\Glove $glove */
+        $glove = $em->getRepository(\App\Entity\Glove::class)->find($this->gloveAId);
+        $this->assertInstanceOf(\App\Entity\Glove::class, $glove);
+        /** @var Club $clubC */
+        $clubC = $em->getRepository(Club::class)->findOneBy(['name' => AppFixtures::CLUB_C]);
+        $this->assertInstanceOf(Club::class, $clubC);
+
+        $this->client->request(Request::METHOD_POST, '/equipment/'.$this->gloveAId.'/edit', [
+            'equipment_form' => [
+                'ownerClub'       => (string) $glove->getOwnerClub()->getId(),
+                'state'           => $glove->getState()->value,
+                'borrowerClub'    => (string) $clubC->getId(),
+                'borrowerMember'  => '',
+                'glove_form'      => [
+                    'nb_fingers' => (string) $glove->getNbFingers(),
+                    'size'       => (string) $glove->getSize(),
+                ],
+            ],
+        ]);
+
+        $this->assertResponseRedirects('/equipment');
+
+        $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gloveAId);
+        $this->assertResponseIsSuccessful();
+
+        $content = (string) $this->client->getResponse()->getContent();
+        $this->assertStringContainsString('Modification', $content);
+        $this->assertStringContainsString('Club emprunteur', $content);
+        $this->assertStringContainsString(AppFixtures::CLUB_C.' (#', $content);
+    }
+
     public function testCreateEquipmentWithMultipleOwnersPrioritizesFederation(): void
     {
         // CN soumet le formulaire avec fédération + club simultanément :

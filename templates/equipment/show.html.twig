@@ -299,6 +299,95 @@
         </aside>
       </div>
 
+      {# --- Historique des modifications --- #}
+      <section class="mt-8 rounded-3xl border border-kyudo-gm-light-grey bg-kyudo-white p-6 shadow-sm">
+        <h2 class="text-base font-semibold text-kyudo-gm-dark">Historique des modifications</h2>
+
+        {% if logEntries|length > 0 %}
+          <div class="relative mt-6">
+            <div class="absolute left-1/2 top-0 h-full w-0.5 bg-kyudo-gm-light-grey -translate-x-1/2"></div>
+
+            {% for entry in logEntries %}
+              {% set isLeft = loop.index is odd %}
+              <div class="relative mb-8 last:mb-0">
+                <div class="{% if isLeft %}mr-auto pr-8{% else %}ml-auto pl-8{% endif %} w-1/2">
+                  <div class="rounded-2xl bg-kyudo-gm-light-grey p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                      <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold
+                        {% if entry.action == 'create' %}bg-emerald-50 text-emerald-800
+                        {% elseif entry.action == 'update' %}bg-blue-50 text-blue-800
+                        {% elseif entry.action == 'remove' %}bg-red-50 text-red-800
+                        {% endif %}">
+                        {% if entry.action == 'create' %}Création
+                        {% elseif entry.action == 'update' %}Modification
+                        {% elseif entry.action == 'remove' %}Suppression
+                        {% endif %}
+                      </span>
+                      <span class="text-xs text-kyudo-gm-grey">{{ entry.loggedAt|format_datetime('medium', 'short', locale: 'fr') }}</span>
+                    </div>
+
+                    <p class="text-xs text-kyudo-gm-grey mb-2">
+                      Par <span class="font-medium text-kyudo-gm-dark">{{ entry.username ?: '-' }}</span>
+                    </p>
+
+                    {% if entry.action == 'update' and entry.data is not empty %}
+                      <ul class="mt-2 space-y-1">
+                        {% for field, value in entry.data %}
+                          <li class="text-xs text-kyudo-gm-dark">
+                            {% set fieldLabel = {
+                              'ownerClub': 'Propriétaire (club)',
+                              'ownerRegion': 'Propriétaire (région)',
+                              'ownerFederation': 'Propriétaire (fédération)',
+                              'equipmentLevel': 'Niveau',
+                              'borrowerClub': 'Club emprunteur',
+                              'borrowerMember': 'Emprunté par',
+                              'state': 'État',
+                              'notes': 'Notes',
+                              'material': 'Matériau',
+                              'strength': 'Force (kg)',
+                              'yumiLength': 'Taille',
+                              'nb_fingers': 'Nombre de doigts',
+                              'nbFingers': 'Nombre de doigts',
+                              'size': 'Taille',
+                              'height': 'Hauteur',
+                              'nbBows': "Nombre d'arcs",
+                              'nbArrows': 'Nombre de flèches',
+                              'orientation': 'Orientation',
+                              'equipmentLength': 'Longueur',
+                              'width': 'Largeur',
+                              'thickness': 'Épaisseur',
+                              'weight': 'Poids (kg)',
+                              'attachment': 'Accroche',
+                            } %}
+                            <span class="font-medium">{{ fieldLabel[field]|default(field) }}</span> :
+                            {% if value is iterable and value.display is defined %}
+                              <span class="text-kyudo-gm-grey">{{ value.display }} (#{{ value.id }})</span>
+                            {% elseif value is iterable %}
+                              <span class="text-kyudo-gm-grey">{{ value|json_encode }}</span>
+                            {% else %}
+                              <span class="text-kyudo-gm-grey">{{ value is same as(true) ? 'Oui' : value is same as(false) ? 'Non' : value ?: '(vide)' }}</span>
+                            {% endif %}
+                          </li>
+                        {% endfor %}
+                      </ul>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="absolute top-4 left-1/2 -translate-x-1/2 w-3.5 h-3.5 rounded-full border-2 border-kyudo-white
+                  {% if entry.action == 'create' %}bg-emerald-500
+                  {% elseif entry.action == 'update' %}bg-kyudo-blue
+                  {% elseif entry.action == 'remove' %}bg-red-500
+                  {% endif %}">
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="mt-6 text-sm text-kyudo-gm-grey">Aucune modification enregistrée.</p>
+        {% endif %}
+      </section>
+
     </div>
   </div>
 {% endblock %}
