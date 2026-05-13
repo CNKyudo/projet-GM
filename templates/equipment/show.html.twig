@@ -303,17 +303,17 @@
       {% if is_granted('VIEW_EQUIPMENT_HISTORY') %}
         {% import _self as timeline %}
 
-        {% macro entry_content(entry, equipment) %}
-          <div class="rounded-2xl bg-kyudo-gm-light-grey p-4">
-            <div class="flex items-center gap-2 mb-2">
-            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold
+      {% macro entry_content(entry, equipment, isOdd) %}
+        <div class="rounded-2xl bg-kyudo-gm-light-grey p-4">
+          <div class="flex items-center gap-2 mb-2{{ isOdd ? ' justify-end' : '' }}">
+            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold{{ isOdd ? ' order-2' : '' }}
               {% if entry.action == 'create' %}bg-emerald-50 text-emerald-800
               {% elseif entry.action == 'update' %}bg-blue-50 text-blue-800
               {% elseif entry.action == 'remove' %}bg-red-50 text-red-800
               {% endif %}">
               {{ ('log_entry.action.' ~ entry.action)|trans }}
             </span>
-              <span class="text-xs text-kyudo-gm-grey">{{ entry.loggedAt|format_datetime('medium', 'short', locale: 'fr') }}</span>
+            <span class="text-xs text-kyudo-gm-grey{{ isOdd ? ' order-1' : '' }}">{{ entry.loggedAt|format_datetime('medium', 'short', locale: 'fr') }}</span>
             </div>
 
             <p class="text-xs text-kyudo-gm-grey mb-2">
@@ -380,7 +380,7 @@
             <div class="events mt-6">
               {% for entry in logEntries %}
                 <div class="event">
-                  <div class="content">{{ timeline.entry_content(entry, equipment) }}</div>
+                  <div class="content">{{ timeline.entry_content(entry, equipment, loop.index is odd) }}</div>
                   <div class="marker w-3.5 h-3.5 rounded-full border-2 border-kyudo-white
                     {% if entry.action == 'create' %}bg-emerald-500
                     {% elseif entry.action == 'update' %}bg-kyudo-blue
