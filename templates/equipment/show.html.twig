@@ -331,44 +331,53 @@
                         Par <span class="font-medium text-kyudo-gm-dark">{{ entry.username ?: '-' }}</span>
                       </p>
 
-                      {% if entry.action == 'update' and entry.data is not empty %}
+                      {% if entry.data is not empty %}
                         <ul class="mt-2 space-y-1">
                           {% for field, value in entry.data %}
-                            <li class="text-xs text-kyudo-gm-dark">
-                              {% set fieldLabel = {
-                                'ownerClub': 'Propriétaire (club)',
-                                'ownerRegion': 'Propriétaire (région)',
-                                'ownerFederation': 'Propriétaire (fédération)',
-                                'equipmentLevel': 'Niveau',
-                                'borrowerClub': 'Club emprunteur',
-                                'borrowerMember': 'Emprunté par',
-                                'state': 'État',
-                                'notes': 'Notes',
-                                'material': 'Matériau',
-                                'strength': 'Force (kg)',
-                                'yumiLength': 'Taille',
-                                'nb_fingers': 'Nombre de doigts',
-                                'nbFingers': 'Nombre de doigts',
-                                'size': 'Taille',
-                                'height': 'Hauteur',
-                                'nbBows': "Nombre d'arcs",
-                                'nbArrows': 'Nombre de flèches',
-                                'orientation': 'Orientation',
-                                'equipmentLength': 'Longueur',
-                                'width': 'Largeur',
-                                'thickness': 'Épaisseur',
-                                'weight': 'Poids (kg)',
-                                'attachment': 'Accroche',
-                              } %}
-                              <span class="font-medium">{{ fieldLabel[field]|default(field) }}</span> :
-                              {% if value is iterable and value.display is defined %}
-                                <span class="text-kyudo-gm-grey">{{ value.display }} (#{{ value.id }})</span>
-                              {% elseif value is iterable %}
-                                <span class="text-kyudo-gm-grey">{{ value|json_encode }}</span>
-                              {% else %}
-                                <span class="text-kyudo-gm-grey">{{ value is same as(true) ? 'Oui' : value is same as(false) ? 'Non' : value ?: '(vide)' }}</span>
-                              {% endif %}
-                            </li>
+                            {% if not (entry.action == 'create' and value is null) %}
+                              <li class="text-xs text-kyudo-gm-dark">
+                                {% set fieldLabel = {
+                                  'ownerClub': 'Propriétaire (club)',
+                                  'ownerRegion': 'Propriétaire (région)',
+                                  'ownerFederation': 'Propriétaire (fédération)',
+                                  'equipmentLevel': 'Niveau',
+                                  'borrowerClub': 'Club emprunteur',
+                                  'borrowerMember': 'Emprunté par',
+                                  'state': 'État',
+                                  'notes': 'Notes',
+                                  'material': 'Matériau',
+                                  'strength': 'Force (kg)',
+                                  'yumiLength': 'Taille',
+                                  'nb_fingers': 'Nombre de doigts',
+                                  'size': 'Taille',
+                                  'height': 'Hauteur',
+                                  'nb_bows': "Nombre d'arcs",
+                                  'nb_arrows': 'Nombre de flèches',
+                                  'orientation': 'Orientation',
+                                  'equipmentLength': 'Longueur',
+                                  'width': 'Largeur',
+                                  'thickness': 'Épaisseur',
+                                  'weight': 'Poids (kg)',
+                                  'attachment': 'Accroche',
+                                } %}
+                                {% set transPrefix = {
+                                  'state': 'equipment.state.',
+                                  'material': equipment.typeName == 'makiwara' ? 'makiwara.material.' : null,
+                                  'yumiLength': 'yumi.length.',
+                                  'orientation': 'yumitate.orientation.',
+                                } %}
+                                <span class="font-medium">{{ fieldLabel[field]|default(field) }}</span> :
+                                {% if value is iterable and value.display is defined %}
+                                  <span class="text-kyudo-gm-grey">{{ value.display }} (#{{ value.id }})</span>
+                                {% elseif value is iterable %}
+                                  <span class="text-kyudo-gm-grey">{{ value|json_encode }}</span>
+                                {% elseif transPrefix[field] is defined and transPrefix[field] is not null and value %}
+                                  <span class="text-kyudo-gm-grey">{{ (transPrefix[field] ~ value)|trans }}</span>
+                                {% else %}
+                                  <span class="text-kyudo-gm-grey">{{ value is same as(true) ? 'Oui' : value is same as(false) ? 'Non' : value ?: '(vide)' }}</span>
+                                {% endif %}
+                              </li>
+                            {% endif %}
                           {% endfor %}
                         </ul>
                       {% endif %}
