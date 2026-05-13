@@ -999,9 +999,9 @@ final class EquipmentControllerTest extends AbstractWebTestCase
         $container = self::getContainer();
         /** @var EntityManagerInterface $em */
         $em = $container->get(EntityManagerInterface::class);
-        /** @var \App\Entity\Glove $glove */
-        $glove = $em->getRepository(\App\Entity\Glove::class)->find($this->gloveAId);
-        $this->assertInstanceOf(\App\Entity\Glove::class, $glove);
+        /** @var Glove $glove */
+        $glove = $em->getRepository(Glove::class)->find($this->gloveAId);
+        $this->assertInstanceOf(Glove::class, $glove);
         /** @var Club $clubC */
         $clubC = $em->getRepository(Club::class)->findOneBy(['name' => AppFixtures::CLUB_C]);
         $this->assertInstanceOf(Club::class, $clubC);
@@ -1028,6 +1028,59 @@ final class EquipmentControllerTest extends AbstractWebTestCase
         $this->assertStringContainsString('Modification', $content);
         $this->assertStringContainsString('Club emprunteur', $content);
         $this->assertStringContainsString(AppFixtures::CLUB_C.' (#', $content);
+    }
+
+    // -----------------------------------------------------------------------
+    // GET /equipment/{id} — modification history visibility (only ADMIN)
+    // -----------------------------------------------------------------------
+    public function testShowEquipmentHistoryNotVisibleForPresident(): void
+    {
+        $this->loginAs(AppFixtures::USER_PRESIDENT);
+        $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gloveAId);
+        $this->assertResponseIsSuccessful();
+
+        $content = (string) $this->client->getResponse()->getContent();
+        $this->assertStringNotContainsString('Historique des modifications', $content);
+    }
+
+    public function testShowEquipmentHistoryNotVisibleForMember(): void
+    {
+        $this->loginAs(AppFixtures::USER_MEMBER);
+        $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gloveAId);
+        $this->assertResponseIsSuccessful();
+
+        $content = (string) $this->client->getResponse()->getContent();
+        $this->assertStringNotContainsString('Historique des modifications', $content);
+    }
+
+    public function testShowEquipmentHistoryNotVisibleForEquipmentManagerCn(): void
+    {
+        $this->loginAs(AppFixtures::USER_MANAGER_CN);
+        $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gloveAId);
+        $this->assertResponseIsSuccessful();
+
+        $content = (string) $this->client->getResponse()->getContent();
+        $this->assertStringNotContainsString('Historique des modifications', $content);
+    }
+
+    public function testShowEquipmentHistoryNotVisibleForEquipmentManagerCtk(): void
+    {
+        $this->loginAs(AppFixtures::USER_MANAGER_CTK);
+        $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gloveAId);
+        $this->assertResponseIsSuccessful();
+
+        $content = (string) $this->client->getResponse()->getContent();
+        $this->assertStringNotContainsString('Historique des modifications', $content);
+    }
+
+    public function testShowEquipmentHistoryNotVisibleForEquipmentManagerClub(): void
+    {
+        $this->loginAs(AppFixtures::USER_MANAGER_CLUB);
+        $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gloveAId);
+        $this->assertResponseIsSuccessful();
+
+        $content = (string) $this->client->getResponse()->getContent();
+        $this->assertStringNotContainsString('Historique des modifications', $content);
     }
 
     public function testCreateEquipmentWithMultipleOwnersPrioritizesFederation(): void

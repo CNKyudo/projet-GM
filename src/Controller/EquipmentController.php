@@ -103,7 +103,9 @@ final class EquipmentController extends AbstractController
         return $this->render('equipment/show.html.twig', [
             'equipment' => $equipment,
             'backHref' => $this->getEquipmentIndexUrl($request),
-            'logEntries' => $this->logEntryEnricher->getRichLogEntries($equipment),
+            'logEntries' => $this->isGranted(UserPermissionVoter::VIEW_EQUIPMENT_HISTORY)
+                ? $this->logEntryEnricher->getRichLogEntries($equipment)
+                : [],
         ]);
     }
 
