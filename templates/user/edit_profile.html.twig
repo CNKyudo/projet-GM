@@ -48,7 +48,7 @@
 
 						<div class="mt-6 flex flex-col gap-3 sm:flex-row">
 							<button type="submit" class="btn btn-primary">Enregistrer</button>
-							<a class="btn btn-secondary" data-history-back href="{{ path('user_profile') }}">Retour au profil</a>
+							<a class="btn btn-secondary" href="{{ path('user_profile') }}">Retour au profil</a>
 						</div>
 						{{ form_end(form) }}
 					</div>
@@ -71,9 +71,6 @@
 					<div class="mt-5 flex flex-col gap-3">
 						<a class="rounded-2xl border border-gray-300 px-4 py-3 text-sm font-medium text-kyudo-gm-grey transition hover:border-kyudo-washed-blue hover:bg-kyudo-washed-blue hover:text-white" href="{{ path('user_change_password') }}">
 							Modifier mon mot de passe
-						</a>
-						<a class="rounded-2xl border border-gray-300 px-4 py-3 text-sm font-medium text-kyudo-gm-grey transition hover:border-kyudo-gm-dark hover:bg-kyudo-gm-dark hover:text-white" data-history-back href="{{ path('user_profile') }}">
-							Revenir au profil
 						</a>
 					</div>
 				</aside>
