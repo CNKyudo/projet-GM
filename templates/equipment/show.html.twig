@@ -319,10 +319,7 @@
                           {% elseif entry.action == 'update' %}bg-blue-50 text-blue-800
                           {% elseif entry.action == 'remove' %}bg-red-50 text-red-800
                           {% endif %}">
-                          {% if entry.action == 'create' %}Création
-                          {% elseif entry.action == 'update' %}Modification
-                          {% elseif entry.action == 'remove' %}Suppression
-                          {% endif %}
+                          {{ ('log_entry.action.' ~ entry.action)|trans }}
                         </span>
                         <span class="text-xs text-kyudo-gm-grey">{{ entry.loggedAt|format_datetime('medium', 'short', locale: 'fr') }}</span>
                       </div>

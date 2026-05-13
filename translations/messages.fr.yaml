@@ -31,3 +31,8 @@ yumitate:
   orientation:
     recto: "Recto"
     recto_verso: "Recto-verso"
+log_entry:
+  action:
+    create: "Création"
+    update: "Modification"
+    remove: "Suppression"
