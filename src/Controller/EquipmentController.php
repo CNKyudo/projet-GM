@@ -22,6 +22,7 @@ use App\Form\EquipmentFormType;
 use App\Repository\EquipmentRepository;
 use App\Security\EquipmentVisibilityFilterResolver;
 use App\Security\Voter\UserPermissionVoter;
+use App\Service\LogEntryEnricher;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -39,6 +40,7 @@ final class EquipmentController extends AbstractController
 
     public function __construct(
         private readonly EquipmentRepository $equipmentRepository,
+        private readonly LogEntryEnricher $logEntryEnricher,
         private readonly PaginatorInterface $paginator,
         private readonly EquipmentVisibilityFilterResolver $visibilityFilterResolver,
         private readonly TranslatorInterface $translator,
@@ -101,6 +103,9 @@ final class EquipmentController extends AbstractController
         return $this->render('equipment/show.html.twig', [
             'equipment' => $equipment,
             'backHref' => $this->getEquipmentIndexUrl($request),
+            'logEntries' => $this->isGranted(UserPermissionVoter::VIEW_EQUIPMENT_HISTORY)
+                ? $this->logEntryEnricher->getRichLogEntries($equipment)
+                : [],
         ]);
     }
 

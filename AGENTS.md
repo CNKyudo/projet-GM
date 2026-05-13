@@ -24,6 +24,7 @@
 - `make phpstan`: Run PHPStan level 7 on `src/` and `tests/`
 - `make fix`: Run rector → php-cs-fixer → phpstan (in that order)
 
+The Make commands are made to be run outside docker, they invoke commands into docker themselves.
 Tool config files live in `tools/` (e.g. `tools/phpstan.neon`, `tools/.php-cs-fixer.php`, `tools/rector.php`). The Makefile uses those paths. Composer scripts reference root-level paths that don't exist; always use `make` targets.
 
 ## Code style
