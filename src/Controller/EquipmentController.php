@@ -34,7 +34,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 final class EquipmentController extends AbstractController
 {
     private const int ITEMS_PER_PAGE = 20;
-    
+
     private const string SESSION_INDEX_URL = 'equipment_index_url';
 
     public function __construct(
