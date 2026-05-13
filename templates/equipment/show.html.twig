@@ -374,7 +374,7 @@
                                 {% elseif transPrefix[field] is defined and transPrefix[field] is not null and value %}
                                   <span class="text-kyudo-gm-grey">{{ (transPrefix[field] ~ value)|trans }}</span>
                                 {% else %}
-                                  <span class="text-kyudo-gm-grey">{{ value is same as(true) ? 'Oui' : value is same as(false) ? 'Non' : value ?: '(vide)' }}</span>
+                                  <span class="text-kyudo-gm-grey">{{ value is same as(true) ? 'Oui' : value is same as(false) ? 'Non' : value is same as(0) ? '0' : value ?: '(vide)' }}</span>
                                 {% endif %}
                               </li>
                             {% endif %}
