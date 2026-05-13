@@ -2,7 +2,6 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  row-gap: 1.5rem;
 }
 
 .events::before {
@@ -24,8 +23,8 @@
 .event .marker {
   order: 1;
   flex-shrink: 0;
-  position: relative;
   margin-top: 1rem;
+  position: relative;
 }
 
 .event .content {
@@ -52,4 +51,8 @@
 
 .event:nth-child(even) .marker {
   left: 7px;
+}
+
+.event + .event {
+  margin-top: -2.5rem;
 }

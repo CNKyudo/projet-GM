@@ -301,93 +301,97 @@
 
       {# --- Historique des modifications --- #}
       {% if is_granted('VIEW_EQUIPMENT_HISTORY') %}
+        {% import _self as timeline %}
+
+        {% macro entry_content(entry, equipment) %}
+          <div class="rounded-2xl bg-kyudo-gm-light-grey p-4">
+            <div class="flex items-center gap-2 mb-2">
+            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold
+              {% if entry.action == 'create' %}bg-emerald-50 text-emerald-800
+              {% elseif entry.action == 'update' %}bg-blue-50 text-blue-800
+              {% elseif entry.action == 'remove' %}bg-red-50 text-red-800
+              {% endif %}">
+              {{ ('log_entry.action.' ~ entry.action)|trans }}
+            </span>
+              <span class="text-xs text-kyudo-gm-grey">{{ entry.loggedAt|format_datetime('medium', 'short', locale: 'fr') }}</span>
+            </div>
+
+            <p class="text-xs text-kyudo-gm-grey mb-2">
+              Par <span class="font-medium text-kyudo-gm-dark">{{ entry.username ?: '-' }}</span>
+            </p>
+
+            {% if entry.data is not empty %}
+              <ul class="mt-2 space-y-1">
+                {% for field, value in entry.data %}
+                  {% if not (entry.action == 'create' and value is null) %}
+                    <li class="text-xs text-kyudo-gm-dark">
+                      {% set fieldLabel = {
+                        'ownerClub': 'log_entry.field.owner_club',
+                        'ownerRegion': 'log_entry.field.owner_region',
+                        'ownerFederation': 'log_entry.field.owner_federation',
+                        'equipmentLevel': 'log_entry.field.equipment_level',
+                        'borrowerClub': 'log_entry.field.borrower_club',
+                        'borrowerMember': 'log_entry.field.borrower_member',
+                        'state': 'log_entry.field.state',
+                        'notes': 'log_entry.field.notes',
+                        'material': 'log_entry.field.material',
+                        'strength': 'log_entry.field.strength',
+                        'yumiLength': 'log_entry.field.yumi_length',
+                        'nb_fingers': 'log_entry.field.nb_fingers',
+                        'size': 'log_entry.field.size',
+                        'height': 'log_entry.field.height',
+                        'nb_bows': 'log_entry.field.nb_bows',
+                        'nb_arrows': 'log_entry.field.nb_arrows',
+                        'orientation': 'log_entry.field.orientation',
+                        'equipmentLength': 'log_entry.field.equipment_length',
+                        'width': 'log_entry.field.width',
+                        'thickness': 'log_entry.field.thickness',
+                        'weight': 'log_entry.field.weight',
+                        'attachment': 'log_entry.field.attachment',
+                      } %}
+                      {% set transPrefix = {
+                        'state': 'equipment.state.',
+                        'material': equipment.typeName == 'makiwara' ? 'makiwara.material.' : null,
+                        'yumiLength': 'yumi.length.',
+                        'orientation': 'yumitate.orientation.',
+                      } %}
+                      <span class="font-medium">{{ (fieldLabel[field]|default(field))|trans }}</span> :
+                      {% if value is iterable and value.display is defined %}
+                        <span class="text-kyudo-gm-grey">{{ value.display }} (#{{ value.id }})</span>
+                      {% elseif value is iterable %}
+                        <span class="text-kyudo-gm-grey">{{ value|json_encode }}</span>
+                      {% elseif transPrefix[field] is defined and transPrefix[field] is not null and value %}
+                        <span class="text-kyudo-gm-grey">{{ (transPrefix[field] ~ value)|trans }}</span>
+                      {% else %}
+                        <span class="text-kyudo-gm-grey">{{ value is same as(true) ? 'Oui' : value is same as(false) ? 'Non' : value is same as(0) ? '0' : value ?: '(vide)' }}</span>
+                      {% endif %}
+                    </li>
+                  {% endif %}
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </div>
+        {% endmacro %}
+
         <section class="mt-8 rounded-3xl border border-kyudo-gm-light-grey bg-kyudo-white p-6 shadow-sm">
-          <h2 class="text-base font-semibold text-kyudo-gm-dark">Historique des modifications</h2>
+          <h2 class="text-base font-semibold text-kyudo-gm-dark">{{ 'log_entry.history'|trans }}</h2>
 
           {% if logEntries|length > 0 %}
             <div class="events mt-6">
               {% for entry in logEntries %}
                 <div class="event">
+                  <div class="content">{{ timeline.entry_content(entry, equipment) }}</div>
                   <div class="marker w-3.5 h-3.5 rounded-full border-2 border-kyudo-white
                     {% if entry.action == 'create' %}bg-emerald-500
                     {% elseif entry.action == 'update' %}bg-kyudo-blue
                     {% elseif entry.action == 'remove' %}bg-red-500
                     {% endif %}">
                   </div>
-                  <div class="content">
-                    <div class="rounded-2xl bg-kyudo-gm-light-grey p-4">
-                      <div class="flex items-center gap-2 mb-2">
-                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold
-                          {% if entry.action == 'create' %}bg-emerald-50 text-emerald-800
-                          {% elseif entry.action == 'update' %}bg-blue-50 text-blue-800
-                          {% elseif entry.action == 'remove' %}bg-red-50 text-red-800
-                          {% endif %}">
-                          {{ ('log_entry.action.' ~ entry.action)|trans }}
-                        </span>
-                        <span class="text-xs text-kyudo-gm-grey">{{ entry.loggedAt|format_datetime('medium', 'short', locale: 'fr') }}</span>
-                      </div>
-
-                      <p class="text-xs text-kyudo-gm-grey mb-2">
-                        Par <span class="font-medium text-kyudo-gm-dark">{{ entry.username ?: '-' }}</span>
-                      </p>
-
-                      {% if entry.data is not empty %}
-                        <ul class="mt-2 space-y-1">
-                          {% for field, value in entry.data %}
-                            {% if not (entry.action == 'create' and value is null) %}
-                              <li class="text-xs text-kyudo-gm-dark">
-                                {% set fieldLabel = {
-                                  'ownerClub': 'Propriétaire (club)',
-                                  'ownerRegion': 'Propriétaire (région)',
-                                  'ownerFederation': 'Propriétaire (fédération)',
-                                  'equipmentLevel': 'Niveau',
-                                  'borrowerClub': 'Club emprunteur',
-                                  'borrowerMember': 'Emprunté par',
-                                  'state': 'État',
-                                  'notes': 'Notes',
-                                  'material': 'Matériau',
-                                  'strength': 'Force (kg)',
-                                  'yumiLength': 'Taille',
-                                  'nb_fingers': 'Nombre de doigts',
-                                  'size': 'Taille',
-                                  'height': 'Hauteur',
-                                  'nb_bows': "Nombre d'arcs",
-                                  'nb_arrows': 'Nombre de flèches',
-                                  'orientation': 'Orientation',
-                                  'equipmentLength': 'Longueur',
-                                  'width': 'Largeur',
-                                  'thickness': 'Épaisseur',
-                                  'weight': 'Poids (kg)',
-                                  'attachment': 'Accroche',
-                                } %}
-                                {% set transPrefix = {
-                                  'state': 'equipment.state.',
-                                  'material': equipment.typeName == 'makiwara' ? 'makiwara.material.' : null,
-                                  'yumiLength': 'yumi.length.',
-                                  'orientation': 'yumitate.orientation.',
-                                } %}
-                                <span class="font-medium">{{ fieldLabel[field]|default(field) }}</span> :
-                                {% if value is iterable and value.display is defined %}
-                                  <span class="text-kyudo-gm-grey">{{ value.display }} (#{{ value.id }})</span>
-                                {% elseif value is iterable %}
-                                  <span class="text-kyudo-gm-grey">{{ value|json_encode }}</span>
-                                {% elseif transPrefix[field] is defined and transPrefix[field] is not null and value %}
-                                  <span class="text-kyudo-gm-grey">{{ (transPrefix[field] ~ value)|trans }}</span>
-                                {% else %}
-                                  <span class="text-kyudo-gm-grey">{{ value is same as(true) ? 'Oui' : value is same as(false) ? 'Non' : value is same as(0) ? '0' : value ?: '(vide)' }}</span>
-                                {% endif %}
-                              </li>
-                            {% endif %}
-                          {% endfor %}
-                        </ul>
-                      {% endif %}
-                    </div>
-                  </div>
                 </div>
               {% endfor %}
             </div>
           {% else %}
-            <p class="mt-6 text-sm text-kyudo-gm-grey">Aucune modification enregistrée.</p>
+            <p class="mt-6 text-sm text-kyudo-gm-grey">{{ 'log_entry.none'|trans }}</p>
           {% endif %}
         </section>
       {% endif %}
