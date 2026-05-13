@@ -44,7 +44,7 @@ class LogEntryEnricher
      * chercher les entités liées en base, afin d'afficher un libellé pertinent
      * (nom, fullName, etc.) au lieu du seul identifiant numérique.
      *
-     * @return LogEntry[]
+     * @return LogEntry<object>[]
      */
     public function getRichLogEntries(object $entity): array
     {
@@ -131,7 +131,7 @@ class LogEntryEnricher
         };
 
         if (!method_exists($entity, $getter)) {
-            return (string) $entity->getId();
+            return method_exists($entity, 'getId') ? (string) $entity->getId() : '';
         }
 
         return (string) $entity->$getter();

@@ -19,10 +19,14 @@ class LogEntryRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return LogEntry[]
+     * @return LogEntry<object>[]
      */
     public function findByEntity(object $entity): array
     {
+        if (!method_exists($entity, 'getId')) {
+            return [];
+        }
+
         return $this->findBy(
             ['objectId' => (string) $entity->getId(), 'objectClass' => $entity::class],
             ['loggedAt' => 'DESC', 'version' => 'DESC'],
