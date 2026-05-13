@@ -8,6 +8,8 @@
 
 @import "./club_management/index.css";
 
+@import "./timeline.css";
+
 .split-bg-materiel {
   background-image: url('../pictures/materiel.jpg');
 }
