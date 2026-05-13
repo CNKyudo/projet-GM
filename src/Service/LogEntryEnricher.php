@@ -9,6 +9,7 @@ use App\Entity\ClubMember;
 use App\Entity\Equipment;
 use App\Entity\Federation;
 use App\Entity\Region;
+use App\Entity\User;
 use App\Repository\LogEntryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Gedmo\Loggable\Entity\LogEntry;
@@ -118,6 +119,8 @@ class LogEntryEnricher
             $entry->setData($data);
         }
 
+        $this->enrichUsernames($logEntries);
+
         return $logEntries;
     }
 
@@ -135,5 +138,44 @@ class LogEntryEnricher
         }
 
         return (string) $entity->$getter();
+    }
+
+    /**
+     * @param LogEntry<object>[] $logEntries
+     */
+    private function enrichUsernames(array $logEntries): void
+    {
+        $userIds = [];
+
+        foreach ($logEntries as $entry) {
+            $username = $entry->getUsername();
+
+            if (\is_numeric($username)) {
+                $userIds[(int) $username] = (int) $username;
+            }
+        }
+
+        if ([] === $userIds) {
+            return;
+        }
+
+        $users = $this->entityManager->getRepository(User::class)->findBy(['id' => $userIds]);
+        $userCache = [];
+
+        foreach ($users as $user) {
+            $userCache[(int) $user->getId()] = $user;
+        }
+
+        foreach ($logEntries as $entry) {
+            $username = $entry->getUsername();
+
+            if (\is_numeric($username)) {
+                $user = $userCache[(int) $username] ?? null;
+
+                if (null !== $user) {
+                    $entry->setUsername((string) $user->getEmail());
+                }
+            }
+        }
     }
 }
