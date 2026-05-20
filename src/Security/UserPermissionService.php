@@ -518,6 +518,11 @@ final class UserPermissionService
         return $this->hasAtLeastRole($user, UserRole::USER);
     }
 
+    public function canViewEquipmentHistory(User $user): bool
+    {
+        return $this->hasAnyRole($user, UserRole::ADMIN);
+    }
+
     private function hasAnyRole(User $user, UserRole ...$requiredRoles): bool
     {
         $userRoles = $user->getRoles();

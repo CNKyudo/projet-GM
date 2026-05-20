@@ -20,5 +20,12 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
+    # Override the default actor provider to store the user ID instead of email
+    stof_doctrine_extensions.tool.actor_provider:
+        class: App\Tool\UserIdActorProvider
+        arguments:
+            - '@security.token_storage'
+            - '@security.authorization_checker'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

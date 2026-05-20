@@ -73,6 +73,8 @@ final class UserPermissionVoter extends Voter
 
     public const string VIEW_QRCODE = 'VIEW_QRCODE';
 
+    public const string VIEW_EQUIPMENT_HISTORY = 'VIEW_EQUIPMENT_HISTORY';
+
     // Gestion des membres de club
     public const string CREATE_CLUB_MEMBER = 'CREATE_CLUB_MEMBER';
 
@@ -105,6 +107,7 @@ final class UserPermissionVoter extends Voter
         self::EDIT_QRCODE => 'canEditQRCode',
         self::DELETE_QRCODE => 'canDeleteQRCode',
         self::VIEW_QRCODE => 'canViewQRCode',
+        self::VIEW_EQUIPMENT_HISTORY => 'canViewEquipmentHistory',
     ];
 
     /**
