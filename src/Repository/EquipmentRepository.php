@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Club;
+use App\Entity\ClubMember;
 use App\Entity\Region;
 use App\Entity\Equipment;
 use App\Enum\EquipmentType;
@@ -48,6 +49,8 @@ class EquipmentRepository extends ServiceEntityRepository
      * @param bool               $onlyAvailableRegional       true = $allowedRegions disponibles seulement
      * @param bool               $includeAllAvailableRegional true = tous les REGIONAL disponibles (toutes régions)
      * @param bool               $includeNational             true = inclure les équipements NATIONAL
+     * @param bool               $filterByBorrower            true = filtrer par emprunteur (si $borrowerMember null, aucun résultat)
+     * @param ClubMember|null    $borrowerMember              Le membre emprunteur (utilisé uniquement si $filterByBorrower = true)
      *
      * @return QueryBuilder Le QueryBuilder prêt à paginer
      */
@@ -61,11 +64,13 @@ class EquipmentRepository extends ServiceEntityRepository
         bool $onlyAvailableRegional = false,
         bool $includeAllAvailableRegional = false,
         bool $includeNational = false,
+        bool $filterByBorrower = false,
+        ?ClubMember $borrowerMember = null,
     ): QueryBuilder {
         $term = '' !== $query ? '%'.mb_strtolower($query).'%' : '';
         $searchStrategy = $this->getStrategyForType($equipmentType);
 
-        return $searchStrategy->buildQuery(
+        $queryBuilder = $searchStrategy->buildQuery(
             $term,
             $status,
             $restrictToClubs,
@@ -75,6 +80,29 @@ class EquipmentRepository extends ServiceEntityRepository
             $includeAllAvailableRegional,
             $includeNational,
         );
+
+        if ($filterByBorrower) {
+            $this->applyBorrowerFilter($queryBuilder, $borrowerMember);
+        }
+
+        return $queryBuilder;
+    }
+
+    /**
+     * Filtre la query pour ne retourner que les équipements empruntés par un membre donné.
+     * Si $borrowerMember est null (utilisateur introuvable ou sans ClubMember), force un résultat vide.
+     */
+    private function applyBorrowerFilter(QueryBuilder $queryBuilder, ?ClubMember $borrowerMember): void
+    {
+        $alias = $queryBuilder->getRootAliases()[0];
+
+        if ($borrowerMember instanceof ClubMember) {
+            $queryBuilder
+                ->andWhere(sprintf('%s.borrowerMember = :borrowerMember', $alias))
+                ->setParameter('borrowerMember', $borrowerMember);
+        } else {
+            $queryBuilder->andWhere('1 = 0');
+        }
     }
 
     /**

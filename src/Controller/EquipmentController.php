@@ -73,6 +73,7 @@ final class EquipmentController extends AbstractController
         $filters = $this->visibilityFilterResolver->resolve($currentUser);
 
         $borrowedUserId = $request->query->getInt('borrowed', 0);
+        $borrowerMember = $borrowedUserId > 0 ? $this->resolveBorrowerMember($borrowedUserId) : null;
 
         $queryBuilder = $this->equipmentRepository->findBySearchStrategy(
             $q,
@@ -84,20 +85,9 @@ final class EquipmentController extends AbstractController
             $filters['onlyAvailableRegional'],
             $filters['includeAllAvailableRegional'],
             $filters['includeNational'],
+            filterByBorrower: $borrowedUserId > 0,
+            borrowerMember: $borrowerMember,
         );
-
-        if ($borrowedUserId > 0) {
-            $borrowerMember = $this->resolveBorrowerMember($borrowedUserId);
-            $alias = $queryBuilder->getRootAliases()[0];
-
-            if ($borrowerMember instanceof ClubMember) {
-                $queryBuilder
-                    ->andWhere(sprintf('%s.borrowerMember = :borrowerMember', $alias))
-                    ->setParameter('borrowerMember', $borrowerMember);
-            } else {
-                $queryBuilder->andWhere('1 = 0');
-            }
-        }
 
         $pagination = $this->paginator->paginate(
             $queryBuilder,

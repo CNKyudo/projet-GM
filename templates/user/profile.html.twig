@@ -58,7 +58,9 @@
 									emprunté{{ user.borrowedEquipments|length > 1 ? 's' : '' }}.
 								</p>
 							</div>
-							<a class="text-sm font-medium text-kyudo-royal-blue underline" href="{{ path('equipment.index', {borrowed: user.id}) }}">Voir tous mes emprunts</a>
+							{% if user.borrowedEquipments|length > 0 and is_granted('BROWSE_ALL_EQUIPMENT') %}
+								<a class="text-sm font-medium text-kyudo-royal-blue underline" href="{{ path('equipment.index', {borrowed: user.id}) }}">Voir tous mes emprunts</a>
+							{% endif %}
 						</div>
 
 						{% if user.borrowedEquipments|length > 0 %}
