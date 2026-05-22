@@ -52,6 +52,10 @@ final class UserController extends AbstractController
 
             return $this->redirectToRoute('user_profile');
         }
+        
+        if ($form->isSubmitted()) {
+            $entityManager->refresh($user);
+        }
 
         return $this->render('user/edit_profile.html.twig', [
             'form' => $form,

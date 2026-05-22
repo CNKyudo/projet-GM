@@ -53,10 +53,10 @@ rector:
 
 csfixer:
 	@echo "Running php-cs-fixer..."
-	$(DOCKER_COMPOSE_CMD) exec php-fpm vendor/bin/php-cs-fixer fix --config=tools/.php-cs-fixer.php --allow-risky=yes
+	$(DOCKER_COMPOSE_CMD) exec php-fpm vendor/bin/php-cs-fixer fix --config=tools/.php-cs-fixer.dist.php --allow-risky=yes
 
 phpstan:
 	@echo "Running phpstan analyse (configuration tools/phpstan.neon)..."
-	$(DOCKER_COMPOSE_CMD) exec php-fpm vendor/bin/phpstan analyse --configuration=tools/phpstan.neon
+	$(DOCKER_COMPOSE_CMD) exec php-fpm vendor/bin/phpstan analyse --configuration=tools/phpstan.dist.neon
 
 .PHONY: fix rector phpstan csfixer test-functional
