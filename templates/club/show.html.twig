@@ -54,7 +54,7 @@
 							<dt class="text-xs font-medium text-">Email</dt>
 							<dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
 								{% if club.email %}
-									<a class="text-blue-700 hover:underline" href="mailto:{{ club.email }}">{{ club.email }}</a>
+									<a class="break-all text-blue-700 hover:underline" href="mailto:{{ club.email }}">{{ club.email }}</a>
 								{% else %}
 									<span class="text-">-</span>
 								{% endif %}
@@ -108,7 +108,7 @@
 									<td class="px-4 py-3">{{ member.firstName }}</td>
 									<td class="px-4 py-3">
 										{% if member.email %}
-											<a class="text-blue-700 hover:underline" href="mailto:{{ member.email }}">{{ member.email }}</a>
+											<a class="break-all text-blue-700 hover:underline" href="mailto:{{ member.email }}">{{ member.email }}</a>
 										{% else %}
 											<span class="text-kyudo-gm-grey">-</span>
 										{% endif %}

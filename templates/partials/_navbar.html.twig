@@ -61,7 +61,7 @@
 
 			<div class="mt-3 border-t border-kyudo-gm-light-grey pt-3">
 				{% if app.user %}
-					<div class="px-3 pb-2 text-sm text-kyudo-gm-grey">Bonjour
+					<div class="break-all px-3 pb-2 text-sm text-kyudo-gm-grey">Bonjour
 						{{ app.user.email }}</div>
 					<a href="{{ path('user_profile') }}" class="mx-3 mb-2 inline-flex rounded-md px-3 py-2 text-sm font-medium {{ is_profile_route ? 'bg-kyudo-blue text-(--color-kyudo-white)' : 'border border-kyudo-gm-light-grey text-kyudo-gm-grey hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white)' }}">Mon profil</a>
 					<a href="{{ path('app_logout') }}" class="mx-3 inline-flex rounded-md bg-kyudo-white px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-600 hover:text-(--color-kyudo-white)">Déconnexion</a>

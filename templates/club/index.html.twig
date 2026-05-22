@@ -73,7 +73,7 @@
 												{{ club.president ? club.president : '-' }}</p>
 											<p class="mt-2 text-xs text-kyudo-gm-dark">
 												{% if club.email %}
-													<a class="text-blue-700 hover:underline" href="mailto:{{ club.email }}">{{ club.email }}</a>
+													<a class="break-all text-blue-700 hover:underline" href="mailto:{{ club.email }}">{{ club.email }}</a>
 												{% else %}
 													<span class="text-">-</span>
 												{% endif %}
@@ -124,7 +124,7 @@
 											<td class="px-5 py-4 text-kyudo-gm-dark">{{ club.president ? club.president : '-' }}</td>
 											<td class="px-5 py-4">
 												{% if club.email %}
-													<a class="text-kyudo-gm-dark hover:text-blue-700" href="mailto:{{ club.email }}">{{ club.email }}</a>
+													<a class="break-all text-kyudo-gm-dark hover:text-blue-700" href="mailto:{{ club.email }}">{{ club.email }}</a>
 												{% else %}
 													<span class="text-">-</span>
 												{% endif %}
