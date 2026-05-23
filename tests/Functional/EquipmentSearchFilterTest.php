@@ -465,8 +465,9 @@ final class EquipmentSearchFilterTest extends AbstractWebTestCase
         // En tant qu'admin (voit tout), le filtre doit retourner exactement 2
         $this->loginAs(AppFixtures::USER_ADMIN);
 
-        $memberUser = self::getContainer()->get(\App\Repository\UserRepository::class)
-            ->findOneBy(['email' => AppFixtures::USER_MEMBER]);
+        /** @var \App\Repository\UserRepository $repo */
+        $repo = self::getContainer()->get(\App\Repository\UserRepository::class);
+        $memberUser = $repo->findOneBy(['email' => AppFixtures::USER_MEMBER]);
         $crawler = $this->requestIndex(['borrowed' => (string) $memberUser->getId()]);
         $this->assertResponseIsSuccessful();
         $this->assertSame(2, $this->countEquipmentRows($crawler));
@@ -478,8 +479,9 @@ final class EquipmentSearchFilterTest extends AbstractWebTestCase
         // Filtre borrowed + equipmentType=yumi → 1 seul (yumiD)
         $this->loginAs(AppFixtures::USER_ADMIN);
 
-        $memberUser = self::getContainer()->get(\App\Repository\UserRepository::class)
-            ->findOneBy(['email' => AppFixtures::USER_MEMBER]);
+        /** @var \App\Repository\UserRepository $repo */
+        $repo = self::getContainer()->get(\App\Repository\UserRepository::class);
+        $memberUser = $repo->findOneBy(['email' => AppFixtures::USER_MEMBER]);
         $crawler = $this->requestIndex(['borrowed' => (string) $memberUser->getId(), 'equipmentType' => 'yumi']);
         $this->assertResponseIsSuccessful();
         $this->assertSame(1, $this->countEquipmentRows($crawler));
@@ -490,8 +492,9 @@ final class EquipmentSearchFilterTest extends AbstractWebTestCase
         // USER_ADMIN n'emprunte rien → 0 résultat
         $this->loginAs(AppFixtures::USER_ADMIN);
 
-        $adminUser = self::getContainer()->get(\App\Repository\UserRepository::class)
-            ->findOneBy(['email' => AppFixtures::USER_ADMIN]);
+        /** @var \App\Repository\UserRepository $repo */
+        $repo = self::getContainer()->get(\App\Repository\UserRepository::class);
+        $adminUser = $repo->findOneBy(['email' => AppFixtures::USER_ADMIN]);
         $crawler = $this->requestIndex(['borrowed' => (string) $adminUser->getId()]);
         $this->assertResponseIsSuccessful();
         $this->assertSame(0, $this->countEquipmentRows($crawler));
