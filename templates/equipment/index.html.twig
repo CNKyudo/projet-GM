@@ -170,6 +170,9 @@
 			<div class="mt-6 flex justify-center">
 				{% do equipments.setParam('q', q) %}
 				{% do equipments.setParam('status', status) %}
+				{% if borrowed is defined and borrowed %}
+					{% do equipments.setParam('borrowed', borrowed) %}
+				{% endif %}
 				{{ knp_pagination_render(equipments) }}
 			</div>
 

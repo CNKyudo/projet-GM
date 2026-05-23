@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\ClubMember;
 use App\Entity\Equipment;
 use App\Entity\Federation;
 use App\Entity\Glove;
@@ -20,6 +21,7 @@ use App\Enum\EquipmentLevel;
 use App\Enum\EquipmentType;
 use App\Form\EquipmentFormType;
 use App\Repository\EquipmentRepository;
+use App\Repository\UserRepository;
 use App\Security\EquipmentVisibilityFilterResolver;
 use App\Security\Voter\UserPermissionVoter;
 use App\Service\LogEntryEnricher;
@@ -44,6 +46,7 @@ final class EquipmentController extends AbstractController
         private readonly PaginatorInterface $paginator,
         private readonly EquipmentVisibilityFilterResolver $visibilityFilterResolver,
         private readonly TranslatorInterface $translator,
+        private readonly UserRepository $userRepository,
     ) {
     }
 
@@ -69,6 +72,9 @@ final class EquipmentController extends AbstractController
         // Calcul des filtres de visibilité selon le rôle de l'utilisateur
         $filters = $this->visibilityFilterResolver->resolve($currentUser);
 
+        $borrowedUserId = $request->query->getInt('borrowed', 0);
+        $borrowerMember = $borrowedUserId > 0 ? $this->resolveBorrowerMember($borrowedUserId) : null;
+
         $queryBuilder = $this->equipmentRepository->findBySearchStrategy(
             $q,
             $equipmentTypeObj,
@@ -79,6 +85,8 @@ final class EquipmentController extends AbstractController
             $filters['onlyAvailableRegional'],
             $filters['includeAllAvailableRegional'],
             $filters['includeNational'],
+            filterByBorrower: $borrowedUserId > 0,
+            borrowerMember: $borrowerMember,
         );
 
         $pagination = $this->paginator->paginate(
@@ -92,6 +100,7 @@ final class EquipmentController extends AbstractController
             'q' => $q,
             'equipmentType' => $equipmentType,
             'status' => $status,
+            'borrowed' => $borrowedUserId,
         ]);
     }
 
@@ -347,5 +356,12 @@ final class EquipmentController extends AbstractController
     private function getEquipmentIndexUrl(Request $request): string
     {
         return $request->getSession()->get(self::SESSION_INDEX_URL) ?: $this->generateUrl('equipment.index');
+    }
+
+    private function resolveBorrowerMember(int $userId): ?ClubMember
+    {
+        $user = $this->userRepository->find($userId);
+
+        return $user?->getClubMember();
     }
 }
