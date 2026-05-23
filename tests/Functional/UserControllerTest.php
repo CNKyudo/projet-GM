@@ -13,6 +13,7 @@ use App\Repository\ClubRepository;
 use App\Repository\RegionRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Tests fonctionnels : UserController.
@@ -402,6 +403,129 @@ final class UserControllerTest extends AbstractWebTestCase
         $updated = $userRepo->findOneBy(['email' => AppFixtures::USER_USER]);
         $this->assertInstanceOf(User::class, $updated);
         $this->assertContains(UserRole::EQUIPMENT_MANAGER_CN->value, $updated->getRoles());
+    }
+
+    // -----------------------------------------------------------------------
+    // POST /profile/edit — changement d'email (mot de passe requis)
+    // -----------------------------------------------------------------------
+
+    /**
+     * Email change with correct password redirects and updates DB.
+     */
+    public function testProfileEditWithCorrectPasswordSucceeds(): void
+    {
+        $this->loginAs(AppFixtures::USER_USER);
+
+        $crawler = $this->client->request(Request::METHOD_GET, '/profile/edit');
+        $form = $crawler->selectButton('Enregistrer')->form();
+        $form['user_profile[email]'] = 'new-email@kyudo-test.fr';
+        $form['user_profile[currentPassword]'] = 'password';
+
+        $this->client->submit($form);
+
+        $this->assertResponseRedirects('/profile');
+
+        $container = self::getContainer();
+        /** @var EntityManagerInterface $em */
+        $em = $container->get(EntityManagerInterface::class);
+        $em->clear();
+
+        /** @var UserRepository $userRepo */
+        $userRepo = $container->get(UserRepository::class);
+        $updated = $userRepo->findOneBy(['email' => 'new-email@kyudo-test.fr']);
+        $this->assertInstanceOf(User::class, $updated);
+    }
+
+    /**
+     * Email change with wrong password stays on form (no redirect, no DB change).
+     */
+    public function testProfileEditWithWrongPasswordFails(): void
+    {
+        $this->loginAs(AppFixtures::USER_USER);
+
+        $crawler = $this->client->request(Request::METHOD_GET, '/profile/edit');
+        $form = $crawler->selectButton('Enregistrer')->form();
+        $form['user_profile[email]'] = 'hacked@kyudo-test.fr';
+        $form['user_profile[currentPassword]'] = 'wrong-password';
+
+        $this->client->submit($form);
+
+        $this->assertResponseStatusCodeSame(422);
+
+        $container = self::getContainer();
+        /** @var UserRepository $userRepo */
+        $userRepo = $container->get(UserRepository::class);
+        $hacked = $userRepo->findOneBy(['email' => 'hacked@kyudo-test.fr']);
+        $this->assertNotInstanceOf(User::class, $hacked, 'Email should not have changed with wrong password');
+    }
+
+    /**
+     * Email change with empty password stays on form.
+     */
+    public function testProfileEditWithEmptyPasswordFails(): void
+    {
+        $this->loginAs(AppFixtures::USER_USER);
+
+        $crawler = $this->client->request(Request::METHOD_GET, '/profile/edit');
+        $form = $crawler->selectButton('Enregistrer')->form();
+        $form['user_profile[email]'] = 'hacked@kyudo-test.fr';
+        $form['user_profile[currentPassword]'] = '';
+
+        $this->client->submit($form);
+
+        $this->assertResponseStatusCodeSame(422);
+    }
+
+    /**
+     * After a failed email change, the user session is still valid.
+     */
+    public function testProfileEditWithWrongPasswordKeepsSession(): void
+    {
+        $this->loginAs(AppFixtures::USER_USER);
+
+        $crawler = $this->client->request(Request::METHOD_GET, '/profile/edit');
+        $form = $crawler->selectButton('Enregistrer')->form();
+        $form['user_profile[email]'] = 'hacked@kyudo-test.fr';
+        $form['user_profile[currentPassword]'] = 'wrong-password';
+
+        $this->client->submit($form);
+        $this->assertResponseStatusCodeSame(422);
+
+        $this->client->request(Request::METHOD_GET, '/profile');
+        $this->assertResponseStatusCodeSame(200);
+    }
+
+    /**
+     * Email change succeeds on second attempt after a first failed attempt.
+     */
+    public function testProfileEditSucceedsAfterPreviousFailure(): void
+    {
+        $this->loginAs(AppFixtures::USER_USER);
+
+        $crawler = $this->client->request(Request::METHOD_GET, '/profile/edit');
+        $form = $crawler->selectButton('Enregistrer')->form();
+        $form['user_profile[email]'] = 'retry@kyudo-test.fr';
+        $form['user_profile[currentPassword]'] = 'wrong-password';
+        $this->client->submit($form);
+        $this->assertResponseStatusCodeSame(422);
+
+        $crawler = $this->client->request(Request::METHOD_GET, '/profile/edit');
+        $form = $crawler->selectButton('Enregistrer')->form();
+        $form['user_profile[email]'] = 'retry@kyudo-test.fr';
+        $form['user_profile[currentPassword]'] = 'password';
+        $this->client->submit($form);
+
+        $this->assertResponseRedirects('/profile');
+
+        $container = self::getContainer();
+        /** @var EntityManagerInterface $em */
+        $em = $container->get(EntityManagerInterface::class);
+        $em->clear();
+
+        /** @var UserRepository $userRepo */
+        $userRepo = $container->get(UserRepository::class);
+        $updated = $userRepo->findOneBy(['email' => 'retry@kyudo-test.fr']);
+        $this->assertInstanceOf(User::class, $updated);
     }
 
     // -----------------------------------------------------------------------
