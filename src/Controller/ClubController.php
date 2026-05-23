@@ -34,7 +34,6 @@ class ClubController extends AbstractController
     }
 
     #[Route('/club/', name: 'club_index', methods: ['GET'])]
-    #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function index(Request $request): Response
     {
         $q = trim((string) $request->query->get('q', ''));
@@ -88,7 +87,6 @@ class ClubController extends AbstractController
     }
 
     #[Route('/club/{id}', name: 'club_show', requirements: ['id' => '\d+'], methods: ['GET'])]
-    #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function show(Club $club): Response
     {
         $memberForm = null;

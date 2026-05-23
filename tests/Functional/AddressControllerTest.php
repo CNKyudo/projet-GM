@@ -15,7 +15,7 @@ use App\DataFixtures\AppFixtures;
  * Tests fonctionnels : AddressController.
  *
  * Routes testées :
- *   GET  /address/{id}         → IS_AUTHENTICATED_FULLY
+ *   GET  /address/{id}         → IS_AUTHENTICATED
  *   GET  /address/new          → CREATE_ADDRESS
  *   GET  /address/{id}/edit    → EDIT_ADDRESS
  *   POST /address/{id}/delete  → DELETE_ADDRESS
@@ -30,7 +30,7 @@ use App\DataFixtures\AppFixtures;
  * │ delete (POST)      │  403  │  403   │  403     │  403         │  403        │  200       │  200  │
  * └────────────────────┴───────┴────────┴──────────┴──────────────┴─────────────┴────────────┴───────┘
  *
- * Note : show utilise IS_AUTHENTICATED_FULLY → tout utilisateur connecté y a accès.
+ * Note : show utilise IS_AUTHENTICATED → tout utilisateur connecté y a accès.
  */
 final class AddressControllerTest extends AbstractWebTestCase
 {
@@ -62,7 +62,7 @@ final class AddressControllerTest extends AbstractWebTestCase
     // -----------------------------------------------------------------------
     public function testShowGrantedForRoleUser(): void
     {
-        // IS_AUTHENTICATED_FULLY : ROLE_USER est authentifié → accès accordé
+        // IS_AUTHENTICATED : ROLE_USER est authentifié → accès accordé
         $this->loginAs(AppFixtures::USER_USER);
         $this->assertGetGranted('/address/'.$this->addressId);
     }

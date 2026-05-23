@@ -45,7 +45,6 @@ class AddressController extends AbstractController
     }
 
     #[Route('/address/{id}', name: 'address_show', requirements: ['id' => '\d+'], methods: ['GET'])]
-    #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function show(Address $address): Response
     {
         return $this->render('address/show.html.twig', [
