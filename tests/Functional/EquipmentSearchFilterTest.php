@@ -468,6 +468,7 @@ final class EquipmentSearchFilterTest extends AbstractWebTestCase
         /** @var \App\Repository\UserRepository $repo */
         $repo = self::getContainer()->get(\App\Repository\UserRepository::class);
         $memberUser = $repo->findOneBy(['email' => AppFixtures::USER_MEMBER]);
+        $this->assertInstanceOf(\App\Entity\User::class, $memberUser);
         $crawler = $this->requestIndex(['borrowed' => (string) $memberUser->getId()]);
         $this->assertResponseIsSuccessful();
         $this->assertSame(2, $this->countEquipmentRows($crawler));
@@ -482,6 +483,7 @@ final class EquipmentSearchFilterTest extends AbstractWebTestCase
         /** @var \App\Repository\UserRepository $repo */
         $repo = self::getContainer()->get(\App\Repository\UserRepository::class);
         $memberUser = $repo->findOneBy(['email' => AppFixtures::USER_MEMBER]);
+        $this->assertInstanceOf(\App\Entity\User::class, $memberUser);
         $crawler = $this->requestIndex(['borrowed' => (string) $memberUser->getId(), 'equipmentType' => 'yumi']);
         $this->assertResponseIsSuccessful();
         $this->assertSame(1, $this->countEquipmentRows($crawler));
@@ -495,6 +497,7 @@ final class EquipmentSearchFilterTest extends AbstractWebTestCase
         /** @var \App\Repository\UserRepository $repo */
         $repo = self::getContainer()->get(\App\Repository\UserRepository::class);
         $adminUser = $repo->findOneBy(['email' => AppFixtures::USER_ADMIN]);
+        $this->assertInstanceOf(\App\Entity\User::class, $adminUser);
         $crawler = $this->requestIndex(['borrowed' => (string) $adminUser->getId()]);
         $this->assertResponseIsSuccessful();
         $this->assertSame(0, $this->countEquipmentRows($crawler));

@@ -23,6 +23,9 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+        qr_code_svg:
+            pattern: ^/qr-code/[0-9a-f\-]{36}/svg$
+            security: false
         main:
             lazy: true
             provider: app_user_provider

@@ -212,7 +212,6 @@ final class QRCodeController extends AbstractController
      * Sert le SVG du QR code comme image (utilisé dans les balises <img>).
      */
     #[Route('/{uuid}/svg', name: 'qr_code.svg', requirements: ['uuid' => '[0-9a-f\-]{36}'], methods: ['GET'])]
-    #[IsGranted(UserPermissionVoter::VIEW_QRCODE)]
     public function svg(string $uuid, QRCodeRepository $repository): Response
     {
         $qrCode = $repository->findByUuid($uuid);
@@ -225,7 +224,7 @@ final class QRCodeController extends AbstractController
 
         return new Response($svg, 200, [
             'Content-Type' => 'image/svg+xml',
-            'Cache-Control' => 'public, max-age=3600',
+            'Cache-Control' => 'public, max-age=31536000',
         ]);
     }
 
