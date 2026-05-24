@@ -17,9 +17,9 @@ use Symfony\Component\HttpFoundation\Response;
  * Tests fonctionnels : ClubController.
  *
  * Routes testées :
- *   GET  /club/               → IS_AUTHENTICATED_FULLY
+ *   GET  /club/               → IS_AUTHENTICATED
  *   GET  /club/new            → CREATE_CLUB
- *   GET  /club/{id}           → IS_AUTHENTICATED_FULLY
+ *   GET  /club/{id}           → IS_AUTHENTICATED
  *   GET  /club/{id}/edit      → EDIT_CLUB (avec sujet)
  *   POST /club/{id} (DELETE)  → DELETE_CLUB (avec sujet)
  *
@@ -36,7 +36,7 @@ use Symfony\Component\HttpFoundation\Response;
  * └────────────────────────────────┴───────┴────────┴──────────┴──────────────┴─────────────┴────────────┴───────┘
  *
  * Notes :
- * - index/show utilisent IS_AUTHENTICATED_FULLY → tout utilisateur connecté y a accès.
+ * - index/show utilisent IS_AUTHENTICATED → tout utilisateur connecté y a accès.
  * - edit propre club (PRESIDENT) → canTransferClubPresidency (PRESIDENT/ADMIN).
  * - edit autre club → canEditClub (MGMT_CTK/CN/ADMIN).
  */
@@ -68,7 +68,7 @@ final class ClubControllerTest extends AbstractWebTestCase
     // -----------------------------------------------------------------------
     public function testIndexGrantedForRoleUser(): void
     {
-        // IS_AUTHENTICATED_FULLY : ROLE_USER est authentifié → accès accordé
+        // IS_AUTHENTICATED : ROLE_USER est authentifié → accès accordé
         $this->loginAs(AppFixtures::USER_USER);
         $this->assertGetGranted('/club/');
     }
@@ -114,7 +114,7 @@ final class ClubControllerTest extends AbstractWebTestCase
     // -----------------------------------------------------------------------
     public function testShowGrantedForRoleUser(): void
     {
-        // IS_AUTHENTICATED_FULLY : ROLE_USER est authentifié → accès accordé
+        // IS_AUTHENTICATED : ROLE_USER est authentifié → accès accordé
         $this->loginAs(AppFixtures::USER_USER);
         $this->assertGetGranted('/club/'.$this->clubAId);
     }
