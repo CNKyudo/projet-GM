@@ -15,6 +15,10 @@ equipment:
     new: "Neuf"
     used: "Usagé"
     to_repair: "À réparer"
+  level:
+    club: "Club"
+    regional: "Régional"
+    national: "National"
   notes:
     label: "Notes"
 makiwara:

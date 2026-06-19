@@ -18,9 +18,9 @@ enum EquipmentLevel: string
     public function label(): string
     {
         return match ($this) {
-            self::CLUB => 'Club',
-            self::REGIONAL => 'Régional',
-            self::NATIONAL => 'National',
+            self::CLUB => 'equipment.level.club',
+            self::REGIONAL => 'equipment.level.regional',
+            self::NATIONAL => 'equipment.level.national',
         };
     }
 }
