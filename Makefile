@@ -34,14 +34,11 @@ reset-database:
 	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:fixtures:load --no-interaction
 
 test-functional:
-	@echo "Preparing test database..."
-	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:database:create --env=test --if-not-exists
-	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:migrations:migrate --env=test --no-interaction || { \
-		>&2 echo "Migration failed. Dropping and recreating test database..."; \
-		$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:database:drop --env=test --force --if-exists; \
-		$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:database:create --env=test; \
-		$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:migrations:migrate --env=test --no-interaction; \
-	}
+	@echo "Cleaning and preparing test database..."
+	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:database:drop --env=test --force --if-exists
+	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:database:create --env=test
+	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/console doctrine:migrations:migrate --env=test --no-interaction
+  
 	@echo "Running functional tests..."
 	$(DOCKER_COMPOSE_CMD) exec php-fpm php bin/phpunit tests/Functional/ --testdox
 

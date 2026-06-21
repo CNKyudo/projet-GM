@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Factory;
 
-use App\Entity\Glove;
+use App\Entity\Gake;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**
- * @extends PersistentProxyObjectFactory<Glove>
+ * @extends PersistentProxyObjectFactory<Gake>
  */
-final class GloveFactory extends PersistentProxyObjectFactory
+final class GakeFactory extends PersistentProxyObjectFactory
 {
     public static function class(): string
     {
-        return Glove::class;
+        return Gake::class;
     }
 
     /**

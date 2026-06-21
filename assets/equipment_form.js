@@ -54,8 +54,8 @@ function normalizeEquipmentType(selectElement) {
         return 'makiwara'
     }
 
-    if (normalizedCandidates.some(function (value) { return value.includes('glove') })) {
-        return 'glove'
+    if (normalizedCandidates.some(function (value) { return value.includes('gake') })) {
+        return 'gake'
     }
 
     if (normalizedCandidates.some(function (value) { return value.includes('yatate') })) {
@@ -81,10 +81,10 @@ function normalizeEquipmentType(selectElement) {
     return ''
 }
 
-function updateEquipmentSections(selectElement, gloveSection, yumiSection, makiwaraSection, supportMakiwaraSection, yumitateSection, yatateSection, makuSection, etafoamSection) {
+function updateEquipmentSections(selectElement, gakeSection, yumiSection, makiwaraSection, supportMakiwaraSection, yumitateSection, yatateSection, makuSection, etafoamSection) {
     var equipmentType = normalizeEquipmentType(selectElement)
     var sections = {
-        glove: gloveSection,
+        gake: gakeSection,
         yumi: yumiSection,
         makiwara: makiwaraSection,
         support_makiwara: supportMakiwaraSection,
@@ -169,8 +169,8 @@ function initEquipmentForm(root) {
         return
     }
 
-    const gloveFormSection = root.querySelector('[data-equipment-form-section="glove"]')
-        || root.querySelector('#glove_form_section')
+    const gakeFormSection = root.querySelector('[data-equipment-form-section="gake"]')
+        || root.querySelector('#gake_form_section')
     const yumiFormSection = root.querySelector('[data-equipment-form-section="yumi"]')
         || root.querySelector('#yumi_form_section')
     const makiwaraFormSection = root.querySelector('[data-equipment-form-section="makiwara"]')
@@ -188,7 +188,7 @@ function initEquipmentForm(root) {
     const refreshSections = function () {
         updateEquipmentSections(
             equipmentType,
-            gloveFormSection,
+            gakeFormSection,
             yumiFormSection,
             makiwaraFormSection,
             supportMakiwaraFormSection,

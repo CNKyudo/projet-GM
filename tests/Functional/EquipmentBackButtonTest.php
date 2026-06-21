@@ -6,16 +6,16 @@ namespace App\Tests\Functional;
 
 use Symfony\Component\HttpFoundation\Request;
 use App\DataFixtures\AppFixtures;
-use App\Entity\Glove;
+use App\Entity\Gake;
 use App\Repository\EquipmentRepository;
 
 final class EquipmentBackButtonTest extends AbstractWebTestCase
 {
     /** ID du gant appartenant au Club A */
-    private int $gloveAId;
+    private int $gakeAId;
 
     /** ID du gant appartenant au Club B — emprunté par Club C */
-    private int $gloveBId;
+    private int $gakeBId;
 
     private bool $isInitialized = false;
 
@@ -30,17 +30,17 @@ final class EquipmentBackButtonTest extends AbstractWebTestCase
             /** @var EquipmentRepository $repo */
             $repo = $container->get(EquipmentRepository::class);
 
-            $gloves = $repo->findAll();
+            $gakes = $repo->findAll();
 
-            foreach ($gloves as $glove) {
-                if (!$glove instanceof Glove) {
+            foreach ($gakes as $gake) {
+                if (!$gake instanceof Gake) {
                     continue;
                 }
 
-                if (AppFixtures::CLUB_A === $glove->getOwnerClub()?->getName()) {
-                    $this->gloveAId = $glove->getId();
-                } elseif (AppFixtures::CLUB_B === $glove->getOwnerClub()?->getName()) {
-                    $this->gloveBId = $glove->getId();
+                if (AppFixtures::CLUB_A === $gake->getOwnerClub()?->getName()) {
+                    $this->gakeAId = $gake->getId();
+                } elseif (AppFixtures::CLUB_B === $gake->getOwnerClub()?->getName()) {
+                    $this->gakeBId = $gake->getId();
                 }
             }
         }
@@ -53,7 +53,7 @@ final class EquipmentBackButtonTest extends AbstractWebTestCase
     public function testShowPageBackButtonAlwaysLinksToEquipmentList(): void
     {
         $this->loginAs(AppFixtures::USER_ADMIN);
-        $crawler = $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gloveAId);
+        $crawler = $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gakeAId);
         $this->assertResponseIsSuccessful();
 
         $backLink = $crawler->selectLink('Retour à la liste');
@@ -69,11 +69,11 @@ final class EquipmentBackButtonTest extends AbstractWebTestCase
     {
         $this->loginAs(AppFixtures::USER_ADMIN);
 
-        $indexUrlWithFilters = '/equipment?q=test&equipmentType=glove&status=available';
+        $indexUrlWithFilters = '/equipment?q=test&equipmentType=gake&status=available';
         $this->client->request(Request::METHOD_GET, $indexUrlWithFilters);
         $this->assertResponseIsSuccessful();
 
-        $crawler = $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gloveAId);
+        $crawler = $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gakeAId);
         $this->assertResponseIsSuccessful();
 
         $backHref = $crawler->selectLink('Retour à la liste')->attr('href');
@@ -84,11 +84,11 @@ final class EquipmentBackButtonTest extends AbstractWebTestCase
     {
         $this->loginAs(AppFixtures::USER_ADMIN);
 
-        $indexUrlWithPage = '/equipment?page=2&equipmentType=glove';
+        $indexUrlWithPage = '/equipment?page=2&equipmentType=gake';
         $this->client->request(Request::METHOD_GET, $indexUrlWithPage);
         $this->assertResponseIsSuccessful();
 
-        $crawler = $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gloveAId);
+        $crawler = $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gakeAId);
         $this->assertResponseIsSuccessful();
 
         $backHref = $crawler->selectLink('Retour à la liste')->attr('href');
@@ -117,11 +117,11 @@ final class EquipmentBackButtonTest extends AbstractWebTestCase
     {
         $this->loginAs(AppFixtures::USER_ADMIN);
 
-        $indexUrlWithFilters = '/equipment?q=test&equipmentType=glove';
+        $indexUrlWithFilters = '/equipment?q=test&equipmentType=gake';
         $this->client->request(Request::METHOD_GET, $indexUrlWithFilters);
         $this->assertResponseIsSuccessful();
 
-        $editUrl = '/equipment/'.$this->gloveAId.'/edit';
+        $editUrl = '/equipment/'.$this->gakeAId.'/edit';
         $crawler = $this->client->request(Request::METHOD_GET, $editUrl, [], [], [
             'HTTP_REFERER' => $indexUrlWithFilters,
         ]);
@@ -135,11 +135,11 @@ final class EquipmentBackButtonTest extends AbstractWebTestCase
     {
         $this->loginAs(AppFixtures::USER_ADMIN);
 
-        $indexUrlWithFilters = '/equipment?q=test&equipmentType=glove';
+        $indexUrlWithFilters = '/equipment?q=test&equipmentType=gake';
         $this->client->request(Request::METHOD_GET, $indexUrlWithFilters);
         $this->assertResponseIsSuccessful();
 
-        $editUrl = '/equipment/'.$this->gloveAId.'/edit';
+        $editUrl = '/equipment/'.$this->gakeAId.'/edit';
         $this->client->request(Request::METHOD_GET, $editUrl, [], [], [
             'HTTP_REFERER' => $indexUrlWithFilters,
         ]);
@@ -150,14 +150,14 @@ final class EquipmentBackButtonTest extends AbstractWebTestCase
 
         $this->assertResponseRedirects();
         $this->assertStringContainsString('q=test', (string) $this->client->getResponse()->headers->get('Location'));
-        $this->assertStringContainsString('equipmentType=glove', (string) $this->client->getResponse()->headers->get('Location'));
+        $this->assertStringContainsString('equipmentType=gake', (string) $this->client->getResponse()->headers->get('Location'));
     }
 
     public function testWithoutPriorIndexVisitBackButtonDefaultsToIndex(): void
     {
         $this->loginAs(AppFixtures::USER_ADMIN);
 
-        $crawler = $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gloveAId);
+        $crawler = $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gakeAId);
         $this->assertResponseIsSuccessful();
 
         $backHref = $crawler->selectLink('Retour à la liste')->attr('href');
@@ -167,8 +167,8 @@ final class EquipmentBackButtonTest extends AbstractWebTestCase
     public function testEditPageFromShowPageBackButtonLinksToShowPage(): void
     {
         $this->loginAs(AppFixtures::USER_ADMIN);
-        $editUrl = '/equipment/'.$this->gloveAId.'/edit';
-        $showUrl = '/equipment/'.$this->gloveAId;
+        $editUrl = '/equipment/'.$this->gakeAId.'/edit';
+        $showUrl = '/equipment/'.$this->gakeAId;
 
         $crawler = $this->client->request(Request::METHOD_GET, $editUrl, [], [], [
             'HTTP_REFERER' => $showUrl,
@@ -182,7 +182,7 @@ final class EquipmentBackButtonTest extends AbstractWebTestCase
     public function testEditPageFromListBackButtonLinksToList(): void
     {
         $this->loginAs(AppFixtures::USER_ADMIN);
-        $editUrl = '/equipment/'.$this->gloveAId.'/edit';
+        $editUrl = '/equipment/'.$this->gakeAId.'/edit';
 
         $crawler = $this->client->request(Request::METHOD_GET, $editUrl, [], [], [
             'HTTP_REFERER' => '/equipment',
@@ -196,7 +196,7 @@ final class EquipmentBackButtonTest extends AbstractWebTestCase
     public function testEditPageUnknownRefererDefaultsToList(): void
     {
         $this->loginAs(AppFixtures::USER_ADMIN);
-        $editUrl = '/equipment/'.$this->gloveAId.'/edit';
+        $editUrl = '/equipment/'.$this->gakeAId.'/edit';
 
         $crawler = $this->client->request(Request::METHOD_GET, $editUrl, [], [], [
             'HTTP_REFERER' => 'https://evil.com/phishing',
@@ -209,7 +209,7 @@ final class EquipmentBackButtonTest extends AbstractWebTestCase
     public function testEditPageNoRefererDefaultsToList(): void
     {
         $this->loginAs(AppFixtures::USER_ADMIN);
-        $editUrl = '/equipment/'.$this->gloveAId.'/edit';
+        $editUrl = '/equipment/'.$this->gakeAId.'/edit';
 
         $crawler = $this->client->request(Request::METHOD_GET, $editUrl);
         $this->assertResponseIsSuccessful();
@@ -220,8 +220,8 @@ final class EquipmentBackButtonTest extends AbstractWebTestCase
     public function testEditFormPostWithErrorsPreservesBackHrefFromSession(): void
     {
         $this->loginAs(AppFixtures::USER_ADMIN);
-        $editUrl = '/equipment/'.$this->gloveAId.'/edit';
-        $showUrl = '/equipment/'.$this->gloveAId;
+        $editUrl = '/equipment/'.$this->gakeAId.'/edit';
+        $showUrl = '/equipment/'.$this->gakeAId;
 
         $crawler = $this->client->request(Request::METHOD_GET, $editUrl, [], [], [
             'HTTP_REFERER' => $showUrl,
@@ -238,7 +238,7 @@ final class EquipmentBackButtonTest extends AbstractWebTestCase
                 'borrowerMember'  => '',
                 'state'           => 'used',
                 'notes'           => '',
-                'glove_form'      => ['nb_fingers' => '3', 'size' => '7'],
+                'gake_form'      => ['nb_fingers' => '3', 'size' => '7'],
             ],
         ]);
 
@@ -252,10 +252,10 @@ final class EquipmentBackButtonTest extends AbstractWebTestCase
     {
         $this->loginAs(AppFixtures::USER_ADMIN);
 
-        $showA = '/equipment/'.$this->gloveAId;
-        $editA = '/equipment/'.$this->gloveAId.'/edit';
-        $showB = '/equipment/'.$this->gloveBId;
-        $editB = '/equipment/'.$this->gloveBId.'/edit';
+        $showA = '/equipment/'.$this->gakeAId;
+        $editA = '/equipment/'.$this->gakeAId.'/edit';
+        $showB = '/equipment/'.$this->gakeBId;
+        $editB = '/equipment/'.$this->gakeBId.'/edit';
 
         $crawler = $this->client->request(Request::METHOD_GET, $editA, [], [], [
             'HTTP_REFERER' => $showA,
@@ -276,7 +276,7 @@ final class EquipmentBackButtonTest extends AbstractWebTestCase
                 'borrowerMember'  => '',
                 'state'           => 'used',
                 'notes'           => '',
-                'glove_form'      => ['nb_fingers' => '3', 'size' => '7'],
+                'gake_form'      => ['nb_fingers' => '3', 'size' => '7'],
             ],
         ]);
         $this->assertStringContainsString(

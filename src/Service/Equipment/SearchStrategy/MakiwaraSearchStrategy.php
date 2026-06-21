@@ -31,6 +31,7 @@ final class MakiwaraSearchStrategy extends AbstractSearchStrategy
         $queryBuilder->andWhere(
             $queryBuilder->expr()->orX(
                 $queryBuilder->expr()->like(sprintf('LOWER(%s.material)', $alias), ':term'),
+                $queryBuilder->expr()->like(sprintf("CONCAT(%s.diameter, '')", $alias), ':term'),
                 $queryBuilder->expr()->like('LOWER(owner.name)', ':term'),
                 $queryBuilder->expr()->like('LOWER(borrower.name)', ':term')
             )

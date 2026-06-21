@@ -10,6 +10,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Validator\Constraints\Range;
 
 /**
  * @extends AbstractType<Makiwara>
@@ -25,6 +27,16 @@ class MakiwaraFormType extends AbstractType
                 'label' => 'Matériau',
                 'placeholder' => 'Choisir un matériau...',
                 'required' => true,
+            ])
+            ->add('diameter', IntegerType::class, [
+                'label' => 'Diamètre (cm)',
+                'constraints' => [
+                    new Range(min: 0),
+                ],
+                'required' => true,
+                'attr' => [
+                    'min' => 0,
+                ],
             ]);
     }
 

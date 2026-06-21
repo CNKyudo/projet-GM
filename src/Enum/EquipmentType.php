@@ -7,7 +7,7 @@ namespace App\Enum;
 enum EquipmentType: string
 {
     case YUMI = 'yumi';
-    case GLOVE = 'glove';
+    case GAKE = 'gake';
     case MAKIWARA = 'makiwara';
     case SUPPORT_MAKIWARA = 'support_makiwara';
     case YUMITATE = 'yumitate';
@@ -19,7 +19,7 @@ enum EquipmentType: string
     {
         return match($this) {
             self::YUMI => 'equipment.type.yumi',
-            self::GLOVE => 'equipment.type.glove',
+            self::GAKE => 'equipment.type.gake',
             self::MAKIWARA => 'equipment.type.makiwara',
             self::SUPPORT_MAKIWARA => 'equipment.type.support_makiwara',
             self::YUMITATE => 'equipment.type.yumitate',

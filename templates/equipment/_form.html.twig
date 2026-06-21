@@ -115,27 +115,27 @@
 
     <div class="mt-5 grid gap-4 sm:grid-cols-2">
 
-      <div id="glove_form_section" data-equipment-form-section="glove"
-        {% if (form.equipment_type is defined and form.equipment_type.vars.value != 'glove') or form.glove_form is not defined %}
+      <div id="gake_form_section" data-equipment-form-section="gake"
+        {% if (form.equipment_type is defined and form.equipment_type.vars.value != 'gake') or form.gake_form is not defined %}
             class="hidden"
         {% endif %}
       >
-        {% if form.glove_form is defined %}
+        {% if form.gake_form is defined %}
           <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
-            {{ form.glove_form.nb_fingers.vars.label|default('Nombre de doigts') }}
+            {{ form.gake_form.nb_fingers.vars.label|default('Nombre de doigts') }}
           </label>
-          {{ form_widget(form.glove_form.nb_fingers, {
+          {{ form_widget(form.gake_form.nb_fingers, {
             attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
           }) }}
-          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.glove_form.nb_fingers) }}</div>
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.gake_form.nb_fingers) }}</div>
 
           <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
-            {{ form.glove_form.size.vars.label|default('Taille') }}
+            {{ form.gake_form.size.vars.label|default('Taille') }}
           </label>
-          {{ form_widget(form.glove_form.size, {
+          {{ form_widget(form.gake_form.size, {
             attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
           }) }}
-          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.glove_form.size) }}</div>
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.gake_form.size) }}</div>
         {% endif %}
       </div>
 
@@ -192,6 +192,14 @@
             attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
           }) }}
           <div class="mt-1 text-sm text-red-600">{{ form_errors(form.makiwara_form.material) }}</div>
+
+          <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
+            {{ form.makiwara_form.diameter.vars.label|default('Diamètre') }}
+          </label>
+          {{ form_widget(form.makiwara_form.diameter, {
+            attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
+          }) }}
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.makiwara_form.diameter) }}</div>
         {% endif %}
       </div>
 

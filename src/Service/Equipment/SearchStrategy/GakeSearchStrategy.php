@@ -5,19 +5,19 @@ declare(strict_types=1);
 namespace App\Service\Equipment\SearchStrategy;
 
 use App\Enum\EquipmentType;
-use App\Repository\GloveRepository;
+use App\Repository\GakeRepository;
 use Doctrine\ORM\QueryBuilder;
 
-final class GloveSearchStrategy extends AbstractSearchStrategy
+final class GakeSearchStrategy extends AbstractSearchStrategy
 {
     public function __construct(
-        private readonly GloveRepository $gloveRepository,
+        private readonly GakeRepository $gakeRepository,
     ) {
     }
 
     protected function createBaseQueryBuilder(): QueryBuilder
     {
-        return $this->gloveRepository->createQueryBuilder('g')
+        return $this->gakeRepository->createQueryBuilder('g')
             ->leftJoin('g.ownerClub', 'owner')->addSelect('owner')
             ->leftJoin('g.borrowerClub', 'borrower')->addSelect('borrower')
             ->orderBy('g.id', 'DESC');
@@ -40,6 +40,6 @@ final class GloveSearchStrategy extends AbstractSearchStrategy
 
     public function getEquipmentType(): EquipmentType
     {
-        return EquipmentType::GLOVE;
+        return EquipmentType::GAKE;
     }
 }

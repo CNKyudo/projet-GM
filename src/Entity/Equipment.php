@@ -21,7 +21,7 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
 #[DiscriminatorColumn(name: 'equipment_type', type: 'string')]
 #[DiscriminatorMap([
     'yumi' => Yumi::class,
-    'glove' => Glove::class,
+    'gake' => Gake::class,
     'makiwara' => Makiwara::class,
     'support_makiwara' => SupportMakiwara::class,
     'yumitate' => Yumitate::class,

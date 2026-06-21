@@ -7,7 +7,7 @@ namespace App\Controller;
 use App\Entity\ClubMember;
 use App\Entity\Equipment;
 use App\Entity\Federation;
-use App\Entity\Glove;
+use App\Entity\Gake;
 use App\Entity\Makiwara;
 use App\Entity\Region;
 use App\Entity\SupportMakiwara;
@@ -154,7 +154,7 @@ final class EquipmentController extends AbstractController
 
             $equipment = match ($type) {
                 EquipmentType::YUMI => new Yumi(),
-                EquipmentType::GLOVE => new Glove(),
+                EquipmentType::GAKE => new Gake(),
                 EquipmentType::MAKIWARA => new Makiwara(),
                 EquipmentType::SUPPORT_MAKIWARA => new SupportMakiwara(),
                 EquipmentType::YUMITATE => new Yumitate(),
@@ -193,10 +193,10 @@ final class EquipmentController extends AbstractController
             $equipment->setBorrowerClub($form->get('borrowerClub')->getData());
             $equipment->setBorrowerMember($form->get('borrowerMember')->getData());
 
-            if ($equipment instanceof Glove && $form->has('glove_form')) {
-                $gloveForm = $form->get('glove_form');
-                $equipment->setNbFingers($gloveForm->get('nb_fingers')->getData());
-                $equipment->setSize($gloveForm->get('size')->getData());
+            if ($equipment instanceof Gake && $form->has('gake_form')) {
+                $gakeForm = $form->get('gake_form');
+                $equipment->setNbFingers($gakeForm->get('nb_fingers')->getData());
+                $equipment->setSize($gakeForm->get('size')->getData());
             }
 
             if ($equipment instanceof Yumi && $form->has('yumi_form')) {
@@ -209,6 +209,7 @@ final class EquipmentController extends AbstractController
             if ($equipment instanceof Makiwara && $form->has('makiwara_form')) {
                 $makiwaraForm = $form->get('makiwara_form');
                 $equipment->setMaterial($makiwaraForm->get('material')->getData());
+                $equipment->setDiameter($makiwaraForm->get('diameter')->getData());
             }
 
             if ($equipment instanceof SupportMakiwara && $form->has('support_makiwara_form')) {

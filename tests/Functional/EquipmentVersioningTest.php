@@ -36,7 +36,7 @@ final class EquipmentVersioningTest extends AbstractWebTestCase
         $conn = $em->getConnection();
         $logEntries = $conn->fetchAllAssociative(
             'SELECT username FROM ext_log_entries WHERE object_id = :id AND object_class LIKE :class AND action = :action',
-            ['id' => (string) $equipment->getId(), 'class' => '%Glove%', 'action' => 'update'],
+            ['id' => (string) $equipment->getId(), 'class' => '%Gake%', 'action' => 'update'],
         );
 
         $this->assertNotEmpty($logEntries, 'No log entry found for the edited equipment');

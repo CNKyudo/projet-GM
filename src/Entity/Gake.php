@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Enum\EquipmentType;
-use App\Repository\GloveRepository;
+use App\Repository\GakeRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation\Versioned;
 
-#[ORM\Entity(repositoryClass: GloveRepository::class)]
-class Glove extends Equipment
+#[ORM\Entity(repositoryClass: GakeRepository::class)]
+class Gake extends Equipment
 {
     #[ORM\Column(nullable: true)]
     #[Versioned]
@@ -22,7 +22,7 @@ class Glove extends Equipment
 
     public static function getType(): EquipmentType
     {
-        return EquipmentType::GLOVE;
+        return EquipmentType::GAKE;
     }
 
     public function getNbFingers(): ?int
