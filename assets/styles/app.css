@@ -11,7 +11,7 @@
 @import "./timeline.css";
 
 .split-bg-materiel {
-  background-image: url('../pictures/materiel.jpg');
+  background-image: url('../pictures/admin.jpg');
 }
 
 .split-bg-club {
@@ -19,7 +19,7 @@
 }
 
 .split-bg-admin {
-  background-image: url('../pictures/admin.jpg');
+  background-image: url('../pictures/materiel.jpg');
 }
 
 .h-screen-with-navbar {
