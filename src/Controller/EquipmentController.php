@@ -24,6 +24,7 @@ use App\Repository\EquipmentRepository;
 use App\Repository\UserRepository;
 use App\Security\EquipmentVisibilityFilterResolver;
 use App\Security\Voter\UserPermissionVoter;
+use App\Service\EquipmentExportService;
 use App\Service\LogEntryEnricher;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -42,6 +43,7 @@ final class EquipmentController extends AbstractController
 
     public function __construct(
         private readonly EquipmentRepository $equipmentRepository,
+        private readonly EquipmentExportService $equipmentExportService,
         private readonly LogEntryEnricher $logEntryEnricher,
         private readonly PaginatorInterface $paginator,
         private readonly EquipmentVisibilityFilterResolver $visibilityFilterResolver,
@@ -102,6 +104,46 @@ final class EquipmentController extends AbstractController
             'status' => $status,
             'borrowed' => $borrowedUserId,
         ]);
+    }
+
+    #[Route('/equipment/export', name: 'equipment.export', methods: ['POST'])]
+    #[IsGranted(UserPermissionVoter::BROWSE_ALL_EQUIPMENT)]
+    public function export(Request $request): Response
+    {
+        $q = trim((string) $request->request->get('q', ''));
+        $equipmentType = (string) $request->request->get('equipmentType', '');
+        $equipmentTypeObj = EquipmentType::tryFrom($equipmentType);
+        $status = (string) $request->request->get('status', 'all');
+
+        if (!in_array($status, ['all', 'available', 'loaned'], true)) {
+            $status = 'all';
+        }
+
+        /** @var User $currentUser */
+        $currentUser = $this->getUser();
+
+        $filters = $this->visibilityFilterResolver->resolve($currentUser);
+
+        $borrowedUserId = $request->request->getInt('borrowed', 0);
+        $borrowerMember = $borrowedUserId > 0 ? $this->resolveBorrowerMember($borrowedUserId) : null;
+
+        $queryBuilder = $this->equipmentRepository->findBySearchStrategy(
+            $q,
+            $equipmentTypeObj,
+            $status,
+            $filters['restrictToClubs'],
+            $filters['allowedClubsAvailableOnly'],
+            $filters['allowedRegions'],
+            $filters['onlyAvailableRegional'],
+            $filters['includeAllAvailableRegional'],
+            $filters['includeNational'],
+            filterByBorrower: $borrowedUserId > 0,
+            borrowerMember: $borrowerMember,
+        );
+
+        $equipments = $queryBuilder->getQuery()->getResult();
+
+        return $this->equipmentExportService->buildCsvResponse($equipments);
     }
 
     #[Route('/equipment/{id}', name: 'equipment.show', requirements: ['id' => '\d+'])]

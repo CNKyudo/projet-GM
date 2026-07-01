@@ -20,12 +20,29 @@
 					</p>
 				</div>
 
-			{% if is_granted('CREATE_OWN_CLUB_EQUIPMENT') or is_granted('CREATE_REGIONAL_EQUIPMENT') or is_granted('CREATE_NATIONAL_EQUIPMENT') %}
-				<a href="{{ path('equipment.create') ?? '/equipment/create' }}" class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-(--color-kyudo-white) shadow-sm hover:bg-kyudo-royal-blue focus:outline-none focus:ring-2 focus:ring-kyudo-washed-blue">
-					+ Ajouter
-				</a>
-			{% endif %}
+			<div class="flex flex-wrap items-center gap-2">
+				<form method="POST" action="{{ path('equipment.export') }}">
+					<input type="hidden" name="q" value="{{ q }}">
+					<input type="hidden" name="equipmentType" value="{{ equipmentType }}">
+					<input type="hidden" name="status" value="{{ status }}">
+					{% if borrowed is defined and borrowed %}
+						<input type="hidden" name="borrowed" value="{{ borrowed }}">
+					{% endif %}
+					<button type="submit" class="inline-flex items-center justify-center gap-1.5 rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 font-medium text-kyudo-gm-dark shadow-sm hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white) focus:outline-none focus:ring-2 focus:ring-kyudo-washed-blue">
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+							<path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+						</svg>
+						Export CSV
+					</button>
+				</form>
+
+				{% if is_granted('CREATE_OWN_CLUB_EQUIPMENT') or is_granted('CREATE_REGIONAL_EQUIPMENT') or is_granted('CREATE_NATIONAL_EQUIPMENT') %}
+					<a href="{{ path('equipment.create') ?? '/equipment/create' }}" class="inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-4 py-2.5 font-medium text-(--color-kyudo-white) shadow-sm hover:bg-kyudo-royal-blue focus:outline-none focus:ring-2 focus:ring-kyudo-washed-blue">
+						+ Ajouter
+					</a>
+				{% endif %}
 			</div>
+		</div>
 
 			<form method="get" class="mt-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
 				<div class="flex w-full flex-col gap-2 md:flex-row md:items-center md:gap-3">
