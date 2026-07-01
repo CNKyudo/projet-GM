@@ -6,7 +6,7 @@ namespace App\Tests\Functional;
 
 use App\DataFixtures\AppFixtures;
 use App\Entity\Equipment;
-use App\Entity\Glove;
+use App\Entity\Gake;
 use App\Entity\QRCode;
 use App\Repository\EquipmentRepository;
 use App\Service\QRCodeService;
@@ -34,19 +34,19 @@ final class QRCodeControllerTest extends AbstractWebTestCase
         /** @var EquipmentRepository $repo */
         $repo = $container->get(EquipmentRepository::class);
 
-        /** @var Equipment[] $gloves */
-        $gloves = $repo->findAll();
+        /** @var Equipment[] $gakes */
+        $gakes = $repo->findAll();
 
         $equipment = null;
-        foreach ($gloves as $glove) {
+        foreach ($gakes as $gake) {
             // Prendre un gant Club A sans QR code existant
-            if ($glove instanceof Glove && AppFixtures::CLUB_A === $glove->getOwnerClub()?->getName() && !$glove->getQrCode() instanceof QRCode) {
-                $equipment = $glove;
+            if ($gake instanceof Gake && AppFixtures::CLUB_A === $gake->getOwnerClub()?->getName() && !$gake->getQrCode() instanceof QRCode) {
+                $equipment = $gake;
                 break;
             }
         }
 
-        if (!$equipment instanceof Glove) {
+        if (!$equipment instanceof Gake) {
             throw new \RuntimeException('Aucun équipement disponible sans QR code dans les fixtures. Nécessite de recréer les fixtures.');
         }
 

@@ -10,7 +10,7 @@ use App\DataFixtures\AppFixtures;
 use App\Entity\Club;
 use App\Entity\Equipment;
 use App\Entity\Federation;
-use App\Entity\Glove;
+use App\Entity\Gake;
 use App\Entity\Region;
 use App\Repository\ClubRepository;
 use App\Repository\EquipmentRepository;
@@ -63,31 +63,31 @@ use Doctrine\ORM\EntityManagerInterface;
 final class EquipmentControllerTest extends AbstractWebTestCase
 {
     /** ID du gant appartenant au Club A (président = president@kyudo-test.fr) */
-    private int $gloveAId;
+    private int $gakeAId;
 
     /** ID du gant appartenant au Club B (sans président, Région B) — emprunté par Club C */
-    private int $gloveBId;
+    private int $gakeBId;
 
     /** ID du gant appartenant au Club C (sans président, Région A — même région que Club A) */
-    private int $gloveCId;
+    private int $gakeCId;
 
     /** ID du gant appartenant au Club G (Bretagne, Région C — autre CTK) */
-    private int $gloveGId;
+    private int $gakeGId;
 
     /** ID du gant régional (owner_region = Région A) — disponible */
-    private int $gloveRegionalId;
+    private int $gakeRegionalId;
 
     /** ID du gant régional (owner_region = Région A) — emprunté */
-    private int $gloveRegionalBorrowedId;
+    private int $gakeRegionalBorrowedId;
 
     /** ID du gant régional (owner_region = Bretagne / Région C) — disponible */
-    private int $gloveRegionalCId;
+    private int $gakeRegionalCId;
 
     /** ID du gant national (owner_federation = Fédération) — disponible */
-    private int $gloveNationalId;
+    private int $gakeNationalId;
 
     /** ID du gant national (owner_federation = Fédération) — emprunté */
-    private int $gloveNationalBorrowedId;
+    private int $gakeNationalBorrowedId;
 
     protected function setUp(): void
     {
@@ -97,37 +97,37 @@ final class EquipmentControllerTest extends AbstractWebTestCase
         /** @var EquipmentRepository $repo */
         $repo = $container->get(EquipmentRepository::class);
 
-        /** @var Equipment[] $gloves */
-        $gloves = $repo->findAll();
+        /** @var Equipment[] $gakes */
+        $gakes = $repo->findAll();
 
-        foreach ($gloves as $glove) {
-            if (!$glove instanceof Glove) {
+        foreach ($gakes as $gake) {
+            if (!$gake instanceof Gake) {
                 continue;
             }
 
-            if (AppFixtures::CLUB_A === $glove->getOwnerClub()?->getName()) {
-                $this->gloveAId = $glove->getId();
-            } elseif (AppFixtures::CLUB_B === $glove->getOwnerClub()?->getName()) {
-                $this->gloveBId = $glove->getId();
-            } elseif (AppFixtures::CLUB_C === $glove->getOwnerClub()?->getName()) {
-                $this->gloveCId = $glove->getId();
-            } elseif (AppFixtures::CLUB_G === $glove->getOwnerClub()?->getName()) {
-                $this->gloveGId = $glove->getId();
-            } elseif (AppFixtures::REGION_A === $glove->getOwnerRegion()?->getName()) {
+            if (AppFixtures::CLUB_A === $gake->getOwnerClub()?->getName()) {
+                $this->gakeAId = $gake->getId();
+            } elseif (AppFixtures::CLUB_B === $gake->getOwnerClub()?->getName()) {
+                $this->gakeBId = $gake->getId();
+            } elseif (AppFixtures::CLUB_C === $gake->getOwnerClub()?->getName()) {
+                $this->gakeCId = $gake->getId();
+            } elseif (AppFixtures::CLUB_G === $gake->getOwnerClub()?->getName()) {
+                $this->gakeGId = $gake->getId();
+            } elseif (AppFixtures::REGION_A === $gake->getOwnerRegion()?->getName()) {
                 // Deux gants régionaux pour Région A : disponible et emprunté
-                if (!$glove->getBorrowerClub() instanceof Club && !$glove->getBorrowerMember() instanceof \App\Entity\ClubMember) {
-                    $this->gloveRegionalId = $glove->getId();
+                if (!$gake->getBorrowerClub() instanceof Club && !$gake->getBorrowerMember() instanceof \App\Entity\ClubMember) {
+                    $this->gakeRegionalId = $gake->getId();
                 } else {
-                    $this->gloveRegionalBorrowedId = $glove->getId();
+                    $this->gakeRegionalBorrowedId = $gake->getId();
                 }
-            } elseif ('Bretagne' === $glove->getOwnerRegion()?->getName()) {
-                $this->gloveRegionalCId = $glove->getId();
-            } elseif ($glove->getOwnerFederation() instanceof Federation) {
+            } elseif ('Bretagne' === $gake->getOwnerRegion()?->getName()) {
+                $this->gakeRegionalCId = $gake->getId();
+            } elseif ($gake->getOwnerFederation() instanceof Federation) {
                 // Deux gants nationaux : disponible et emprunté
-                if (!$glove->getBorrowerClub() instanceof Club && !$glove->getBorrowerMember() instanceof \App\Entity\ClubMember) {
-                    $this->gloveNationalId = $glove->getId();
+                if (!$gake->getBorrowerClub() instanceof Club && !$gake->getBorrowerMember() instanceof \App\Entity\ClubMember) {
+                    $this->gakeNationalId = $gake->getId();
                 } else {
-                    $this->gloveNationalBorrowedId = $glove->getId();
+                    $this->gakeNationalBorrowedId = $gake->getId();
                 }
             }
         }
@@ -192,11 +192,11 @@ final class EquipmentControllerTest extends AbstractWebTestCase
     //   Club B (Région B)                 — emprunté par Club C
     //   Club C (Région A)                 — disponible
     //   Club G (Région C / Bretagne)      — disponible
-    //   Régional Région A dispo           — gloveRegionalId
-    //   Régional Région A emprunté        — gloveRegionalBorrowedId
-    //   Régional Région C dispo           — gloveRegionalCId
-    //   National dispo                    — gloveNationalId
-    //   National emprunté                 — gloveNationalBorrowedId
+    //   Régional Région A dispo           — gakeRegionalId
+    //   Régional Région A emprunté        — gakeRegionalBorrowedId
+    //   Régional Région C dispo           — gakeRegionalCId
+    //   National dispo                    — gakeNationalId
+    //   National emprunté                 — gakeNationalBorrowedId
     // -----------------------------------------------------------------------
 
     // --- ADMIN : voit tout ---
@@ -221,7 +221,7 @@ final class EquipmentControllerTest extends AbstractWebTestCase
 
         $content = (string) $this->client->getResponse()->getContent();
         // Club A = propre club → visible
-        $this->assertStringContainsString('/equipment/'.$this->gloveAId, $content);
+        $this->assertStringContainsString('/equipment/'.$this->gakeAId, $content);
     }
 
     public function testIndexMemberDoesNotSeeOtherClubEquipment(): void
@@ -232,9 +232,9 @@ final class EquipmentControllerTest extends AbstractWebTestCase
         $this->assertResponseIsSuccessful();
 
         $content = (string) $this->client->getResponse()->getContent();
-        $this->assertStringNotContainsString('/equipment/'.$this->gloveBId, $content); // autre CTK, emprunté
-        $this->assertStringNotContainsString('/equipment/'.$this->gloveCId, $content); // même CTK, MEMBER n'accède pas aux autres clubs
-        $this->assertStringNotContainsString('/equipment/'.$this->gloveGId, $content); // autre CTK
+        $this->assertStringNotContainsString('/equipment/'.$this->gakeBId, $content); // autre CTK, emprunté
+        $this->assertStringNotContainsString('/equipment/'.$this->gakeCId, $content); // même CTK, MEMBER n'accède pas aux autres clubs
+        $this->assertStringNotContainsString('/equipment/'.$this->gakeGId, $content); // autre CTK
     }
 
     public function testIndexMemberSeesOwnCtkRegionalAvailable(): void
@@ -245,7 +245,7 @@ final class EquipmentControllerTest extends AbstractWebTestCase
         $this->assertResponseIsSuccessful();
 
         $content = (string) $this->client->getResponse()->getContent();
-        $this->assertStringContainsString('/equipment/'.$this->gloveRegionalId, $content);
+        $this->assertStringContainsString('/equipment/'.$this->gakeRegionalId, $content);
     }
 
     public function testIndexMemberDoesNotSeeOwnCtkRegionalBorrowed(): void
@@ -256,7 +256,7 @@ final class EquipmentControllerTest extends AbstractWebTestCase
         $this->assertResponseIsSuccessful();
 
         $content = (string) $this->client->getResponse()->getContent();
-        $this->assertStringNotContainsString('/equipment/'.$this->gloveRegionalBorrowedId, $content);
+        $this->assertStringNotContainsString('/equipment/'.$this->gakeRegionalBorrowedId, $content);
     }
 
     public function testIndexMemberDoesNotSeeNationalEquipment(): void
@@ -267,8 +267,8 @@ final class EquipmentControllerTest extends AbstractWebTestCase
         $this->assertResponseIsSuccessful();
 
         $content = (string) $this->client->getResponse()->getContent();
-        $this->assertStringNotContainsString('/equipment/'.$this->gloveNationalId, $content);
-        $this->assertStringNotContainsString('/equipment/'.$this->gloveNationalBorrowedId, $content);
+        $this->assertStringNotContainsString('/equipment/'.$this->gakeNationalId, $content);
+        $this->assertStringNotContainsString('/equipment/'.$this->gakeNationalBorrowedId, $content);
     }
 
     // --- PRESIDENT : propre club (tous) + même CTK clubs (dispo) + toutes régions (dispo) + pas de national ---
@@ -280,7 +280,7 @@ final class EquipmentControllerTest extends AbstractWebTestCase
         $this->assertResponseIsSuccessful();
 
         $content = (string) $this->client->getResponse()->getContent();
-        $this->assertStringContainsString('/equipment/'.$this->gloveCId, $content);
+        $this->assertStringContainsString('/equipment/'.$this->gakeCId, $content);
     }
 
     public function testIndexPresidentDoesNotSeeOtherCtkBorrowedClub(): void
@@ -291,7 +291,7 @@ final class EquipmentControllerTest extends AbstractWebTestCase
         $this->assertResponseIsSuccessful();
 
         $content = (string) $this->client->getResponse()->getContent();
-        $this->assertStringNotContainsString('/equipment/'.$this->gloveBId, $content);
+        $this->assertStringNotContainsString('/equipment/'.$this->gakeBId, $content);
     }
 
     public function testIndexPresidentDoesNotSeeOtherCtkAvailableClub(): void
@@ -302,7 +302,7 @@ final class EquipmentControllerTest extends AbstractWebTestCase
         $this->assertResponseIsSuccessful();
 
         $content = (string) $this->client->getResponse()->getContent();
-        $this->assertStringNotContainsString('/equipment/'.$this->gloveGId, $content);
+        $this->assertStringNotContainsString('/equipment/'.$this->gakeGId, $content);
     }
 
     public function testIndexPresidentSeesAllCtkRegionalAvailable(): void
@@ -313,9 +313,9 @@ final class EquipmentControllerTest extends AbstractWebTestCase
         $this->assertResponseIsSuccessful();
 
         $content = (string) $this->client->getResponse()->getContent();
-        $this->assertStringContainsString('/equipment/'.$this->gloveRegionalId, $content);    // Région A, dispo
-        $this->assertStringContainsString('/equipment/'.$this->gloveRegionalCId, $content);   // Région C, dispo
-        $this->assertStringNotContainsString('/equipment/'.$this->gloveRegionalBorrowedId, $content); // Région A, emprunté
+        $this->assertStringContainsString('/equipment/'.$this->gakeRegionalId, $content);    // Région A, dispo
+        $this->assertStringContainsString('/equipment/'.$this->gakeRegionalCId, $content);   // Région C, dispo
+        $this->assertStringNotContainsString('/equipment/'.$this->gakeRegionalBorrowedId, $content); // Région A, emprunté
     }
 
     public function testIndexPresidentDoesNotSeeNationalEquipment(): void
@@ -325,8 +325,8 @@ final class EquipmentControllerTest extends AbstractWebTestCase
         $this->assertResponseIsSuccessful();
 
         $content = (string) $this->client->getResponse()->getContent();
-        $this->assertStringNotContainsString('/equipment/'.$this->gloveNationalId, $content);
-        $this->assertStringNotContainsString('/equipment/'.$this->gloveNationalBorrowedId, $content);
+        $this->assertStringNotContainsString('/equipment/'.$this->gakeNationalId, $content);
+        $this->assertStringNotContainsString('/equipment/'.$this->gakeNationalBorrowedId, $content);
     }
 
     // --- MGR_CTK : clubs de sa CTK (tous) + autres clubs (dispo) + ses régions (tous) + autres régions (dispo) ---
@@ -338,7 +338,7 @@ final class EquipmentControllerTest extends AbstractWebTestCase
         $this->assertResponseIsSuccessful();
 
         $content = (string) $this->client->getResponse()->getContent();
-        $this->assertStringContainsString('/equipment/'.$this->gloveRegionalBorrowedId, $content);
+        $this->assertStringContainsString('/equipment/'.$this->gakeRegionalBorrowedId, $content);
     }
 
     public function testIndexMgrCtkSeesOtherCtkRegionalAvailable(): void
@@ -349,7 +349,7 @@ final class EquipmentControllerTest extends AbstractWebTestCase
         $this->assertResponseIsSuccessful();
 
         $content = (string) $this->client->getResponse()->getContent();
-        $this->assertStringContainsString('/equipment/'.$this->gloveRegionalCId, $content);
+        $this->assertStringContainsString('/equipment/'.$this->gakeRegionalCId, $content);
     }
 
     public function testIndexMgrCtkDoesNotSeeOtherCtkBorrowedClub(): void
@@ -360,7 +360,7 @@ final class EquipmentControllerTest extends AbstractWebTestCase
         $this->assertResponseIsSuccessful();
 
         $content = (string) $this->client->getResponse()->getContent();
-        $this->assertStringNotContainsString('/equipment/'.$this->gloveBId, $content);
+        $this->assertStringNotContainsString('/equipment/'.$this->gakeBId, $content);
     }
 
     public function testIndexMgrCtkSeesOtherCtkAvailableClub(): void
@@ -371,7 +371,7 @@ final class EquipmentControllerTest extends AbstractWebTestCase
         $this->assertResponseIsSuccessful();
 
         $content = (string) $this->client->getResponse()->getContent();
-        $this->assertStringContainsString('/equipment/'.$this->gloveGId, $content);
+        $this->assertStringContainsString('/equipment/'.$this->gakeGId, $content);
     }
 
     public function testIndexMgrCtkDoesNotSeeNationalEquipment(): void
@@ -381,8 +381,8 @@ final class EquipmentControllerTest extends AbstractWebTestCase
         $this->assertResponseIsSuccessful();
 
         $content = (string) $this->client->getResponse()->getContent();
-        $this->assertStringNotContainsString('/equipment/'.$this->gloveNationalId, $content);
-        $this->assertStringNotContainsString('/equipment/'.$this->gloveNationalBorrowedId, $content);
+        $this->assertStringNotContainsString('/equipment/'.$this->gakeNationalId, $content);
+        $this->assertStringNotContainsString('/equipment/'.$this->gakeNationalBorrowedId, $content);
     }
 
     // --- MGR_CN : voit tout ---
@@ -393,8 +393,8 @@ final class EquipmentControllerTest extends AbstractWebTestCase
         $this->assertResponseIsSuccessful();
 
         $content = (string) $this->client->getResponse()->getContent();
-        $this->assertStringContainsString('/equipment/'.$this->gloveNationalId, $content);
-        $this->assertStringContainsString('/equipment/'.$this->gloveNationalBorrowedId, $content);
+        $this->assertStringContainsString('/equipment/'.$this->gakeNationalId, $content);
+        $this->assertStringContainsString('/equipment/'.$this->gakeNationalBorrowedId, $content);
     }
 
     // -----------------------------------------------------------------------
@@ -405,47 +405,47 @@ final class EquipmentControllerTest extends AbstractWebTestCase
     public function testShowOwnClubEquipmentDeniedForRoleUser(): void
     {
         $this->loginAs(AppFixtures::USER_USER);
-        $this->assertGetDenied('/equipment/'.$this->gloveAId);
+        $this->assertGetDenied('/equipment/'.$this->gakeAId);
     }
 
     public function testShowOwnClubEquipmentGrantedForMember(): void
     {
         $this->loginAs(AppFixtures::USER_MEMBER);
-        $this->assertGetGranted('/equipment/'.$this->gloveAId);
+        $this->assertGetGranted('/equipment/'.$this->gakeAId);
     }
 
     public function testShowOwnClubEquipmentGrantedForPresident(): void
     {
         // president@kyudo-test.fr est président de Club A → équipement du propre club
         $this->loginAs(AppFixtures::USER_PRESIDENT);
-        $this->assertGetGranted('/equipment/'.$this->gloveAId);
+        $this->assertGetGranted('/equipment/'.$this->gakeAId);
     }
 
     public function testShowOwnClubEquipmentGrantedForEquipmentManagerClub(): void
     {
         // mgr-club@kyudo-test.fr est gestionnaire de Club A → équipement du propre club
         $this->loginAs(AppFixtures::USER_MANAGER_CLUB);
-        $this->assertGetGranted('/equipment/'.$this->gloveAId);
+        $this->assertGetGranted('/equipment/'.$this->gakeAId);
     }
 
     public function testShowClubEquipmentInManagedRegionGrantedForEquipmentManagerCtk(): void
     {
         // Club A est dans Région A, gérée par mgr-ctk → canViewOtherClubEquipment : même CTK → 200
         $this->loginAs(AppFixtures::USER_MANAGER_CTK);
-        $this->assertGetGranted('/equipment/'.$this->gloveAId);
+        $this->assertGetGranted('/equipment/'.$this->gakeAId);
     }
 
     public function testShowClubEquipmentGrantedForEquipmentManagerCn(): void
     {
         // CN a accès à tous les équipements club → 200
         $this->loginAs(AppFixtures::USER_MANAGER_CN);
-        $this->assertGetGranted('/equipment/'.$this->gloveAId);
+        $this->assertGetGranted('/equipment/'.$this->gakeAId);
     }
 
     public function testShowOwnClubEquipmentGrantedForAdmin(): void
     {
         $this->loginAs(AppFixtures::USER_ADMIN);
-        $this->assertGetGranted('/equipment/'.$this->gloveAId);
+        $this->assertGetGranted('/equipment/'.$this->gakeAId);
     }
 
     // -----------------------------------------------------------------------
@@ -458,14 +458,14 @@ final class EquipmentControllerTest extends AbstractWebTestCase
     {
         // Club C est en Région A, dispo → MANAGER_CLUB peut voir
         $this->loginAs(AppFixtures::USER_MANAGER_CLUB);
-        $this->assertGetGranted('/equipment/'.$this->gloveCId);
+        $this->assertGetGranted('/equipment/'.$this->gakeCId);
     }
 
     public function testShowOtherRegionClubEquipmentDeniedForEquipmentManagerClub(): void
     {
         // Club B est en Région B (autre CTK) → MANAGER_CLUB ne peut pas voir
         $this->loginAs(AppFixtures::USER_MANAGER_CLUB);
-        $this->assertGetDenied('/equipment/'.$this->gloveBId);
+        $this->assertGetDenied('/equipment/'.$this->gakeBId);
     }
 
     // -----------------------------------------------------------------------
@@ -475,7 +475,7 @@ final class EquipmentControllerTest extends AbstractWebTestCase
     {
         // Club C est en Région A (même CTK que member), mais MEMBER ne voit aucun autre club
         $this->loginAs(AppFixtures::USER_MEMBER);
-        $this->assertGetDenied('/equipment/'.$this->gloveCId);
+        $this->assertGetDenied('/equipment/'.$this->gakeCId);
     }
 
     // -----------------------------------------------------------------------
@@ -485,14 +485,14 @@ final class EquipmentControllerTest extends AbstractWebTestCase
     {
         // Club C est en Région A (même CTK que le président de Club A) → dispo → 200
         $this->loginAs(AppFixtures::USER_PRESIDENT);
-        $this->assertGetGranted('/equipment/'.$this->gloveCId);
+        $this->assertGetGranted('/equipment/'.$this->gakeCId);
     }
 
     public function testShowOtherCtKClubEquipmentDeniedForPresident(): void
     {
         // Club G est en Région C (autre CTK) → PRESIDENT ne peut pas voir → 403
         $this->loginAs(AppFixtures::USER_PRESIDENT);
-        $this->assertGetDenied('/equipment/'.$this->gloveGId);
+        $this->assertGetDenied('/equipment/'.$this->gakeGId);
     }
 
     // -----------------------------------------------------------------------
@@ -502,21 +502,21 @@ final class EquipmentControllerTest extends AbstractWebTestCase
     {
         // Club G est en Région C (autre CTK), dispo → CTK voit les équipements dispo des autres CTK
         $this->loginAs(AppFixtures::USER_MANAGER_CTK);
-        $this->assertGetGranted('/equipment/'.$this->gloveGId);
+        $this->assertGetGranted('/equipment/'.$this->gakeGId);
     }
 
     public function testShowOtherCtKClubEquipmentBorrowedDeniedForEquipmentManagerCtk(): void
     {
-        // Club B est en Région B (autre CTK), gloveB est emprunté → 403
+        // Club B est en Région B (autre CTK), gakeB est emprunté → 403
         $this->loginAs(AppFixtures::USER_MANAGER_CTK);
-        $this->assertGetDenied('/equipment/'.$this->gloveBId);
+        $this->assertGetDenied('/equipment/'.$this->gakeBId);
     }
 
     public function testShowOtherCtKClubEquipmentGrantedForEquipmentManagerCn(): void
     {
         // CN voit tout, y compris les équipements empruntés d'autres CTK → 200
         $this->loginAs(AppFixtures::USER_MANAGER_CN);
-        $this->assertGetGranted('/equipment/'.$this->gloveBId);
+        $this->assertGetGranted('/equipment/'.$this->gakeBId);
     }
 
     // -----------------------------------------------------------------------
@@ -530,60 +530,60 @@ final class EquipmentControllerTest extends AbstractWebTestCase
     public function testShowRegionalEquipmentDeniedForUser(): void
     {
         $this->loginAs(AppFixtures::USER_USER);
-        $this->assertGetDenied('/equipment/'.$this->gloveRegionalId);
+        $this->assertGetDenied('/equipment/'.$this->gakeRegionalId);
     }
 
     public function testShowRegionalEquipmentDispoGrantedForMember(): void
     {
         // MEMBER peut voir l'équipement régional dispo de sa CTK (Région A)
         $this->loginAs(AppFixtures::USER_MEMBER);
-        $this->assertGetGranted('/equipment/'.$this->gloveRegionalId);
+        $this->assertGetGranted('/equipment/'.$this->gakeRegionalId);
     }
 
     public function testShowRegionalEquipmentBorrowedDeniedForMember(): void
     {
         // MEMBER ne peut PAS voir un équipement régional emprunté
         $this->loginAs(AppFixtures::USER_MEMBER);
-        $this->assertGetDenied('/equipment/'.$this->gloveRegionalBorrowedId);
+        $this->assertGetDenied('/equipment/'.$this->gakeRegionalBorrowedId);
     }
 
     public function testShowRegionalEquipmentDispoGrantedForPresident(): void
     {
         $this->loginAs(AppFixtures::USER_PRESIDENT);
-        $this->assertGetGranted('/equipment/'.$this->gloveRegionalId);
+        $this->assertGetGranted('/equipment/'.$this->gakeRegionalId);
     }
 
     public function testShowRegionalEquipmentBorrowedDeniedForPresident(): void
     {
         // PRESIDENT ne peut pas voir un équipement régional emprunté
         $this->loginAs(AppFixtures::USER_PRESIDENT);
-        $this->assertGetDenied('/equipment/'.$this->gloveRegionalBorrowedId);
+        $this->assertGetDenied('/equipment/'.$this->gakeRegionalBorrowedId);
     }
 
     public function testShowRegionalEquipmentDispoGrantedForEquipmentManagerClub(): void
     {
         $this->loginAs(AppFixtures::USER_MANAGER_CLUB);
-        $this->assertGetGranted('/equipment/'.$this->gloveRegionalId);
+        $this->assertGetGranted('/equipment/'.$this->gakeRegionalId);
     }
 
     public function testShowRegionalEquipmentBorrowedDeniedForEquipmentManagerClub(): void
     {
         $this->loginAs(AppFixtures::USER_MANAGER_CLUB);
-        $this->assertGetDenied('/equipment/'.$this->gloveRegionalBorrowedId);
+        $this->assertGetDenied('/equipment/'.$this->gakeRegionalBorrowedId);
     }
 
     public function testShowRegionalEquipmentDispoGrantedForEquipmentManagerCtk(): void
     {
         // CTK gère Région A → voit les équipements régionaux dispo et prêtés
         $this->loginAs(AppFixtures::USER_MANAGER_CTK);
-        $this->assertGetGranted('/equipment/'.$this->gloveRegionalId);
+        $this->assertGetGranted('/equipment/'.$this->gakeRegionalId);
     }
 
     public function testShowRegionalEquipmentBorrowedGrantedForEquipmentManagerCtk(): void
     {
         // CTK gère Région A → voit même les équipements régionaux empruntés de sa CTK
         $this->loginAs(AppFixtures::USER_MANAGER_CTK);
-        $this->assertGetGranted('/equipment/'.$this->gloveRegionalBorrowedId);
+        $this->assertGetGranted('/equipment/'.$this->gakeRegionalBorrowedId);
     }
 
     // -----------------------------------------------------------------------
@@ -597,46 +597,46 @@ final class EquipmentControllerTest extends AbstractWebTestCase
     {
         // USER peut voir un équipement national disponible
         $this->loginAs(AppFixtures::USER_USER);
-        $this->assertGetGranted('/equipment/'.$this->gloveNationalId);
+        $this->assertGetGranted('/equipment/'.$this->gakeNationalId);
     }
 
     public function testShowNationalEquipmentBorrowedDeniedForUser(): void
     {
         // USER ne peut PAS voir un équipement national emprunté
         $this->loginAs(AppFixtures::USER_USER);
-        $this->assertGetDenied('/equipment/'.$this->gloveNationalBorrowedId);
+        $this->assertGetDenied('/equipment/'.$this->gakeNationalBorrowedId);
     }
 
     public function testShowNationalEquipmentDispoGrantedForMember(): void
     {
         $this->loginAs(AppFixtures::USER_MEMBER);
-        $this->assertGetGranted('/equipment/'.$this->gloveNationalId);
+        $this->assertGetGranted('/equipment/'.$this->gakeNationalId);
     }
 
     public function testShowNationalEquipmentBorrowedDeniedForMember(): void
     {
         $this->loginAs(AppFixtures::USER_MEMBER);
-        $this->assertGetDenied('/equipment/'.$this->gloveNationalBorrowedId);
+        $this->assertGetDenied('/equipment/'.$this->gakeNationalBorrowedId);
     }
 
     public function testShowNationalEquipmentBorrowedDeniedForEquipmentManagerCtk(): void
     {
         // CTK ne peut pas voir les équipements nationaux empruntés
         $this->loginAs(AppFixtures::USER_MANAGER_CTK);
-        $this->assertGetDenied('/equipment/'.$this->gloveNationalBorrowedId);
+        $this->assertGetDenied('/equipment/'.$this->gakeNationalBorrowedId);
     }
 
     public function testShowNationalEquipmentBorrowedGrantedForEquipmentManagerCn(): void
     {
         // CN peut voir tous les équipements nationaux (dispo + prêtés)
         $this->loginAs(AppFixtures::USER_MANAGER_CN);
-        $this->assertGetGranted('/equipment/'.$this->gloveNationalBorrowedId);
+        $this->assertGetGranted('/equipment/'.$this->gakeNationalBorrowedId);
     }
 
     public function testShowNationalEquipmentGrantedForAdmin(): void
     {
         $this->loginAs(AppFixtures::USER_ADMIN);
-        $this->assertGetGranted('/equipment/'.$this->gloveNationalBorrowedId);
+        $this->assertGetGranted('/equipment/'.$this->gakeNationalBorrowedId);
     }
 
     // -----------------------------------------------------------------------
@@ -696,13 +696,13 @@ final class EquipmentControllerTest extends AbstractWebTestCase
     public function testEditOwnClubEquipmentDeniedForMember(): void
     {
         $this->loginAs(AppFixtures::USER_MEMBER);
-        $this->assertGetDenied('/equipment/'.$this->gloveAId.'/edit');
+        $this->assertGetDenied('/equipment/'.$this->gakeAId.'/edit');
     }
 
     public function testEditOwnClubEquipmentGrantedForPresident(): void
     {
         $this->loginAs(AppFixtures::USER_PRESIDENT);
-        $this->assertGetGranted('/equipment/'.$this->gloveAId.'/edit');
+        $this->assertGetGranted('/equipment/'.$this->gakeAId.'/edit');
     }
 
     public function testEditOwnClubEquipmentGrantedForEquipmentManagerClub(): void
@@ -710,7 +710,7 @@ final class EquipmentControllerTest extends AbstractWebTestCase
         // mgr-club@kyudo-test.fr est gestionnaire de Club A dans les fixtures
         // → isOwnClub = true → canEditOwnClubEquipment (MANAGER_CLUB autorisé) → 200
         $this->loginAs(AppFixtures::USER_MANAGER_CLUB);
-        $this->assertGetGranted('/equipment/'.$this->gloveAId.'/edit');
+        $this->assertGetGranted('/equipment/'.$this->gakeAId.'/edit');
     }
 
     public function testEditOwnClubEquipmentGrantedForEquipmentManagerCtk(): void
@@ -718,7 +718,7 @@ final class EquipmentControllerTest extends AbstractWebTestCase
         // CTK n'a pas de "propre club" dans les fixtures → isOwnClub = false
         // → passe par canEditEquipmentFromOtherClub (CTK/CN/ADMIN) → 200
         $this->loginAs(AppFixtures::USER_MANAGER_CTK);
-        $this->assertGetGranted('/equipment/'.$this->gloveAId.'/edit');
+        $this->assertGetGranted('/equipment/'.$this->gakeAId.'/edit');
     }
 
     public function testEditOwnClubEquipmentGrantedForEquipmentManagerCn(): void
@@ -726,13 +726,13 @@ final class EquipmentControllerTest extends AbstractWebTestCase
         // CN n'a pas de "propre club" dans les fixtures → isOwnClub = false
         // → passe par canEditEquipmentFromOtherClub (CTK/CN/ADMIN) → 200
         $this->loginAs(AppFixtures::USER_MANAGER_CN);
-        $this->assertGetGranted('/equipment/'.$this->gloveAId.'/edit');
+        $this->assertGetGranted('/equipment/'.$this->gakeAId.'/edit');
     }
 
     public function testEditOwnClubEquipmentGrantedForAdmin(): void
     {
         $this->loginAs(AppFixtures::USER_ADMIN);
-        $this->assertGetGranted('/equipment/'.$this->gloveAId.'/edit');
+        $this->assertGetGranted('/equipment/'.$this->gakeAId.'/edit');
     }
 
     // -----------------------------------------------------------------------
@@ -743,27 +743,27 @@ final class EquipmentControllerTest extends AbstractWebTestCase
     {
         // president@kyudo-test.fr est président du Club A, pas du Club B
         $this->loginAs(AppFixtures::USER_PRESIDENT);
-        $this->assertGetDenied('/equipment/'.$this->gloveBId.'/edit');
+        $this->assertGetDenied('/equipment/'.$this->gakeBId.'/edit');
     }
 
     public function testEditNationalOrRegionalEquipmentGrantedForEquipmentManagerCtk(): void
     {
         // CSV : MGMT_CTK peut modifier équipements national et régional (autre club)
         $this->loginAs(AppFixtures::USER_MANAGER_CTK);
-        $this->assertGetGranted('/equipment/'.$this->gloveBId.'/edit');
+        $this->assertGetGranted('/equipment/'.$this->gakeBId.'/edit');
     }
 
     public function testEditNationalOrRegionalEquipmentGrantedForEquipmentManagerCn(): void
     {
         // CSV : MGMT_CN peut modifier équipements national et régional (autre club)
         $this->loginAs(AppFixtures::USER_MANAGER_CN);
-        $this->assertGetGranted('/equipment/'.$this->gloveBId.'/edit');
+        $this->assertGetGranted('/equipment/'.$this->gakeBId.'/edit');
     }
 
     public function testEditOtherClubEquipmentGrantedForAdmin(): void
     {
         $this->loginAs(AppFixtures::USER_ADMIN);
-        $this->assertGetGranted('/equipment/'.$this->gloveBId.'/edit');
+        $this->assertGetGranted('/equipment/'.$this->gakeBId.'/edit');
     }
 
     // -----------------------------------------------------------------------
@@ -773,25 +773,25 @@ final class EquipmentControllerTest extends AbstractWebTestCase
     public function testEditNationalEquipmentGrantedForEquipmentManagerCtk(): void
     {
         $this->loginAs(AppFixtures::USER_MANAGER_CTK);
-        $this->assertGetGranted('/equipment/'.$this->gloveNationalId.'/edit');
+        $this->assertGetGranted('/equipment/'.$this->gakeNationalId.'/edit');
     }
 
     public function testEditNationalEquipmentGrantedForEquipmentManagerCn(): void
     {
         $this->loginAs(AppFixtures::USER_MANAGER_CN);
-        $this->assertGetGranted('/equipment/'.$this->gloveNationalId.'/edit');
+        $this->assertGetGranted('/equipment/'.$this->gakeNationalId.'/edit');
     }
 
     public function testEditNationalEquipmentDeniedForPresident(): void
     {
         $this->loginAs(AppFixtures::USER_PRESIDENT);
-        $this->assertGetDenied('/equipment/'.$this->gloveNationalId.'/edit');
+        $this->assertGetDenied('/equipment/'.$this->gakeNationalId.'/edit');
     }
 
     public function testEditNationalEquipmentDeniedForEquipmentManagerClub(): void
     {
         $this->loginAs(AppFixtures::USER_MANAGER_CLUB);
-        $this->assertGetDenied('/equipment/'.$this->gloveNationalId.'/edit');
+        $this->assertGetDenied('/equipment/'.$this->gakeNationalId.'/edit');
     }
 
     // -----------------------------------------------------------------------
@@ -800,21 +800,21 @@ final class EquipmentControllerTest extends AbstractWebTestCase
     // -----------------------------------------------------------------------
     public function testEditRegionalEquipmentGrantedForEquipmentManagerCtk(): void
     {
-        // CTK gère Région A, gloveRegional appartient à Région A → autorisé
+        // CTK gère Région A, gakeRegional appartient à Région A → autorisé
         $this->loginAs(AppFixtures::USER_MANAGER_CTK);
-        $this->assertGetGranted('/equipment/'.$this->gloveRegionalId.'/edit');
+        $this->assertGetGranted('/equipment/'.$this->gakeRegionalId.'/edit');
     }
 
     public function testEditRegionalEquipmentDeniedForPresident(): void
     {
         $this->loginAs(AppFixtures::USER_PRESIDENT);
-        $this->assertGetDenied('/equipment/'.$this->gloveRegionalId.'/edit');
+        $this->assertGetDenied('/equipment/'.$this->gakeRegionalId.'/edit');
     }
 
     public function testEditRegionalEquipmentDeniedForEquipmentManagerClub(): void
     {
         $this->loginAs(AppFixtures::USER_MANAGER_CLUB);
-        $this->assertGetDenied('/equipment/'.$this->gloveRegionalId.'/edit');
+        $this->assertGetDenied('/equipment/'.$this->gakeRegionalId.'/edit');
     }
 
     // -----------------------------------------------------------------------
@@ -832,11 +832,11 @@ final class EquipmentControllerTest extends AbstractWebTestCase
 
         $this->assertPostRedirects('/equipment/create', [
             'equipment_form' => [
-                'equipment_type' => 'glove',
+                'equipment_type' => 'gake',
                 'ownerClub'      => (string) $clubA->getId(),
                 'borrowerClub'   => '',
                 'borrowerMember' => '',
-                'glove_form'     => ['nb_fingers' => '3', 'size' => '7'],
+                'gake_form'     => ['nb_fingers' => '3', 'size' => '7'],
                 'yumi_form'      => ['material' => '', 'strength' => '', 'length' => ''],
             ],
         ]);
@@ -854,12 +854,12 @@ final class EquipmentControllerTest extends AbstractWebTestCase
 
         $this->assertPostRedirects('/equipment/create', [
             'equipment_form' => [
-                'equipment_type'  => 'glove',
+                'equipment_type'  => 'gake',
                 'ownerRegion'     => (string) $regionA->getId(),
                 'ownerClub'       => '',
                 'borrowerClub'    => '',
                 'borrowerMember'  => '',
-                'glove_form'      => ['nb_fingers' => '3', 'size' => '7'],
+                'gake_form'      => ['nb_fingers' => '3', 'size' => '7'],
                 'yumi_form'       => ['material' => '', 'strength' => '', 'length' => ''],
             ],
         ]);
@@ -893,13 +893,13 @@ final class EquipmentControllerTest extends AbstractWebTestCase
 
         $this->assertPostRedirects('/equipment/create', [
             'equipment_form' => [
-                'equipment_type'    => 'glove',
+                'equipment_type'    => 'gake',
                 'ownerFederation'   => (string) $federation->getId(),
                 'ownerRegion'       => '',
                 'ownerClub'         => '',
                 'borrowerClub'      => '',
                 'borrowerMember'    => '',
-                'glove_form'        => ['nb_fingers' => '3', 'size' => '7'],
+                'gake_form'        => ['nb_fingers' => '3', 'size' => '7'],
                 'yumi_form'         => ['material' => '', 'strength' => '', 'length' => ''],
             ],
         ]);
@@ -915,13 +915,13 @@ final class EquipmentControllerTest extends AbstractWebTestCase
 
         $this->client->request(Request::METHOD_POST, '/equipment/create', [
             'equipment_form' => [
-                'equipment_type'    => 'glove',
+                'equipment_type'    => 'gake',
                 'ownerFederation'   => '',
                 'ownerRegion'       => '',
                 'ownerClub'         => '',
                 'borrowerClub'      => '',
                 'borrowerMember'    => '',
-                'glove_form'        => ['nb_fingers' => '3', 'size' => '7'],
+                'gake_form'        => ['nb_fingers' => '3', 'size' => '7'],
                 'yumi_form'         => ['material' => '', 'strength' => '', 'length' => ''],
             ],
         ]);
@@ -940,7 +940,7 @@ final class EquipmentControllerTest extends AbstractWebTestCase
     public function testShowEquipmentHistoryTimelineSectionRenders(): void
     {
         $this->loginAs(AppFixtures::USER_ADMIN);
-        $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gloveAId);
+        $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gakeAId);
         $this->assertResponseIsSuccessful();
 
         $content = (string) $this->client->getResponse()->getContent();
@@ -950,7 +950,7 @@ final class EquipmentControllerTest extends AbstractWebTestCase
     public function testShowEquipmentHistoryTimelineShowsCreateEntry(): void
     {
         $this->loginAs(AppFixtures::USER_ADMIN);
-        $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gloveAId);
+        $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gakeAId);
         $this->assertResponseIsSuccessful();
 
         $content = (string) $this->client->getResponse()->getContent();
@@ -964,27 +964,27 @@ final class EquipmentControllerTest extends AbstractWebTestCase
         $container = self::getContainer();
         /** @var EntityManagerInterface $em */
         $em = $container->get(EntityManagerInterface::class);
-        /** @var Glove $glove */
-        $glove = $em->getRepository(Glove::class)->find($this->gloveAId);
-        $this->assertInstanceOf(Glove::class, $glove);
+        /** @var Gake $gake */
+        $gake = $em->getRepository(Gake::class)->find($this->gakeAId);
+        $this->assertInstanceOf(Gake::class, $gake);
 
-        $this->client->request(Request::METHOD_POST, '/equipment/'.$this->gloveAId.'/edit', [
+        $this->client->request(Request::METHOD_POST, '/equipment/'.$this->gakeAId.'/edit', [
             'equipment_form' => [
-                'ownerClub'       => (string) $glove->getOwnerClub()->getId(),
-                'state'           => $glove->getState()->value,
+                'ownerClub'       => (string) $gake->getOwnerClub()->getId(),
+                'state'           => $gake->getState()->value,
                 'borrowerClub'    => '',
                 'borrowerMember'  => '',
                 'notes'           => 'Timeline test note',
-                'glove_form'      => [
-                    'nb_fingers' => (string) $glove->getNbFingers(),
-                    'size'       => (string) $glove->getSize(),
+                'gake_form'      => [
+                    'nb_fingers' => (string) $gake->getNbFingers(),
+                    'size'       => (string) $gake->getSize(),
                 ],
             ],
         ]);
 
         $this->assertResponseRedirects('/equipment');
 
-        $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gloveAId);
+        $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gakeAId);
         $this->assertResponseIsSuccessful();
 
         $content = (string) $this->client->getResponse()->getContent();
@@ -999,29 +999,29 @@ final class EquipmentControllerTest extends AbstractWebTestCase
         $container = self::getContainer();
         /** @var EntityManagerInterface $em */
         $em = $container->get(EntityManagerInterface::class);
-        /** @var Glove $glove */
-        $glove = $em->getRepository(Glove::class)->find($this->gloveAId);
-        $this->assertInstanceOf(Glove::class, $glove);
+        /** @var Gake $gake */
+        $gake = $em->getRepository(Gake::class)->find($this->gakeAId);
+        $this->assertInstanceOf(Gake::class, $gake);
         /** @var Club $clubC */
         $clubC = $em->getRepository(Club::class)->findOneBy(['name' => AppFixtures::CLUB_C]);
         $this->assertInstanceOf(Club::class, $clubC);
 
-        $this->client->request(Request::METHOD_POST, '/equipment/'.$this->gloveAId.'/edit', [
+        $this->client->request(Request::METHOD_POST, '/equipment/'.$this->gakeAId.'/edit', [
             'equipment_form' => [
-                'ownerClub'       => (string) $glove->getOwnerClub()->getId(),
-                'state'           => $glove->getState()->value,
+                'ownerClub'       => (string) $gake->getOwnerClub()->getId(),
+                'state'           => $gake->getState()->value,
                 'borrowerClub'    => (string) $clubC->getId(),
                 'borrowerMember'  => '',
-                'glove_form'      => [
-                    'nb_fingers' => (string) $glove->getNbFingers(),
-                    'size'       => (string) $glove->getSize(),
+                'gake_form'      => [
+                    'nb_fingers' => (string) $gake->getNbFingers(),
+                    'size'       => (string) $gake->getSize(),
                 ],
             ],
         ]);
 
         $this->assertResponseRedirects('/equipment');
 
-        $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gloveAId);
+        $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gakeAId);
         $this->assertResponseIsSuccessful();
 
         $content = (string) $this->client->getResponse()->getContent();
@@ -1036,7 +1036,7 @@ final class EquipmentControllerTest extends AbstractWebTestCase
     public function testShowEquipmentHistoryNotVisibleForPresident(): void
     {
         $this->loginAs(AppFixtures::USER_PRESIDENT);
-        $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gloveAId);
+        $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gakeAId);
         $this->assertResponseIsSuccessful();
 
         $content = (string) $this->client->getResponse()->getContent();
@@ -1046,7 +1046,7 @@ final class EquipmentControllerTest extends AbstractWebTestCase
     public function testShowEquipmentHistoryNotVisibleForMember(): void
     {
         $this->loginAs(AppFixtures::USER_MEMBER);
-        $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gloveAId);
+        $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gakeAId);
         $this->assertResponseIsSuccessful();
 
         $content = (string) $this->client->getResponse()->getContent();
@@ -1056,7 +1056,7 @@ final class EquipmentControllerTest extends AbstractWebTestCase
     public function testShowEquipmentHistoryNotVisibleForEquipmentManagerCn(): void
     {
         $this->loginAs(AppFixtures::USER_MANAGER_CN);
-        $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gloveAId);
+        $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gakeAId);
         $this->assertResponseIsSuccessful();
 
         $content = (string) $this->client->getResponse()->getContent();
@@ -1066,7 +1066,7 @@ final class EquipmentControllerTest extends AbstractWebTestCase
     public function testShowEquipmentHistoryNotVisibleForEquipmentManagerCtk(): void
     {
         $this->loginAs(AppFixtures::USER_MANAGER_CTK);
-        $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gloveAId);
+        $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gakeAId);
         $this->assertResponseIsSuccessful();
 
         $content = (string) $this->client->getResponse()->getContent();
@@ -1076,7 +1076,7 @@ final class EquipmentControllerTest extends AbstractWebTestCase
     public function testShowEquipmentHistoryNotVisibleForEquipmentManagerClub(): void
     {
         $this->loginAs(AppFixtures::USER_MANAGER_CLUB);
-        $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gloveAId);
+        $this->client->request(Request::METHOD_GET, '/equipment/'.$this->gakeAId);
         $this->assertResponseIsSuccessful();
 
         $content = (string) $this->client->getResponse()->getContent();
@@ -1099,13 +1099,13 @@ final class EquipmentControllerTest extends AbstractWebTestCase
 
         $this->client->request(Request::METHOD_POST, '/equipment/create', [
             'equipment_form' => [
-                'equipment_type'    => 'glove',
+                'equipment_type'    => 'gake',
                 'ownerFederation'   => (string) $federation->getId(),
                 'ownerRegion'       => '',
                 'ownerClub'         => (string) $clubA->getId(),
                 'borrowerClub'      => '',
                 'borrowerMember'    => '',
-                'glove_form'        => ['nb_fingers' => '3', 'size' => '7'],
+                'gake_form'        => ['nb_fingers' => '3', 'size' => '7'],
                 'yumi_form'         => ['material' => '', 'strength' => '', 'length' => ''],
             ],
         ]);

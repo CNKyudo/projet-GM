@@ -7,7 +7,7 @@ namespace App\DataFixtures;
 use App\Entity\Club;
 use App\Entity\ClubMember;
 use App\Entity\Federation;
-use App\Entity\Glove;
+use App\Entity\Gake;
 use App\Entity\Region;
 use App\Entity\User;
 use App\Entity\Yumi;
@@ -61,7 +61,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
  *     - Kyudo Lorient            (Club J)
  *
  * Équipements (17) :
- *   Gants (Glove) :
+ *   Gants (Gake) :
  *     - 3 × niveau CLUB (clubs A, B, C)
  *     - 1 × niveau CLUB avec emprunteur club (Club G → Rennes)
  *     - 1 × niveau REGIONAL (Région A) disponible
@@ -364,86 +364,86 @@ class AppFixtures extends Fixture
         $manager->persist($memberLyon2);
 
         // ────────────────────────────────────────────────────────────────────
-        // Équipements — Gants (Glove)
+        // Équipements — Gants (Gake)
         // ────────────────────────────────────────────────────────────────────
 
         // CLUB — Club A (Paris Marais)
-        $gloveA1 = new Glove()
+        $gakeA1 = new Gake()
             ->setOwnerClub($clubA)
             ->setNbFingers(3)
             ->setSize(8);
-        $manager->persist($gloveA1);
+        $manager->persist($gakeA1);
 
-        $gloveA2 = new Glove()
+        $gakeA2 = new Gake()
             ->setOwnerClub($clubA)
             ->setNbFingers(3)
             ->setSize(7);
-        $manager->persist($gloveA2);
+        $manager->persist($gakeA2);
 
         // CLUB — Club B (Lyon) — avec emprunteur club (Vincennes emprunte à Lyon)
-        $gloveB = new Glove()
+        $gakeB = new Gake()
             ->setOwnerClub($clubB)
             ->setNbFingers(3)
             ->setSize(9)
             ->setBorrowerClub($clubC);
-        $manager->persist($gloveB);
+        $manager->persist($gakeB);
 
         // CLUB — Club C (Vincennes)
-        $gloveC = new Glove()
+        $gakeC = new Gake()
             ->setOwnerClub($clubC)
             ->setNbFingers(3)
             ->setSize(6);
-        $manager->persist($gloveC);
+        $manager->persist($gakeC);
 
         // CLUB — Club G (Rennes)
-        $gloveG = new Glove()
+        $gakeG = new Gake()
             ->setOwnerClub($clubG)
             ->setNbFingers(4)
             ->setSize(7);
-        $manager->persist($gloveG);
+        $manager->persist($gakeG);
 
         // REGIONAL — Région A (Île-de-France)
-        $gloveRegA = new Glove()
+        $gakeRegA = new Gake()
             ->setOwnerRegion($regionA)
             ->setEquipmentLevel(EquipmentLevel::REGIONAL)
             ->setNbFingers(3)
             ->setSize(8);
-        $manager->persist($gloveRegA);
+        $manager->persist($gakeRegA);
 
         // REGIONAL — Région C (Bretagne)
-        $gloveRegC = new Glove()
+        $gakeRegC = new Gake()
             ->setOwnerRegion($regionC)
             ->setEquipmentLevel(EquipmentLevel::REGIONAL)
             ->setNbFingers(3)
             ->setSize(7);
-        $manager->persist($gloveRegC);
+        $manager->persist($gakeRegC);
 
         // NATIONAL
-        $gloveNat = new Glove()
+        $gakeNat = new Gake()
             ->setOwnerFederation($federation)
             ->setEquipmentLevel(EquipmentLevel::NATIONAL)
             ->setNbFingers(5)
             ->setSize(10);
-        $manager->persist($gloveNat);
+        $manager->persist($gakeNat);
 
         // NATIONAL — emprunté (pour tester la restriction "dispo seulement" des rôles < CN)
-        $gloveNatBorrowed = new Glove()
+        $gakeNatBorrowed = new Gake()
             ->setOwnerFederation($federation)
             ->setEquipmentLevel(EquipmentLevel::NATIONAL)
             ->setNbFingers(3)
             ->setSize(8)
             ->setBorrowerMember($memberLinked);
-        $manager->persist($gloveNatBorrowed);
+        $manager->persist($gakeNatBorrowed);
 
         // REGIONAL — Région A (Île-de-France) — emprunté
         // (pour tester la restriction "dispo seulement" de MEMBER / PRESIDENT / MANAGER_CLUB)
-        $gloveRegABorrowed = new Glove()
+        $gakeRegABorrowed = new Gake()
             ->setOwnerRegion($regionA)
             ->setEquipmentLevel(EquipmentLevel::REGIONAL)
             ->setNbFingers(4)
             ->setSize(7)
             ->setBorrowerClub($clubA);
-        $manager->persist($gloveRegABorrowed);
+        $manager->persist($gakeRegABorrowed);
 
         // ────────────────────────────────────────────────────────────────────
         // Équipements — Arcs (Yumi)

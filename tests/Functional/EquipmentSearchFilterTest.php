@@ -20,16 +20,16 @@ use Symfony\Component\HttpFoundation\Request;
  * ─────────────────────────────────────────────────────────────────────────────
  *
  * Gants (10) :
- *   gloveA1          CLUB      Club A (Paris Marais)    nb_fingers=3  size=8   disponible
- *   gloveA2          CLUB      Club A (Paris Marais)    nb_fingers=3  size=7   disponible
- *   gloveB           CLUB      Club B (Lyon)            nb_fingers=3  size=9   prêté à Club C
- *   gloveC           CLUB      Club C (Vincennes)       nb_fingers=3  size=6   disponible
- *   gloveG           CLUB      Club G (Rennes)          nb_fingers=4  size=7   disponible
- *   gloveRA          REGIONAL  Région A (Île-de-France) nb_fingers=3  size=8   disponible
- *   gloveRC          REGIONAL  Région C (Bretagne)      nb_fingers=3  size=7   disponible
- *   gloveNat         NATIONAL  Fédération               nb_fingers=5  size=10  disponible
- *   gloveNatBorrowed NATIONAL  Fédération               nb_fingers=3  size=8   prêté à memberLinked
- *   gloveRegABorrowed REGIONAL Région A (Île-de-France) nb_fingers=4  size=7   prêté à Club A
+ *   gakeA1          CLUB      Club A (Paris Marais)    nb_fingers=3  size=8   disponible
+ *   gakeA2          CLUB      Club A (Paris Marais)    nb_fingers=3  size=7   disponible
+ *   gakeB           CLUB      Club B (Lyon)            nb_fingers=3  size=9   prêté à Club C
+ *   gakeC           CLUB      Club C (Vincennes)       nb_fingers=3  size=6   disponible
+ *   gakeG           CLUB      Club G (Rennes)          nb_fingers=4  size=7   disponible
+ *   gakeRA          REGIONAL  Région A (Île-de-France) nb_fingers=3  size=8   disponible
+ *   gakeRC          REGIONAL  Région C (Bretagne)      nb_fingers=3  size=7   disponible
+ *   gakeNat         NATIONAL  Fédération               nb_fingers=5  size=10  disponible
+ *   gakeNatBorrowed NATIONAL  Fédération               nb_fingers=3  size=8   prêté à memberLinked
+ *   gakeRegABorrowed REGIONAL Région A (Île-de-France) nb_fingers=4  size=7   prêté à Club A
  *
  * Arcs (9) :
  *   yumiA1   CLUB      Club A  bambou       14  namisun      disponible
@@ -48,26 +48,26 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * Sans filtre             → 19
  * equipmentType=yumi      →  9
- * equipmentType=glove     → 10
+ * equipmentType=gake     → 10
  *
  * status=all              → 19
- * status=available        → 15  (gloveB + yumiD + gloveNatBorrowed + gloveRegABorrowed → 4 prêtés)
- * status=loaned           →  4  (gloveB + yumiD + gloveNatBorrowed + gloveRegABorrowed)
+ * status=available        → 15  (gakeB + yumiD + gakeNatBorrowed + gakeRegABorrowed → 4 prêtés)
+ * status=loaned           →  4  (gakeB + yumiD + gakeNatBorrowed + gakeRegABorrowed)
  *
  * status=available + yumi →  8  (yumiD a un borrowerMember → loaned)
  * status=loaned   + yumi  →  1  (yumiD)
- * status=available + glove→  7  (tous les gloves sauf gloveB, gloveNatBorrowed, gloveRegABorrowed)
- * status=loaned   + glove →  3  (gloveB + gloveNatBorrowed + gloveRegABorrowed)
+ * status=available + gake →  7  (tous les gakes sauf gakeB, gakeNatBorrowed, gakeRegABorrowed)
+ * status=loaned   + gake  →  3  (gakeB + gakeNatBorrowed + gakeRegABorrowed)
  *
  * Recherche textuelle (DefaultSearchStrategy — sans filtre de type) :
  *   Champs indexés : ownerClub.name, borrowerClub.name, CONCAT(id,'')
  *   Les équipements régionaux/nationaux ont ownerClub NULL → non trouvables par nom de propriétaire.
  *
  *   q="paris"   → Club A ("Kyudo Paris Marais") + Club D ("Ryushin Dojo Paris")
- *                  gloveA1, gloveA2, yumiA1, yumiA2, yumiD → 5
- *                  + gloveRegABorrowed (borrowerClub=Club A → "Paris") → 6
- *   q="lyon"    → Club B ("Kyudo Lyon") → gloveB (via owner.name) → 1
- *   q="vincen"  → Club C ("Kyudo Vincennes") via owner.name (gloveC) + via borrower.name (gloveB) → 2
+ *                  gakeA1, gakeA2, yumiA1, yumiA2, yumiD → 5
+ *                  + gakeRegABorrowed (borrowerClub=Club A → "Paris") → 6
+ *   q="lyon"    → Club B ("Kyudo Lyon") → gakeB (via owner.name) → 1
+ *   q="vincen"  → Club C ("Kyudo Vincennes") via owner.name (gakeC) + via borrower.name (gakeB) → 2
  *   q="bambou"  → aucun club/région/fédération ne contient "bambou" → 0
  *
  * Recherche textuelle (YumiSearchStrategy — type=yumi) :
@@ -80,14 +80,14 @@ use Symfony\Component\HttpFoundation\Request;
  *   q="nisun_nobi" → yumiA2, yumiG, yumiNat2           → 3
  *   q="14"         → yumiA1 (strength=14), yumiNat2 (strength=14) → 2
  *
- * Recherche textuelle (GloveSearchStrategy — type=glove) :
+ * Recherche textuelle (GakeSearchStrategy — type=gake) :
  *   Champs indexés : nb_fingers, size, ownerClub.name, borrowerClub.name
  *   Équipements régionaux/nationaux trouvables via nb_fingers/size.
  *
- *   q="5"      → gloveNat (nb_fingers=5) → 1
- *   q="3"      → 7 gloves avec nb_fingers=3 (gloveA1,gloveA2,gloveB,gloveC,gloveRA,gloveRC,gloveNatBorrowed)
- *   q="paris"  → Club A → gloveA1, gloveA2 + gloveRegABorrowed (borrowerClub=Club A) → 3
- *   q="vincen" → Club C via owner.name (gloveC) + via borrower.name (gloveB) → 2
+ *   q="5"      → gakeNat (nb_fingers=5) → 1
+ *   q="3"      → 7 gakes avec nb_fingers=3 (gakeA1,gakeA2,gakeB,gakeC,gakeRA,gakeRC,gakeNatBorrowed)
+ *   q="paris"  → Club A → gakeA1, gakeA2 + gakeRegABorrowed (borrowerClub=Club A) → 3
+ *   q="vincen" → Club C via owner.name (gakeC) + via borrower.name (gakeB) → 2
  */
 final class EquipmentSearchFilterTest extends AbstractWebTestCase
 {
@@ -96,11 +96,11 @@ final class EquipmentSearchFilterTest extends AbstractWebTestCase
 
     private const int TOTAL_YUMI_COUNT = 9;
 
-    private const int TOTAL_GLOVE_COUNT = 10;
+    private const int TOTAL_GAKE_COUNT = 10;
 
     // ─── Totaux par status ───────────────────────────────────────────────────
 
-    /** gloveB (borrowerClub) + yumiD (borrowerMember) + gloveNatBorrowed + gloveRegABorrowed → 4 prêtés */
+    /** gakeB (borrowerClub) + yumiD (borrowerMember) + gakeNatBorrowed + gakeRegABorrowed → 4 prêtés */
     private const int LOANED_COUNT = 4;
 
     private const int AVAILABLE_COUNT = 15;
@@ -109,9 +109,9 @@ final class EquipmentSearchFilterTest extends AbstractWebTestCase
 
     private const int LOANED_YUMI_COUNT = 1;
 
-    private const int AVAILABLE_GLOVE_COUNT = 7;
+    private const int AVAILABLE_GAKE_COUNT = 7;
 
-    private const int LOANED_GLOVE_COUNT = 3;
+    private const int LOANED_GAKE_COUNT = 3;
 
     // -----------------------------------------------------------------------
     // Helper
@@ -161,21 +161,21 @@ final class EquipmentSearchFilterTest extends AbstractWebTestCase
     }
 
     // -----------------------------------------------------------------------
-    // C. Filtre equipmentType=glove
+    // C. Filtre equipmentType=gake
     // -----------------------------------------------------------------------
 
-    public function testFilterByGloveType(): void
+    public function testFilterByGakeType(): void
     {
         $this->loginAs(AppFixtures::USER_ADMIN);
-        $crawler = $this->requestIndex(['equipmentType' => 'glove']);
+        $crawler = $this->requestIndex(['equipmentType' => 'gake']);
         $this->assertResponseIsSuccessful();
-        $this->assertSame(self::TOTAL_GLOVE_COUNT, $this->countEquipmentRows($crawler));
+        $this->assertSame(self::TOTAL_GAKE_COUNT, $this->countEquipmentRows($crawler));
     }
 
     // -----------------------------------------------------------------------
     // D. Filtre status=available
     // Note : le filtre vérifie borrowerClub IS NULL ET borrowerMember IS NULL.
-    // gloveB (borrowerClub) + yumiD (borrowerMember) → 2 prêtés, 15 disponibles.
+    // gakeB (borrowerClub) + yumiD (borrowerMember) → 2 prêtés, 15 disponibles.
     // -----------------------------------------------------------------------
 
     public function testFilterAvailable(): void
@@ -188,7 +188,7 @@ final class EquipmentSearchFilterTest extends AbstractWebTestCase
 
     // -----------------------------------------------------------------------
     // E. Filtre status=loaned
-    // Admin : gloveB + yumiD + gloveNatBorrowed + gloveRegABorrowed → LOANED_COUNT=4.
+    // Admin : gakeB + yumiD + gakeNatBorrowed + gakeRegABorrowed → LOANED_COUNT=4.
     // Member (Club A / Île-de-France) : ne voit que son club + régional dispo →
     //   Club A n'a aucun équipement prêté → 0 résultat.
     // -----------------------------------------------------------------------
@@ -201,7 +201,7 @@ final class EquipmentSearchFilterTest extends AbstractWebTestCase
         $this->assertResponseIsSuccessful();
         $this->assertSame(self::LOANED_COUNT, $this->countEquipmentRows($crawler));
 
-        // Vérifier que c'est bien gloveB (Club B → emprunteur Club C)
+        // Vérifier que c'est bien gakeB (Club B → emprunteur Club C)
         $content = (string) $this->client->getResponse()->getContent();
         $this->assertStringContainsString(AppFixtures::CLUB_B, $content);
         $this->assertStringContainsString(AppFixtures::CLUB_C, $content);
@@ -238,21 +238,21 @@ final class EquipmentSearchFilterTest extends AbstractWebTestCase
         $this->assertSame(self::LOANED_YUMI_COUNT, $this->countEquipmentRows($crawler));
     }
 
-    public function testFilterGloveAvailable(): void
+    public function testFilterGakeAvailable(): void
     {
         $this->loginAs(AppFixtures::USER_ADMIN);
-        $crawler = $this->requestIndex(['equipmentType' => 'glove', 'status' => 'available']);
+        $crawler = $this->requestIndex(['equipmentType' => 'gake', 'status' => 'available']);
         $this->assertResponseIsSuccessful();
-        $this->assertSame(self::AVAILABLE_GLOVE_COUNT, $this->countEquipmentRows($crawler));
+        $this->assertSame(self::AVAILABLE_GAKE_COUNT, $this->countEquipmentRows($crawler));
     }
 
-    public function testFilterGloveLoaned(): void
+    public function testFilterGakeLoaned(): void
     {
-        // gloveB (Club B → emprunté par Club C) + gloveNatBorrowed + gloveRegABorrowed → 3 gants prêtés
+        // gakeB (Club B → emprunté par Club C) + gakeNatBorrowed + gakeRegABorrowed → 3 gants prêtés
         $this->loginAs(AppFixtures::USER_ADMIN);
-        $crawler = $this->requestIndex(['equipmentType' => 'glove', 'status' => 'loaned']);
+        $crawler = $this->requestIndex(['equipmentType' => 'gake', 'status' => 'loaned']);
         $this->assertResponseIsSuccessful();
-        $this->assertSame(self::LOANED_GLOVE_COUNT, $this->countEquipmentRows($crawler));
+        $this->assertSame(self::LOANED_GAKE_COUNT, $this->countEquipmentRows($crawler));
         $this->assertStringContainsString(AppFixtures::CLUB_B, (string) $this->client->getResponse()->getContent());
     }
 
@@ -264,8 +264,8 @@ final class EquipmentSearchFilterTest extends AbstractWebTestCase
 
     public function testSearchByClubAName(): void
     {
-        // Admin : "paris" → Club A + Club D + gloveRegABorrowed (borrowerClub=Club A)
-        // gloveA1, gloveA2, yumiA1, yumiA2, yumiD → 5 + gloveRegABorrowed → 6
+        // Admin : "paris" → Club A + Club D + gakeRegABorrowed (borrowerClub=Club A)
+        // gakeA1, gakeA2, yumiA1, yumiA2, yumiD → 5 + gakeRegABorrowed → 6
         $this->loginAs(AppFixtures::USER_ADMIN);
         $crawler = $this->requestIndex(['q' => 'paris']);
         $this->assertResponseIsSuccessful();
@@ -276,8 +276,8 @@ final class EquipmentSearchFilterTest extends AbstractWebTestCase
     public function testSearchByClubANameAsMember(): void
     {
         // MEMBER (Club A, Région A) : voit uniquement Club A + régionaux dispo de Région A.
-        // "paris" → Club A : gloveA1, gloveA2, yumiA1, yumiA2 → 4
-        // (yumiD=Club D non visible ; gloveRegABorrowed=régional emprunté non visible)
+        // "paris" → Club A : gakeA1, gakeA2, yumiA1, yumiA2 → 4
+        // (yumiD=Club D non visible ; gakeRegABorrowed=régional emprunté non visible)
         $this->loginAs(AppFixtures::USER_MEMBER);
         $crawler = $this->requestIndex(['q' => 'paris']);
         $this->assertResponseIsSuccessful();
@@ -287,7 +287,7 @@ final class EquipmentSearchFilterTest extends AbstractWebTestCase
 
     public function testSearchByClubBName(): void
     {
-        // "lyon" → Club B ("Kyudo Lyon") via owner.name → gloveB (1 résultat)
+        // "lyon" → Club B ("Kyudo Lyon") via owner.name → gakeB (1 résultat)
         $this->loginAs(AppFixtures::USER_ADMIN);
         $crawler = $this->requestIndex(['q' => 'lyon']);
         $this->assertResponseIsSuccessful();
@@ -298,8 +298,8 @@ final class EquipmentSearchFilterTest extends AbstractWebTestCase
     public function testSearchByBorrowerNameMatchesOwnerAndBorrower(): void
     {
         // "vincen" → Club C ("Kyudo Vincennes")
-        //   via owner.name : gloveC (propriétaire = Club C)
-        //   via borrower.name : gloveB (emprunté par Club C)
+        //   via owner.name : gakeC (propriétaire = Club C)
+        //   via borrower.name : gakeB (emprunté par Club C)
         // → 2 résultats
         $this->loginAs(AppFixtures::USER_ADMIN);
         $crawler = $this->requestIndex(['q' => 'vincen']);
@@ -369,45 +369,45 @@ final class EquipmentSearchFilterTest extends AbstractWebTestCase
     }
 
     // -----------------------------------------------------------------------
-    // I. Recherche q + equipmentType=glove (GloveSearchStrategy)
+    // I. Recherche q + equipmentType=gake (GakeSearchStrategy)
     //    Indexe : nb_fingers, size, ownerClub.name, borrowerClub.name
     // -----------------------------------------------------------------------
 
-    public function testSearchByNbFingersInGlove(): void
+    public function testSearchByNbFingersInGake(): void
     {
-        // nb_fingers LIKE %5% → gloveNat (nb_fingers=5) → 1
+        // nb_fingers LIKE %5% → gakeNat (nb_fingers=5) → 1
         $this->loginAs(AppFixtures::USER_ADMIN);
-        $crawler = $this->requestIndex(['q' => '5', 'equipmentType' => 'glove']);
+        $crawler = $this->requestIndex(['q' => '5', 'equipmentType' => 'gake']);
         $this->assertResponseIsSuccessful();
         $this->assertSame(1, $this->countEquipmentRows($crawler));
         $this->assertStringContainsString('National', (string) $this->client->getResponse()->getContent());
     }
 
-    public function testSearchByNbFingers3MatchesSixGloves(): void
+    public function testSearchByNbFingers3MatchesSixGakes(): void
     {
         // nb_fingers LIKE %3% → 7 gants avec nb_fingers=3
-        // (gloveA1, gloveA2, gloveB, gloveC, gloveRA, gloveRC, gloveNatBorrowed — sauf gloveG(4), gloveNat(5), gloveRegABorrowed(4))
+        // (gakeA1, gakeA2, gakeB, gakeC, gakeRA, gakeRC, gakeNatBorrowed — sauf gakeG(4), gakeNat(5), gakeRegABorrowed(4))
         $this->loginAs(AppFixtures::USER_ADMIN);
-        $crawler = $this->requestIndex(['q' => '3', 'equipmentType' => 'glove']);
+        $crawler = $this->requestIndex(['q' => '3', 'equipmentType' => 'gake']);
         $this->assertResponseIsSuccessful();
         $this->assertSame(7, $this->countEquipmentRows($crawler));
     }
 
-    public function testSearchByOwnerNameInGlove(): void
+    public function testSearchByOwnerNameInGake(): void
     {
-        // "paris" → Club A → gloveA1, gloveA2 (owner)
-        // + gloveRegABorrowed (borrowerClub=Club A → "Kyudo Paris Marais") → 3
+        // "paris" → Club A → gakeA1, gakeA2 (owner)
+        // + gakeRegABorrowed (borrowerClub=Club A → "Kyudo Paris Marais") → 3
         $this->loginAs(AppFixtures::USER_ADMIN);
-        $crawler = $this->requestIndex(['q' => 'paris', 'equipmentType' => 'glove']);
+        $crawler = $this->requestIndex(['q' => 'paris', 'equipmentType' => 'gake']);
         $this->assertResponseIsSuccessful();
         $this->assertSame(3, $this->countEquipmentRows($crawler));
     }
 
-    public function testSearchByBorrowerNameInGloveMatchesBoth(): void
+    public function testSearchByBorrowerNameInGakeMatchesBoth(): void
     {
-        // "vincen" → gloveC (propriétaire = Club C) + gloveB (emprunteur = Club C) → 2
+        // "vincen" → gakeC (propriétaire = Club C) + gakeB (emprunteur = Club C) → 2
         $this->loginAs(AppFixtures::USER_ADMIN);
-        $crawler = $this->requestIndex(['q' => 'vincen', 'equipmentType' => 'glove']);
+        $crawler = $this->requestIndex(['q' => 'vincen', 'equipmentType' => 'gake']);
         $this->assertResponseIsSuccessful();
         $this->assertSame(2, $this->countEquipmentRows($crawler));
     }
@@ -435,11 +435,11 @@ final class EquipmentSearchFilterTest extends AbstractWebTestCase
         $this->assertSame(1, $this->countEquipmentRows($crawler));
     }
 
-    public function testCombinedGloveLoanedWithNoQuery(): void
+    public function testCombinedGakeLoanedWithNoQuery(): void
     {
-        // glove + loaned (sans q) → gloveB + gloveNatBorrowed + gloveRegABorrowed → 3
+        // gake + loaned (sans q) → gakeB + gakeNatBorrowed + gakeRegABorrowed → 3
         $this->loginAs(AppFixtures::USER_ADMIN);
-        $crawler = $this->requestIndex(['equipmentType' => 'glove', 'status' => 'loaned']);
+        $crawler = $this->requestIndex(['equipmentType' => 'gake', 'status' => 'loaned']);
         $this->assertResponseIsSuccessful();
         $this->assertSame(3, $this->countEquipmentRows($crawler));
         $this->assertStringContainsString(AppFixtures::CLUB_B, (string) $this->client->getResponse()->getContent());
@@ -461,7 +461,7 @@ final class EquipmentSearchFilterTest extends AbstractWebTestCase
 
     public function testBorrowedFilterShowsOnlyBorrowedByUser(): void
     {
-        // USER_MEMBER (Jean Dupont) emprunte gloveNatBorrowed + yumiD → 2
+        // USER_MEMBER (Jean Dupont) emprunte gakeNatBorrowed + yumiD → 2
         // En tant qu'admin (voit tout), le filtre doit retourner exactement 2
         $this->loginAs(AppFixtures::USER_ADMIN);
 
@@ -476,7 +476,7 @@ final class EquipmentSearchFilterTest extends AbstractWebTestCase
 
     public function testBorrowedFilterCombinedWithEquipmentType(): void
     {
-        // USER_MEMBER emprunte gloveNatBorrowed (glove) + yumiD (yumi)
+        // USER_MEMBER emprunte gakeNatBorrowed (gake) + yumiD (yumi)
         // Filtre borrowed + equipmentType=yumi → 1 seul (yumiD)
         $this->loginAs(AppFixtures::USER_ADMIN);
 

@@ -89,7 +89,7 @@
               </div>
             {% endif %}
 
-            {% if equipment.typeName == 'glove' %}
+            {% if equipment.typeName == 'gake' %}
               <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
                 <dt class="text-xs font-medium text-">Nombre de doigts</dt>
                 <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
@@ -126,6 +126,12 @@
                 <dt class="text-xs font-medium text-">Matériau</dt>
                 <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
                   {{ equipment.material ? equipment.material.label|trans : '-' }}
+                </dd>
+              </div>
+              <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
+                <dt class="text-xs font-medium text-">Diamètre</dt>
+                <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
+                  {{ equipment.diameter is not null ? equipment.diameter : '-' }}
                 </dd>
               </div>
             {% elseif equipment.typeName == 'support_makiwara' %}

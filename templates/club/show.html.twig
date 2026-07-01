@@ -213,7 +213,7 @@
 											{% if equipment.strength %} &nbsp;·&nbsp; Force : {{ equipment.strength }} kg{% endif %}
 											{% if equipment.yumiLength %} &nbsp;·&nbsp; Longueur : {{ equipment.yumiLength.value }}{% endif %}
 											{% if not equipment.material and not equipment.strength and not equipment.yumiLength %}-{% endif %}
-										{% elseif equipment.typeName == 'glove' %}
+										{% elseif equipment.typeName == 'gake' %}
 											{% if equipment.nbFingers %}Doigts : {{ equipment.nbFingers }}{% endif %}
 											{% if equipment.size %} &nbsp;·&nbsp; Taille : {{ equipment.size }}{% endif %}
 											{% if not equipment.nbFingers and not equipment.size %}-{% endif %}

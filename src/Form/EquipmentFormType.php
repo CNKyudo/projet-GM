@@ -9,7 +9,7 @@ use App\Entity\Club;
 use App\Entity\ClubMember;
 use App\Entity\Equipment;
 use App\Entity\Federation;
-use App\Entity\Glove;
+use App\Entity\Gake;
 use App\Entity\Makiwara;
 use App\Entity\Region;
 use App\Entity\SupportMakiwara;
@@ -94,7 +94,7 @@ class EquipmentFormType extends AbstractType
                         'mapped' => false,
                         'required' => true,
                     ])
-                    ->add('glove_form', GloveFormType::class, [
+                    ->add('gake_form', GakeFormType::class, [
                         'disabled' => true,
                     ])
                     ->add('yumi_form', YumiFormType::class, [
@@ -126,8 +126,8 @@ class EquipmentFormType extends AbstractType
                 $currentUser = $form->getConfig()->getOption('current_user');
                 $this->addOwnerFields($form, $currentUser, $data);
 
-                if ($data instanceof Glove) {
-                    $form->add('glove_form', GloveFormType::class);
+                if ($data instanceof Gake) {
+                    $form->add('gake_form', GakeFormType::class);
                 } elseif ($data instanceof Yumi) {
                     $form->add('yumi_form', YumiFormType::class);
                 } elseif ($data instanceof Makiwara) {
@@ -156,8 +156,8 @@ class EquipmentFormType extends AbstractType
 
             $submittedType = is_array($data) ? ($data['equipment_type'] ?? null) : null;
 
-            $form->add('glove_form', GloveFormType::class, [
-                'disabled' => $submittedType !== EquipmentType::GLOVE->value,
+            $form->add('gake_form', GakeFormType::class, [
+                'disabled' => $submittedType !== EquipmentType::GAKE->value,
             ]);
 
             $form->add('yumi_form', YumiFormType::class, [
