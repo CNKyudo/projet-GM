@@ -30,7 +30,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
  *   member@kyudo-test.fr    → ROLE_MEMBER (membre du Club A)
  *   president@kyudo-test.fr → ROLE_CLUB_PRESIDENT (président du Club A)
  *   mgr-club@kyudo-test.fr  → ROLE_EQUIPMENT_MANAGER_CLUB (gestionnaire matériel du Club A)
- *   mgr-ctk@kyudo-test.fr   → ROLE_EQUIPMENT_MANAGER_CTK (gestionnaire de Région A – Île-de-France)
+ *   mgr-ctk@kyudo-test.fr   → ROLE_EQUIPMENT_MANAGER_CTK (gestionnaire de Région A – Ile de France)
  *   mgr-cn@kyudo-test.fr    → ROLE_EQUIPMENT_MANAGER_CN
  *   admin@kyudo-test.fr     → ROLE_ADMIN
  *
@@ -41,34 +41,43 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
  *   - Comité National de Kyudo (CNKyudo)
  *
  * Régions (CTK) :
- *   - Île-de-France          (Région A — gérée par mgr-ctk@kyudo-test.fr)
- *   - Auvergne-Rhône-Alpes   (Région B)
- *   - Bretagne                (Région C)
+ *   - Ile de France        (Région A — gérée par mgr-ctk@kyudo-test.fr)
+ *   - Auvergne Rhone Alpe  (Région B)
+ *   - Arc Atlantique       (Région C)
+ *   - Nord & Est           (Région D)
+ *   - Grand Sud            (Région E)
  *
- * Clubs (10) :
- *   Île-de-France :
+ * Clubs (15) :
+ *   Ile de France :
  *     - Kyudo Paris Marais      (Club A — présidé par president@kyudo-test.fr, géré par mgr-club@kyudo-test.fr)
  *     - Kyudo Vincennes          (Club C — même région que Club A, pour tester les restrictions régionales)
  *     - Ryushin Dojo Paris       (Club D)
- *   Auvergne-Rhône-Alpes :
+ *   Auvergne Rhone Alpe :
  *     - Kyudo Lyon               (Club B — sans président)
  *     - Kyudo Grenoble           (Club E)
  *     - Dojo Zen Clermont        (Club F)
- *   Bretagne :
+ *   Arc Atlantique :
  *     - Kyudo Rennes             (Club G)
- *     - Kyudo Brest              (Club H)
- *     - Dojo Bretagne Quimper    (Club I)
  *     - Kyudo Lorient            (Club J)
+ *     - Kyudo Nantes             (Club K)
+ *   Nord & Est :
+ *     - Kyudo Brest              (Club H)
+ *     - Kyudo Strasbourg         (Club L)
+ *     - Kyudo Lille              (Club M)
+ *   Grand Sud :
+ *     - Dojo Bretagne Quimper    (Club I)
+ *     - Kyudo Marseille          (Club N)
+ *     - Kyudo Toulouse           (Club O)
  *
- * Équipements (17) :
+ * Équipements (19) :
  *   Gants (Gake) :
  *     - 3 × niveau CLUB (clubs A, B, C)
  *     - 1 × niveau CLUB avec emprunteur club (Club G → Rennes)
  *     - 1 × niveau REGIONAL (Région A) disponible
- *     - 1 × niveau REGIONAL (Région A) emprunté  ← NOUVEAU
+ *     - 1 × niveau REGIONAL (Région A) emprunté
  *     - 1 × niveau REGIONAL (Région C) disponible
  *     - 1 × niveau NATIONAL disponible
- *     - 1 × niveau NATIONAL emprunté              ← NOUVEAU
+ *     - 1 × niveau NATIONAL emprunté
  *   Arcs (Yumi) :
  *     - 4 × niveau CLUB (clubs A, D, E, G)
  *     - 2 × niveau REGIONAL (régions B, C)
@@ -102,9 +111,15 @@ class AppFixtures extends Fixture
 
     public const CLUB_G = 'Kyudo Rennes';
 
-    public const REGION_A = 'Île-de-France';
+    public const REGION_A = 'Ile de France';
 
-    public const REGION_B = 'Auvergne-Rhône-Alpes';
+    public const REGION_B = 'Auvergne Rhone Alpe';
+
+    public const REGION_C = 'Arc Atlantique';
+
+    public const REGION_D = 'Nord & Est';
+
+    public const REGION_E = 'Grand Sud';
 
     public const FEDERATION_NAME = 'Comité National de Kyudo';
 
@@ -121,9 +136,6 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         $hashedPassword = $this->userPasswordHasher->hashPassword(new User(), self::PASSWORD);
-
-        // ────────────────────────────────────────────────────────────────────
-        // Fédération
 
         // ────────────────────────────────────────────────────────────────────
         // Fédération
@@ -150,9 +162,21 @@ class AppFixtures extends Fixture
 
         $regionC = new Region()
             ->setFederation($federation)
-            ->setName('Bretagne')
-            ->setEmail('ctk.bretagne@cnkyudo.fr');
+            ->setName(self::REGION_C)
+            ->setEmail('ctk.arc-atlantique@cnkyudo.fr');
         $manager->persist($regionC);
+
+        $regionD = new Region()
+            ->setFederation($federation)
+            ->setName(self::REGION_D)
+            ->setEmail('ctk.nord-est@cnkyudo.fr');
+        $manager->persist($regionD);
+
+        $regionE = new Region()
+            ->setFederation($federation)
+            ->setName(self::REGION_E)
+            ->setEmail('ctk.grand-sud@cnkyudo.fr');
+        $manager->persist($regionE);
 
         // ────────────────────────────────────────────────────────────────────
         // Comptes de test (requis par les tests fonctionnels)
@@ -179,14 +203,14 @@ class AppFixtures extends Fixture
             $u[$email] = $user;
         }
 
-        // manager_ctk gère la Région A (Île-de-France)
+        // manager_ctk gère la Région A (Ile de France)
         $u[self::USER_MANAGER_CTK]->addManagedRegion($regionA);
 
         // ────────────────────────────────────────────────────────────────────
         // Utilisateurs réalistes
         // ────────────────────────────────────────────────────────────────────
 
-        // Gestionnaire CTK Auvergne-Rhône-Alpes
+        // Gestionnaire CTK Auvergne Rhone Alpe
         $ctkAura = new User()
             ->setEmail('ctk.aura@cnkyudo.fr')
             ->setPassword($hashedPassword)
@@ -195,14 +219,32 @@ class AppFixtures extends Fixture
 
         $manager->persist($ctkAura);
 
-        // Gestionnaire CTK Bretagne
-        $ctkBretagne = new User()
-            ->setEmail('ctk.bretagne@cnkyudo.fr')
+        // Gestionnaire CTK Arc Atlantique
+        $ctkArcAtlantique = new User()
+            ->setEmail('ctk.arc-atlantique@cnkyudo.fr')
             ->setPassword($hashedPassword)
             ->setRoles([UserRole::EQUIPMENT_MANAGER_CTK->value]);
-        $ctkBretagne->addManagedRegion($regionC);
+        $ctkArcAtlantique->addManagedRegion($regionC);
 
-        $manager->persist($ctkBretagne);
+        $manager->persist($ctkArcAtlantique);
+
+        // Gestionnaire CTK Nord & Est
+        $ctkNordEst = new User()
+            ->setEmail('ctk.nord-est@cnkyudo.fr')
+            ->setPassword($hashedPassword)
+            ->setRoles([UserRole::EQUIPMENT_MANAGER_CTK->value]);
+        $ctkNordEst->addManagedRegion($regionD);
+
+        $manager->persist($ctkNordEst);
+
+        // Gestionnaire CTK Grand Sud
+        $ctkGrandSud = new User()
+            ->setEmail('ctk.grand-sud@cnkyudo.fr')
+            ->setPassword($hashedPassword)
+            ->setRoles([UserRole::EQUIPMENT_MANAGER_CTK->value]);
+        $ctkGrandSud->addManagedRegion($regionE);
+
+        $manager->persist($ctkGrandSud);
 
         // Membres et présidents supplémentaires
         $presidentLyon = new User()
@@ -247,11 +289,19 @@ class AppFixtures extends Fixture
             ->setRoles([UserRole::MEMBER->value]);
         $manager->persist($membre4);
 
+        for ($i = 0; $i < 25; ++$i) {
+            $membre = new User()
+            ->setEmail('user'.$i.'@kyudo.fr')
+            ->setPassword($hashedPassword)
+            ->setRoles([UserRole::MEMBER->value]);
+            $manager->persist($membre);
+        }
+
         // ────────────────────────────────────────────────────────────────────
         // Clubs
         // ────────────────────────────────────────────────────────────────────
 
-        // — Île-de-France —
+        // — Ile de France —
         $clubA = new Club()                                       // Club A (tests)
             ->setName(self::CLUB_A)
             ->setEmail('contact@kyudo-paris-marais.fr')
@@ -272,12 +322,12 @@ class AppFixtures extends Fixture
         $manager->persist($clubC);
 
         $clubD = new Club()
-            ->setName('Ryushin Dojo Paris')
+            ->setName(self::CLUB_D)
             ->setEmail('contact@ryushin-paris.fr')
             ->setRegion($regionA);
         $manager->persist($clubD);
 
-        // — Auvergne-Rhône-Alpes —
+        // — Auvergne Rhone Alpe —
         $clubB = new Club()                                       // Club B (tests)
             ->setName(self::CLUB_B)
             ->setEmail('contact@kyudo-lyon.fr')
@@ -300,9 +350,9 @@ class AppFixtures extends Fixture
             ->setRegion($regionB);
         $manager->persist($clubF);
 
-        // — Bretagne —
-        $clubG = new Club()
-            ->setName('Kyudo Rennes')
+        // — Arc Atlantique —
+        $clubG = new Club()                                       // Club G (tests)
+            ->setName(self::CLUB_G)
             ->setEmail('contact@kyudo-rennes.fr')
             ->setPresident($presidentRennes)
             ->setRegion($regionC);
@@ -310,23 +360,55 @@ class AppFixtures extends Fixture
 
         $manager->persist($clubG);
 
-        $clubH = new Club()
-            ->setName('Kyudo Brest')
-            ->setEmail('contact@kyudo-brest.fr')
-            ->setRegion($regionC);
-        $manager->persist($clubH);
-
-        $clubI = new Club()
-            ->setName('Dojo Bretagne Quimper')
-            ->setEmail('contact@dojo-quimper.fr')
-            ->setRegion($regionC);
-        $manager->persist($clubI);
-
         $clubJ = new Club()
             ->setName('Kyudo Lorient')
             ->setEmail('contact@kyudo-lorient.fr')
             ->setRegion($regionC);
         $manager->persist($clubJ);
+
+        $clubK = new Club()
+            ->setName('Kyudo Nantes')
+            ->setEmail('contact@kyudo-nantes.fr')
+            ->setRegion($regionC);
+        $manager->persist($clubK);
+
+        // — Nord & Est —
+        $clubH = new Club()
+            ->setName('Kyudo Brest')
+            ->setEmail('contact@kyudo-brest.fr')
+            ->setRegion($regionD);
+        $manager->persist($clubH);
+
+        $clubL = new Club()
+            ->setName('Kyudo Strasbourg')
+            ->setEmail('contact@kyudo-strasbourg.fr')
+            ->setRegion($regionD);
+        $manager->persist($clubL);
+
+        $clubM = new Club()
+            ->setName('Kyudo Lille')
+            ->setEmail('contact@kyudo-lille.fr')
+            ->setRegion($regionD);
+        $manager->persist($clubM);
+
+        // — Grand Sud —
+        $clubI = new Club()
+            ->setName('Dojo Bretagne Quimper')
+            ->setEmail('contact@dojo-quimper.fr')
+            ->setRegion($regionE);
+        $manager->persist($clubI);
+
+        $clubN = new Club()
+            ->setName('Kyudo Marseille')
+            ->setEmail('contact@kyudo-marseille.fr')
+            ->setRegion($regionE);
+        $manager->persist($clubN);
+
+        $clubO = new Club()
+            ->setName('Kyudo Toulouse')
+            ->setEmail('contact@kyudo-toulouse.fr')
+            ->setRegion($regionE);
+        $manager->persist($clubO);
 
         // ────────────────────────────────────────────────────────────────────
         // ClubMembers
@@ -402,7 +484,7 @@ class AppFixtures extends Fixture
             ->setSize(7);
         $manager->persist($gakeG);
 
-        // REGIONAL — Région A (Île-de-France)
+        // REGIONAL — Région A (Ile de France)
         $gakeRegA = new Gake()
             ->setOwnerRegion($regionA)
             ->setEquipmentLevel(EquipmentLevel::REGIONAL)
@@ -410,7 +492,7 @@ class AppFixtures extends Fixture
             ->setSize(8);
         $manager->persist($gakeRegA);
 
-        // REGIONAL — Région C (Bretagne)
+        // REGIONAL — Région C (Arc Atlantique)
         $gakeRegC = new Gake()
             ->setOwnerRegion($regionC)
             ->setEquipmentLevel(EquipmentLevel::REGIONAL)
@@ -435,7 +517,7 @@ class AppFixtures extends Fixture
             ->setBorrowerMember($memberLinked);
         $manager->persist($gakeNatBorrowed);
 
-        // REGIONAL — Région A (Île-de-France) — emprunté
+        // REGIONAL — Région A (Ile de France) — emprunté
         // (pour tester la restriction "dispo seulement" de MEMBER / PRESIDENT / MANAGER_CLUB)
         $gakeRegABorrowed = new Gake()
             ->setOwnerRegion($regionA)
@@ -489,7 +571,7 @@ class AppFixtures extends Fixture
             ->setYumiLength(YumiLength::NISUN_NOBI);
         $manager->persist($yumiG);
 
-        // REGIONAL — Région B (Auvergne-Rhône-Alpes)
+        // REGIONAL — Région B (Auvergne Rhone Alpe)
         $yumiRegB1 = new Yumi()
             ->setOwnerRegion($regionB)
             ->setEquipmentLevel(EquipmentLevel::REGIONAL)

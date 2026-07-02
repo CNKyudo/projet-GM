@@ -19,6 +19,9 @@
 						{{ users|length }}
 						utilisateur{{ users|length > 1 ? 's' : '' }}
 					</div>
+					{% if is_granted('CREATE_USER') %}
+						<a class="btn btn-primary" href="{{ path('admin_user_create') }}">Créer un utilisateur</a>
+					{% endif %}
 					<a class="btn btn-secondary" data-history-back href="{{ path('user_profile') }}">Retour au profil</a>
 				</div>
 			</div>

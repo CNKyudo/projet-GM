@@ -8,7 +8,7 @@ use App\DataFixtures\AppFixtures;
 use App\Entity\Club;
 use App\Entity\Equipment;
 use App\Entity\Federation;
-use App\Entity\Glove;
+use App\Entity\Gake;
 use App\Repository\EquipmentRepository;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -26,10 +26,10 @@ use Symfony\Component\HttpFoundation\Request;
 final class EquipmentExportTest extends AbstractWebTestCase
 {
     /** ID du gant appartenant au Club A */
-    private int $gloveAId;
+    private int $gakeAId;
 
     /** ID du gant appartenant au Club G (autre CTK, disponible) */
-    private int $gloveGId;
+    private int $gakeGId;
 
     protected function setUp(): void
     {
@@ -43,14 +43,14 @@ final class EquipmentExportTest extends AbstractWebTestCase
         $equipments = $repo->findAll();
 
         foreach ($equipments as $equipment) {
-            if (!$equipment instanceof Glove) {
+            if (!$equipment instanceof Gake) {
                 continue;
             }
 
             if (AppFixtures::CLUB_A === $equipment->getOwnerClub()?->getName()) {
-                $this->gloveAId = $equipment->getId();
+                $this->gakeAId = $equipment->getId();
             } elseif (AppFixtures::CLUB_G === $equipment->getOwnerClub()?->getName()) {
-                $this->gloveGId = $equipment->getId();
+                $this->gakeGId = $equipment->getId();
             } elseif (AppFixtures::REGION_A === $equipment->getOwnerRegion()?->getName()
                 && !$equipment->getBorrowerClub() instanceof Club
                 && !$equipment->getBorrowerMember() instanceof \App\Entity\ClubMember) {
@@ -141,17 +141,17 @@ final class EquipmentExportTest extends AbstractWebTestCase
     // Filtres propagés : equipmentType
     // -----------------------------------------------------------------------
 
-    public function testExportFilterByEquipmentTypeGlove(): void
+    public function testExportFilterByEquipmentTypeGake(): void
     {
         $this->loginAs(AppFixtures::USER_ADMIN);
         $this->client->request(Request::METHOD_POST, '/equipment/export', [
-            'equipmentType' => 'glove',
+            'equipmentType' => 'gake',
         ]);
 
         $this->assertResponseIsSuccessful();
         $content = (string) $this->client->getResponse()->getContent();
 
-        // Tous les types dans un export filtré sur "glove" doivent être "Gant"
+        // Tous les types dans un export filtré sur "gake" doivent être "Gant"
         $lines = $this->parseCsvLines($content);
         $headers = array_shift($lines);
         $this->assertNotNull($headers);
@@ -164,7 +164,7 @@ final class EquipmentExportTest extends AbstractWebTestCase
                 continue;
             }
 
-            $this->assertSame('Gant (Kake)', $line[$typeIndex], 'Toutes les lignes doivent être de type Gant (Kake)');
+            $this->assertSame('Gant (Gake)', $line[$typeIndex], 'Toutes les lignes doivent être de type Gant (Gake)');
         }
     }
 
@@ -274,7 +274,7 @@ final class EquipmentExportTest extends AbstractWebTestCase
         $this->assertNotFalse($idIndex);
 
         $exportedIds = array_map(static fn (array $line): string => $line[$idIndex] ?? '', $lines);
-        $this->assertContains((string) $this->gloveAId, $exportedIds, 'Le gant du Club A doit être dans l\'export du MEMBER');
+        $this->assertContains((string) $this->gakeAId, $exportedIds, 'Le gant du Club A doit être dans l\'export du MEMBER');
     }
 
     public function testExportDoesNotContainOtherCtkEquipmentForMember(): void
@@ -291,7 +291,7 @@ final class EquipmentExportTest extends AbstractWebTestCase
         $this->assertNotFalse($idIndex);
 
         $exportedIds = array_map(static fn (array $line): string => $line[$idIndex] ?? '', $lines);
-        $this->assertNotContains((string) $this->gloveGId, $exportedIds, 'MEMBER ne doit pas voir le gant du Club G (autre CTK)');
+        $this->assertNotContains((string) $this->gakeGId, $exportedIds, 'MEMBER ne doit pas voir le gant du Club G (autre CTK)');
     }
 
     // -----------------------------------------------------------------------
@@ -300,13 +300,13 @@ final class EquipmentExportTest extends AbstractWebTestCase
 
     /**
      * Vérifie que le type dans le CSV utilise la valeur traduite par le translator
-     * (ex: "Gant (Kake)" depuis messages.fr.yaml, pas "Gant" en dur).
+     * (ex: "Gant (Gake)" depuis messages.fr.yaml, pas "Gant" en dur).
      */
     public function testExportTypeColumnUsesTranslator(): void
     {
         $this->loginAs(AppFixtures::USER_ADMIN);
         $this->client->request(Request::METHOD_POST, '/equipment/export', [
-            'equipmentType' => 'glove',
+            'equipmentType' => 'gake',
         ]);
 
         $this->assertResponseIsSuccessful();
@@ -325,9 +325,9 @@ final class EquipmentExportTest extends AbstractWebTestCase
             }
 
             $this->assertSame(
-                'Gant (Kake)',
+                'Gant (Gake)',
                 $line[$typeIndex],
-                'Le type doit utiliser la valeur traduite par le translator (messages.fr.yaml: equipment.type.glove)'
+                'Le type doit utiliser la valeur traduite par le translator (messages.fr.yaml: equipment.type.gake)'
             );
         }
     }

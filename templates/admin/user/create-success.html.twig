@@ -1,0 +1,116 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Utilisateur créé{% endblock %}
+
+{% block body %}
+	<div class="h-screen-with-navbar bg-kyudo-club px-4 pb-10 pt-16 sm:px-6">
+		<div class="mx-auto max-w-3xl rounded-[32px] bg-kyudo-white/95 p-6 shadow-2xl ring-1 ring-black/5 backdrop-blur sm:p-8 md:p-10">
+
+			<div class="space-y-6">
+				<!-- Success message -->
+				{% include 'partials/_alert.html.twig' with {
+					type: 'success',
+					title: 'Utilisateur créé avec succès',
+					message: 'Veuillez communiquer les identifiants ci-dessous au nouvel utilisateur. Il devra modifier son mot de passe lors de sa première connexion.',
+					class: 'mb-6'
+				} only %}
+
+				<!-- Credentials section -->
+				<section class="rounded-3xl border border-kyudo-gm-light-grey bg-kyudo-white p-6 shadow-sm">
+					<h1 class="text-2xl font-semibold tracking-tight text-kyudo-gm-dark">Identifiants à communiquer</h1>
+
+					<div class="mt-6 space-y-4">
+						<!-- Email -->
+						<div class="rounded-2xl bg-kyudo-gm-light-grey p-4">
+							<p class="text-sm font-medium text-kyudo-gm-grey">Adresse email</p>
+							<div class="mt-3 flex items-center justify-between">
+								<p class="font-mono text-base font-semibold text-kyudo-gm-dark">{{ email }}</p>
+								<button
+									type="button"
+									class="btn btn-secondary btn-sm"
+									onclick="copyToClipboard('{{ email }}', this)"
+									title="Copier l'email"
+								>
+									Copier
+								</button>
+							</div>
+						</div>
+
+						<!-- Password -->
+						<div class="rounded-2xl bg-kyudo-gm-light-grey p-4">
+							<div class="flex items-center justify-between">
+								<p class="text-sm font-medium text-kyudo-gm-grey">Mot de passe temporaire</p>
+								<button
+									type="button"
+									id="toggle-password-btn"
+									class="text-sm text-kyudo-royal-blue hover:text-kyudo-blue"
+									onclick="togglePasswordVisibility()"
+									title="Afficher/masquer le mot de passe"
+								>
+									Afficher
+								</button>
+							</div>
+							<div class="mt-3 flex items-center justify-between">
+								<p id="password-display" class="font-mono text-base font-semibold text-kyudo-gm-dark">••••••••••••</p>
+								<button
+									type="button"
+									class="btn btn-primary btn-sm"
+									onclick="copyToClipboard('{{ plainPassword }}', this)"
+									title="Copier le mot de passe"
+								>
+									Copier
+								</button>
+							</div>
+						</div>
+					</div>
+
+					<!-- Warning -->
+					<div class="mt-6 rounded-2xl border border-orange-200 bg-orange-50/40 p-4">
+						<p class="text-sm text-orange-800">
+							<strong>⚠️ Important :</strong> Cette page ne s'affichera qu'une seule fois. Notez le mot de passe avant de continuer.
+							L'utilisateur devra le modifier à sa première connexion.
+						</p>
+					</div>
+				</section>
+
+				<!-- Action buttons -->
+				<div class="flex flex-col gap-3 sm:flex-row">
+					<a class="btn btn-primary" href="{{ path('user_index') }}">Retour à la gestion des utilisateurs</a>
+					<a class="btn btn-secondary" href="{{ path('admin_user_create') }}">Créer un autre utilisateur</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		let passwordVisible = false;
+		const plainPassword = '{{ plainPassword|escape('js') }}';
+
+		function togglePasswordVisibility() {
+			passwordVisible = !passwordVisible;
+			const display = document.getElementById('password-display');
+			const btn = document.getElementById('toggle-password-btn');
+
+			if (passwordVisible) {
+				display.textContent = plainPassword;
+				btn.textContent = 'Masquer';
+			} else {
+				display.textContent = '••••••••••••';
+				btn.textContent = 'Afficher';
+			}
+		}
+
+		function copyToClipboard(text, button) {
+			navigator.clipboard.writeText(text).then(() => {
+				const originalText = button.textContent;
+				button.textContent = '✓ Copié !';
+				button.disabled = true;
+
+				setTimeout(() => {
+					button.textContent = originalText;
+					button.disabled = false;
+				}, 2000);
+			});
+		}
+	</script>
+{% endblock %}

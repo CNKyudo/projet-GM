@@ -41,6 +41,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
     #[ORM\Column]
     private string $password;
 
+    /**
+     * Indique si l'utilisateur doit changer son mot de passe à la prochaine connexion.
+     * Positionné à true lors de la création d'un compte par un administrateur.
+     */
+    #[ORM\Column(options: ['default' => false])]
+    private bool $mustChangePassword = false;
+
     #[ORM\OneToOne(mappedBy: 'president')]
     private ?Club $clubWhichImPresidentOf = null;
 
@@ -146,6 +153,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
     public function setPassword(string $password): static
     {
         $this->password = $password;
+
+        return $this;
+    }
+
+    public function isMustChangePassword(): bool
+    {
+        return $this->mustChangePassword;
+    }
+
+    public function setMustChangePassword(bool $mustChangePassword): static
+    {
+        $this->mustChangePassword = $mustChangePassword;
 
         return $this;
     }

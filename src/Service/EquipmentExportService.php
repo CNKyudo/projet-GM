@@ -6,7 +6,7 @@ namespace App\Service;
 
 use App\Entity\Equipment;
 use App\Entity\Etafoam;
-use App\Entity\Glove;
+use App\Entity\Gake;
 use App\Entity\Maku;
 use App\Entity\Makiwara;
 use App\Entity\SupportMakiwara;
@@ -76,8 +76,8 @@ final readonly class EquipmentExportService
             'Matériau',           // Yumi, Makiwara, Maku
             'Force (kg)',         // Yumi
             'Longueur arc',       // Yumi
-            'Nb doigts',          // Glove
-            'Taille gant',        // Glove
+            'Nb doigts',          // Gake
+            'Taille gant',        // Gake
             'Hauteur (cm)',       // SupportMakiwara, Maku
             'Nb arcs',            // Yumitate
             'Orientation',        // Yumitate
@@ -113,7 +113,7 @@ final readonly class EquipmentExportService
             $this->extractYumiStrength($equipment),
             $this->extractYumiLength($equipment),
             $this->extractNbFingers($equipment),
-            $this->extractGloveSize($equipment),
+            $this->extractGakeSize($equipment),
             $this->extractHeight($equipment),
             $this->extractNbBows($equipment),
             $this->extractYumitateOrientation($equipment),
@@ -181,16 +181,16 @@ final readonly class EquipmentExportService
 
     private function extractNbFingers(Equipment $equipment): string
     {
-        if (!$equipment instanceof Glove) {
+        if (!$equipment instanceof Gake) {
             return '';
         }
 
         return (string) ($equipment->getNbFingers() ?? '');
     }
 
-    private function extractGloveSize(Equipment $equipment): string
+    private function extractGakeSize(Equipment $equipment): string
     {
-        if (!$equipment instanceof Glove) {
+        if (!$equipment instanceof Gake) {
             return '';
         }
 

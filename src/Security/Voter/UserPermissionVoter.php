@@ -22,6 +22,8 @@ final class UserPermissionVoter extends Voter
     // Gestion des utilisateurs
     public const string ACCESS_USER_MANAGEMENT = 'ACCESS_USER_MANAGEMENT';
 
+    public const string CREATE_USER = 'CREATE_USER';
+
     public const string EDIT_OWN_ACCOUNT_INFORMATION = 'EDIT_OWN_ACCOUNT_INFORMATION';
 
     public const string ASSIGN_USER_TO_ANY_CLUB = 'ASSIGN_USER_TO_ANY_CLUB';
@@ -89,6 +91,7 @@ final class UserPermissionVoter extends Voter
      */
     private const array ROLE_ONLY_ATTRIBUTES = [
         self::ACCESS_USER_MANAGEMENT => 'canAccessUserManagement',
+        self::CREATE_USER => 'canCreateUser',
         self::EDIT_OWN_ACCOUNT_INFORMATION => 'canEditOwnAccountInformation',
         self::ASSIGN_USER_TO_ANY_CLUB => 'canAssignUserToAnyClub',
         self::ASSIGN_USER_TO_OWN_CLUB => 'canAssignUserToOwnClub',
