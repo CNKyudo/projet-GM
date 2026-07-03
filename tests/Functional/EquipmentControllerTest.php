@@ -71,7 +71,7 @@ final class EquipmentControllerTest extends AbstractWebTestCase
     /** ID du gant appartenant au Club C (sans président, Région A — même région que Club A) */
     private int $gakeCId;
 
-    /** ID du gant appartenant au Club G (Bretagne, Région C — autre CTK) */
+    /** ID du gant appartenant au Club G (Arc Atlantique, Région C — autre CTK) */
     private int $gakeGId;
 
     /** ID du gant régional (owner_region = Région A) — disponible */
@@ -80,7 +80,7 @@ final class EquipmentControllerTest extends AbstractWebTestCase
     /** ID du gant régional (owner_region = Région A) — emprunté */
     private int $gakeRegionalBorrowedId;
 
-    /** ID du gant régional (owner_region = Bretagne / Région C) — disponible */
+    /** ID du gant régional (owner_region = Arc Atlantique / Région C) — disponible */
     private int $gakeRegionalCId;
 
     /** ID du gant national (owner_federation = Fédération) — disponible */
@@ -120,7 +120,7 @@ final class EquipmentControllerTest extends AbstractWebTestCase
                 } else {
                     $this->gakeRegionalBorrowedId = $gake->getId();
                 }
-            } elseif ('Bretagne' === $gake->getOwnerRegion()?->getName()) {
+            } elseif (AppFixtures::REGION_C === $gake->getOwnerRegion()?->getName()) {
                 $this->gakeRegionalCId = $gake->getId();
             } elseif ($gake->getOwnerFederation() instanceof Federation) {
                 // Deux gants nationaux : disponible et emprunté
@@ -188,10 +188,10 @@ final class EquipmentControllerTest extends AbstractWebTestCase
     // liens de la liste paginée.
     //
     // Rappel des fixtures :
-    //   Club A (Région A / Île-de-France) — member, president, mgr-club
+    //   Club A (Région A / Ile de France) — member, president, mgr-club
     //   Club B (Région B)                 — emprunté par Club C
     //   Club C (Région A)                 — disponible
-    //   Club G (Région C / Bretagne)      — disponible
+    //   Club G (Région C / Arc Atlantique) — disponible
     //   Régional Région A dispo           — gakeRegionalId
     //   Régional Région A emprunté        — gakeRegionalBorrowedId
     //   Régional Région C dispo           — gakeRegionalCId
@@ -354,7 +354,7 @@ final class EquipmentControllerTest extends AbstractWebTestCase
 
     public function testIndexMgrCtkDoesNotSeeOtherCtkBorrowedClub(): void
     {
-        // Club B (Région B) a son gant emprunté → CTK Île-de-France ne peut pas le voir
+        // Club B (Région B) a son gant emprunté → CTK Ile de France ne peut pas le voir
         $this->loginAs(AppFixtures::USER_MANAGER_CTK);
         $this->client->request(Request::METHOD_GET, '/equipment');
         $this->assertResponseIsSuccessful();
@@ -365,7 +365,7 @@ final class EquipmentControllerTest extends AbstractWebTestCase
 
     public function testIndexMgrCtkSeesOtherCtkAvailableClub(): void
     {
-        // Club G (Bretagne, Région C) a son gant disponible → CTK Île-de-France peut le voir
+        // Club G (Arc Atlantique, Région C) a son gant disponible → CTK Ile de France peut le voir
         $this->loginAs(AppFixtures::USER_MANAGER_CTK);
         $this->client->request(Request::METHOD_GET, '/equipment');
         $this->assertResponseIsSuccessful();

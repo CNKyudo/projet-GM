@@ -152,6 +152,32 @@ final class UserControllerTest extends AbstractWebTestCase
         $this->assertGetGranted('/user');
     }
 
+    public function testCreateUserButtonVisibleForAdmin(): void
+    {
+        $this->loginAs(AppFixtures::USER_ADMIN);
+        $crawler = $this->client->request(Request::METHOD_GET, '/user');
+        $this->assertResponseStatusCodeSame(200);
+
+        // Vérifier que le bouton "Créer un utilisateur" est visible
+        $link = $crawler->selectLink('Créer un utilisateur');
+        $this->assertCount(1, $link, 'Le bouton "Créer un utilisateur" doit être visible pour l\'admin');
+
+        // Vérifier que le lien pointe vers la route admin_user_create
+        $href = $link->attr('href');
+        $this->assertStringContainsString('/admin/users/create', (string) $href);
+    }
+
+    public function testCreateUserButtonHiddenForNonAdmin(): void
+    {
+        $this->loginAs(AppFixtures::USER_PRESIDENT);
+        $crawler = $this->client->request(Request::METHOD_GET, '/user');
+        $this->assertResponseStatusCodeSame(200);
+
+        // Vérifier que le bouton "Créer un utilisateur" n'est pas visible
+        $link = $crawler->selectLink('Créer un utilisateur');
+        $this->assertCount(0, $link, 'Le bouton "Créer un utilisateur" ne doit pas être visible pour un non-admin');
+    }
+
     // -----------------------------------------------------------------------
     // GET /user/{id}/club — assignation d'un club
     // Autorisé pour : CLUB_PRESIDENT, EQUIPMENT_MANAGER_CTK, ADMIN

@@ -25,11 +25,11 @@ use Symfony\Component\HttpFoundation\Request;
  *   gakeB           CLUB      Club B (Lyon)            nb_fingers=3  size=9   prêté à Club C
  *   gakeC           CLUB      Club C (Vincennes)       nb_fingers=3  size=6   disponible
  *   gakeG           CLUB      Club G (Rennes)          nb_fingers=4  size=7   disponible
- *   gakeRA          REGIONAL  Région A (Île-de-France) nb_fingers=3  size=8   disponible
- *   gakeRC          REGIONAL  Région C (Bretagne)      nb_fingers=3  size=7   disponible
+ *   gakeRA          REGIONAL  Région A (Ile de France) nb_fingers=3  size=8   disponible
+ *   gakeRC          REGIONAL  Région C (Arc Atlantique) nb_fingers=3  size=7   disponible
  *   gakeNat         NATIONAL  Fédération               nb_fingers=5  size=10  disponible
  *   gakeNatBorrowed NATIONAL  Fédération               nb_fingers=3  size=8   prêté à memberLinked
- *   gakeRegABorrowed REGIONAL Région A (Île-de-France) nb_fingers=4  size=7   prêté à Club A
+ *   gakeRegABorrowed REGIONAL Région A (Ile de France) nb_fingers=4  size=7   prêté à Club A
  *
  * Arcs (9) :
  *   yumiA1   CLUB      Club A  bambou       14  namisun      disponible
@@ -189,7 +189,7 @@ final class EquipmentSearchFilterTest extends AbstractWebTestCase
     // -----------------------------------------------------------------------
     // E. Filtre status=loaned
     // Admin : gakeB + yumiD + gakeNatBorrowed + gakeRegABorrowed → LOANED_COUNT=4.
-    // Member (Club A / Île-de-France) : ne voit que son club + régional dispo →
+    // Member (Club A / Ile de France) : ne voit que son club + régional dispo →
     //   Club A n'a aucun équipement prêté → 0 résultat.
     // -----------------------------------------------------------------------
 

@@ -16,6 +16,11 @@ final class UserPermissionService
     // Gestion des utilisateurs
     // -----------------------------------------------------------------------
 
+    public function canCreateUser(User $user): bool
+    {
+        return $this->hasAnyRole($user, UserRole::ADMIN);
+    }
+
     public function canAccessUserManagement(User $user): bool
     {
         return $this->hasAtLeastRole($user, UserRole::CLUB_PRESIDENT);

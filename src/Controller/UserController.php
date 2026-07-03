@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Enum\UserRole;
 use App\Form\ChangePasswordFormType;
+use App\Form\ForceChangePasswordType;
 use App\Form\UserProfileType;
 use App\Repository\UserRepository;
 use App\Security\Voter\UserPermissionVoter;
@@ -83,6 +84,37 @@ final class UserController extends AbstractController
         }
 
         return $this->render('user/change_password.html.twig', [
+            'form' => $form,
+        ]);
+    }
+
+    #[Route('/profile/password/force', name: 'user_force_change_password', methods: ['GET', 'POST'])]
+    #[IsGranted(UserPermissionVoter::EDIT_OWN_ACCOUNT_INFORMATION)]
+    public function forceChangePassword(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $user = $this->getAuthenticatedUser();
+
+        if (!$user->isMustChangePassword()) {
+            return $this->redirectToRoute('user_profile');
+        }
+
+        $form = $this->createForm(ForceChangePasswordType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var string $plainPassword */
+            $plainPassword = $form->get('plainPassword')->getData();
+
+            $user->setPassword($this->userPasswordHasher->hashPassword($user, $plainPassword));
+            $user->setMustChangePassword(false);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Votre mot de passe a bien été modifié. Bienvenue !');
+
+            return $this->redirectToRoute('user_profile');
+        }
+
+        return $this->render('user/force_change_password.html.twig', [
             'form' => $form,
         ]);
     }
