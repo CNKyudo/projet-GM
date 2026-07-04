@@ -72,7 +72,7 @@ final readonly class EquipmentExportService
             $sheet->fromArray(
                 $this->buildRow($equipment),
                 null,
-                'A' . $row
+                'A'.$row
             );
 
             ++$row;
@@ -82,7 +82,7 @@ final readonly class EquipmentExportService
             count($this->buildHeaders())
         );
 
-        $sheet->getStyle("A1:{$lastColumn}1")
+        $sheet->getStyle(sprintf('A1:%s1', $lastColumn))
             ->getFont()
             ->setBold(true);
 
