@@ -114,6 +114,7 @@ final class EquipmentController extends AbstractController
         $equipmentType = (string) $request->request->get('equipmentType', '');
         $equipmentTypeObj = EquipmentType::tryFrom($equipmentType);
         $status = (string) $request->request->get('status', 'all');
+        $format = (string) $request->request->get('format', 'csv');
 
         if (!in_array($status, ['all', 'available', 'loaned'], true)) {
             $status = 'all';
@@ -143,7 +144,10 @@ final class EquipmentController extends AbstractController
 
         $equipments = $queryBuilder->getQuery()->getResult();
 
-        return $this->equipmentExportService->buildCsvResponse($equipments);
+        return match ($format) {
+            'xlsx' => $this->equipmentExportService->buildExcelResponse($equipments),
+            default => $this->equipmentExportService->buildCsvResponse($equipments),
+        };
     }
 
     #[Route('/equipment/{id}', name: 'equipment.show', requirements: ['id' => '\d+'])]
