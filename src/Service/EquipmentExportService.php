@@ -18,6 +18,8 @@ use App\Enum\EquipmentState;
 use App\Enum\EquipmentType;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 final readonly class EquipmentExportService
 {
@@ -51,6 +53,52 @@ final readonly class EquipmentExportService
 
         $response = new Response($content);
         $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
+        $response->headers->set('Content-Disposition', 'attachment; filename="'.$filename.'"');
+        $response->headers->set('Cache-Control', 'no-cache, no-store, must-revalidate');
+
+        return $response;
+    }
+
+    public function buildExcelResponse(array $equipments): Response
+    {
+        $filename = 'equipements_'.date('Ymd_His').'.xlsx';
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->fromArray($this->buildHeaders(), null, 'A1');
+
+        $row = 2;
+
+        foreach ($equipments as $equipment) {
+            $sheet->fromArray(
+                $this->buildRow($equipment),
+                null,
+                'A' . $row
+            );
+
+            ++$row;
+        }
+
+        $lastColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(
+            count($this->buildHeaders())
+        );
+
+        $sheet->getStyle("A1:{$lastColumn}1")
+            ->getFont()
+            ->setBold(true);
+
+        // Autosize columns
+        foreach (range('A', $lastColumn) as $column) {
+            $sheet->getColumnDimension($column)->setAutoSize(true);
+        }
+
+        $writer = new Xlsx($spreadsheet);
+
+        ob_start();
+        $writer->save('php://output');
+        $content = ob_get_clean();
+
+        $response = new Response($content);
+        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         $response->headers->set('Content-Disposition', 'attachment; filename="'.$filename.'"');
         $response->headers->set('Cache-Control', 'no-cache, no-store, must-revalidate');
 
