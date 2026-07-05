@@ -25,6 +25,10 @@ class Etafoam extends Equipment
     #[Versioned]
     private ?float $thickness = null;
 
+    #[ORM\Column(type: Types::INTEGER)]
+    #[Versioned]
+    private int $quantity = 1;
+
     public static function getType(): EquipmentType
     {
         return EquipmentType::ETAFOAM;
@@ -62,6 +66,18 @@ class Etafoam extends Equipment
     public function setThickness(?float $thickness): static
     {
         $this->thickness = $thickness;
+
+        return $this;
+    }
+
+    public function getQuantity(): int
+    {
+        return $this->quantity;
+    }
+
+    public function setQuantity(int $quantity): static
+    {
+        $this->quantity = $quantity;
 
         return $this;
     }
