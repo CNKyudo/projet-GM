@@ -288,6 +288,7 @@ final class EquipmentController extends AbstractController
                 $equipment->setEquipmentLength($etafoamForm->get('equipmentLength')->getData());
                 $equipment->setWidth($etafoamForm->get('width')->getData());
                 $equipment->setThickness($etafoamForm->get('thickness')->getData());
+                $equipment->setQuantity($etafoamForm->get('quantity')->getData());
             }
 
             $entityManager->persist($equipment);

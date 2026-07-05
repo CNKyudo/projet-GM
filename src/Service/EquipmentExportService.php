@@ -59,6 +59,9 @@ final readonly class EquipmentExportService
         return $response;
     }
 
+    /**
+     * @param array<int|string, Equipment> $equipments
+     */
     public function buildExcelResponse(array $equipments): Response
     {
         $filename = 'equipements_'.date('Ymd_His').'.xlsx';
@@ -78,16 +81,16 @@ final readonly class EquipmentExportService
             ++$row;
         }
 
-        $lastColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(
-            count($this->buildHeaders())
-        );
+        $headerCount = count($this->buildHeaders());
+        $lastColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($headerCount);
 
         $sheet->getStyle(sprintf('A1:%s1', $lastColumn))
             ->getFont()
             ->setBold(true);
 
-        // Autosize columns
-        foreach (range('A', $lastColumn) as $column) {
+        // Autosize columns - use numeric index instead of range() to avoid PHP warning with multi-byte column letters
+        for ($i = 1; $i <= $headerCount; ++$i) {
+            $column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i);
             $sheet->getColumnDimension($column)->setAutoSize(true);
         }
 
@@ -95,7 +98,7 @@ final readonly class EquipmentExportService
 
         ob_start();
         $writer->save('php://output');
-        $content = ob_get_clean();
+        $content = (string) ob_get_clean();
 
         $response = new Response($content);
         $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -133,6 +136,7 @@ final readonly class EquipmentExportService
             'Longueur (cm)',      // Maku, Etafoam
             'Largeur (cm)',       // Etafoam
             'Épaisseur (cm)',     // Etafoam
+            'Quantité',           // Etafoam
             'Poids (kg)',         // Maku
             'Attache',            // Maku
             'Notes',
@@ -169,6 +173,7 @@ final readonly class EquipmentExportService
             $this->extractLength($equipment),
             $this->extractEtafoamWidth($equipment),
             $this->extractEtafoamThickness($equipment),
+            $this->extractQuantity($equipment),
             $this->extractMakuWeight($equipment),
             $this->extractMakuAttachment($equipment),
             $equipment->getNotes() ?? '',
@@ -314,6 +319,15 @@ final readonly class EquipmentExportService
         }
 
         return (string) ($equipment->getThickness() ?? '');
+    }
+
+    private function extractQuantity(Equipment $equipment): string
+    {
+        if (!$equipment instanceof Etafoam) {
+            return '';
+        }
+
+        return (string) $equipment->getQuantity();
     }
 
     private function extractMakuWeight(Equipment $equipment): string

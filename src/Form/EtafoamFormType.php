@@ -48,6 +48,16 @@ class EtafoamFormType extends AbstractType
                 'attr' => [
                     'min' => 0,
                 ],
+            ])
+            ->add('quantity', IntegerType::class, [
+                'label' => 'Quantité',
+                'constraints' => [
+                    new Range(min: 1),
+                ],
+                'required' => true,
+                'attr' => [
+                    'min' => 1,
+                ],
             ]);
     }
 

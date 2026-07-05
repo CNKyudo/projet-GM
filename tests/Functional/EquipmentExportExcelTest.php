@@ -129,9 +129,7 @@ final class EquipmentExportExcelTest extends AbstractWebTestCase
 
         try {
             $spreadsheet = $this->loadSpreadsheetFromContent($content);
-            $this->assertNotNull($spreadsheet);
             $sheet = $spreadsheet->getActiveSheet();
-            $this->assertNotNull($sheet);
             // Vérifier qu'il y a des données
             $this->assertGreaterThan(0, $sheet->getHighestRow());
         } catch (ReaderException $readerException) {
@@ -189,9 +187,10 @@ final class EquipmentExportExcelTest extends AbstractWebTestCase
         $headers = $data[0] ?? [];
         $typeIndex = array_search('Type', $headers, true);
         $this->assertNotFalse($typeIndex);
+        $counter = count($data);
 
         // Vérifier que toutes les lignes (sauf header) sont de type "Gant (Gake)"
-        for ($i = 1; $i < count($data); ++$i) {
+        for ($i = 1; $i < $counter; ++$i) {
             $row = $data[$i];
             if (!isset($row[$typeIndex]) || '' === $row[$typeIndex]) {
                 continue;
@@ -224,8 +223,9 @@ final class EquipmentExportExcelTest extends AbstractWebTestCase
         $borrowerMemberIndex = array_search('Membre emprunteur', $headers, true);
         $this->assertNotFalse($borrowerClubIndex);
         $this->assertNotFalse($borrowerMemberIndex);
+        $counter = count($data);
 
-        for ($i = 1; $i < count($data); ++$i) {
+        for ($i = 1; $i < $counter; ++$i) {
             $row = $data[$i];
             $borrowerClub = (string) ($row[$borrowerClubIndex] ?? '');
             $borrowerMember = (string) ($row[$borrowerMemberIndex] ?? '');
@@ -252,8 +252,9 @@ final class EquipmentExportExcelTest extends AbstractWebTestCase
         $headers = $data[0] ?? [];
         $niveauIndex = array_search('Niveau', $headers, true);
         $this->assertNotFalse($niveauIndex);
+        $counter = count($data);
 
-        for ($i = 1; $i < count($data); ++$i) {
+        for ($i = 1; $i < $counter; ++$i) {
             $row = $data[$i];
             $niveau = (string) ($row[$niveauIndex] ?? '');
             $this->assertNotSame('National', $niveau, 'MEMBER ne doit pas voir les équipements nationaux');
@@ -275,7 +276,8 @@ final class EquipmentExportExcelTest extends AbstractWebTestCase
         $this->assertNotFalse($niveauIndex);
 
         $hasNational = false;
-        for ($i = 1; $i < count($data); ++$i) {
+        $counter = count($data);
+        for ($i = 1; $i < $counter; ++$i) {
             $row = $data[$i];
             $niveau = (string) ($row[$niveauIndex] ?? '');
             if ('National' === $niveau) {
@@ -348,8 +350,9 @@ final class EquipmentExportExcelTest extends AbstractWebTestCase
         $headers = $data[0] ?? [];
         $typeIndex = array_search('Type', $headers, true);
         $this->assertNotFalse($typeIndex);
+        $counter = count($data);
 
-        for ($i = 1; $i < count($data); ++$i) {
+        for ($i = 1; $i < $counter; ++$i) {
             $row = $data[$i];
             $type = (string) ($row[$typeIndex] ?? '');
             $this->assertSame(
