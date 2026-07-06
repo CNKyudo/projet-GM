@@ -9,6 +9,7 @@ use App\Entity\Etafoam;
 use App\Entity\Gake;
 use App\Entity\Maku;
 use App\Entity\Makiwara;
+use App\Entity\Muneate;
 use App\Entity\SupportMakiwara;
 use App\Entity\Yatate;
 use App\Entity\Yumi;
@@ -124,11 +125,11 @@ final readonly class EquipmentExportService
             'Club emprunteur',
             'Membre emprunteur',
             // Colonnes spécifiques par type
-            'Matériau',           // Yumi, Makiwara, Maku
+            'Matériau',           // Yumi, Makiwara, Maku, Muneate
             'Force (kg)',         // Yumi
             'Longueur arc',       // Yumi
             'Nb doigts',          // Gake
-            'Taille gant',        // Gake
+            'Taille',             // Gake, Muneate
             'Hauteur (cm)',       // SupportMakiwara, Maku
             'Nb arcs',            // Yumitate
             'Orientation',        // Yumitate
@@ -136,7 +137,7 @@ final readonly class EquipmentExportService
             'Longueur (cm)',      // Maku, Etafoam
             'Largeur (cm)',       // Etafoam
             'Épaisseur (cm)',     // Etafoam
-            'Quantité',           // Etafoam
+            'Quantité',           // Etafoam, Muneate
             'Poids (kg)',         // Maku
             'Attache',            // Maku
             'Notes',
@@ -165,7 +166,7 @@ final readonly class EquipmentExportService
             $this->extractYumiStrength($equipment),
             $this->extractYumiLength($equipment),
             $this->extractNbFingers($equipment),
-            $this->extractGakeSize($equipment),
+            $this->extractSize($equipment),
             $this->extractHeight($equipment),
             $this->extractNbBows($equipment),
             $this->extractYumitateOrientation($equipment),
@@ -211,6 +212,10 @@ final readonly class EquipmentExportService
             return $equipment->getMaterial() ?? '';
         }
 
+        if ($equipment instanceof Muneate) {
+            return $equipment->getMaterial() ?? '';
+        }
+
         return '';
     }
 
@@ -241,13 +246,17 @@ final readonly class EquipmentExportService
         return (string) ($equipment->getNbFingers() ?? '');
     }
 
-    private function extractGakeSize(Equipment $equipment): string
+    private function extractSize(Equipment $equipment): string
     {
-        if (!$equipment instanceof Gake) {
-            return '';
+        if ($equipment instanceof Gake) {
+            return (string) ($equipment->getSize() ?? '');
         }
 
-        return (string) ($equipment->getSize() ?? '');
+        if ($equipment instanceof Muneate) {
+            return $equipment->getSize() ?? '';
+        }
+
+        return '';
     }
 
     private function extractHeight(Equipment $equipment): string
@@ -323,11 +332,15 @@ final readonly class EquipmentExportService
 
     private function extractQuantity(Equipment $equipment): string
     {
-        if (!$equipment instanceof Etafoam) {
-            return '';
+        if ($equipment instanceof Etafoam) {
+            return (string) $equipment->getQuantity();
         }
 
-        return (string) $equipment->getQuantity();
+        if ($equipment instanceof Muneate) {
+            return (string) $equipment->getQuantity();
+        }
+
+        return '';
     }
 
     private function extractMakuWeight(Equipment $equipment): string
