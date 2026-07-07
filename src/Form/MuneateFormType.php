@@ -58,6 +58,7 @@ class MuneateFormType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Muneate::class,
+            'inherit_data' => true,
         ]);
     }
 }

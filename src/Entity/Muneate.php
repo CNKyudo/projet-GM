@@ -54,7 +54,7 @@ class Muneate extends Equipment
         return $this;
     }
 
-    public function getQuantity(): ?int
+    public function getQuantity(): int
     {
         return $this->quantity;
     }
