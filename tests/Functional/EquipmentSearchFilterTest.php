@@ -60,14 +60,16 @@ use Symfony\Component\HttpFoundation\Request;
  * status=loaned   + gake  →  3  (gakeB + gakeNatBorrowed + gakeRegABorrowed)
  *
  * Recherche textuelle (DefaultSearchStrategy — sans filtre de type) :
- *   Champs indexés : ownerClub.name, borrowerClub.name, CONCAT(id,'')
- *   Les équipements régionaux/nationaux ont ownerClub NULL → non trouvables par nom de propriétaire.
+ *   Champs indexés : ownerClub.name, borrowerClub.name, ownerRegion.name, CONCAT(id,'')
+ *   Les équipements régionaux/nationaux ont ownerClub NULL → trouvables par nom de région propriétaire.
  *
  *   q="paris"   → Club A ("Kyudo Paris Marais") + Club D ("Ryushin Dojo Paris")
  *                  gakeA1, gakeA2, yumiA1, yumiA2, yumiD → 5
  *                  + gakeRegABorrowed (borrowerClub=Club A → "Paris") → 6
  *   q="lyon"    → Club B ("Kyudo Lyon") → gakeB (via owner.name) → 1
  *   q="vincen"  → Club C ("Kyudo Vincennes") via owner.name (gakeC) + via borrower.name (gakeB) → 2
+ *   q="ile"     → Région A ("Ile de France") → gakeRA, gakeRegABorrowed → 2
+ *   q="arc"     → Région C ("Arc Atlantique") → gakeRC → 1
  *   q="bambou"  → aucun club/région/fédération ne contient "bambou" → 0
  *
  * Recherche textuelle (YumiSearchStrategy — type=yumi) :
@@ -305,6 +307,26 @@ final class EquipmentSearchFilterTest extends AbstractWebTestCase
         $crawler = $this->requestIndex(['q' => 'vincen']);
         $this->assertResponseIsSuccessful();
         $this->assertSame(2, $this->countEquipmentRows($crawler));
+    }
+
+    public function testSearchByOwnerRegionName(): void
+    {
+        // "ile" → Région A ("Ile de France") → gakeRA (owner), gakeRegABorrowed (owner) → 2
+        $this->loginAs(AppFixtures::USER_ADMIN);
+        $crawler = $this->requestIndex(['q' => 'ile']);
+        $this->assertResponseIsSuccessful();
+        $this->assertSame(2, $this->countEquipmentRows($crawler));
+        $this->assertStringContainsString(AppFixtures::REGION_A, (string) $this->client->getResponse()->getContent());
+    }
+
+    public function testSearchByOwnerRegionNameArc(): void
+    {
+        // "arc" → Région C ("Arc Atlantique") → gakeRC (owner) → 1
+        $this->loginAs(AppFixtures::USER_ADMIN);
+        $crawler = $this->requestIndex(['q' => 'arc']);
+        $this->assertResponseIsSuccessful();
+        $this->assertSame(1, $this->countEquipmentRows($crawler));
+        $this->assertStringContainsString(AppFixtures::REGION_C, (string) $this->client->getResponse()->getContent());
     }
 
     public function testSearchWithNoMatchReturnsNoResults(): void

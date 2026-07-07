@@ -20,6 +20,7 @@ final class YatateSearchStrategy extends AbstractSearchStrategy
         return $this->yatateRepository->createQueryBuilder('ya')
             ->leftJoin('ya.ownerClub', 'owner')->addSelect('owner')
             ->leftJoin('ya.borrowerClub', 'borrower')->addSelect('borrower')
+            ->leftJoin('ya.ownerRegion', 'ownerRegion')->addSelect('ownerRegion')
             ->orderBy('ya.id', 'DESC');
     }
 

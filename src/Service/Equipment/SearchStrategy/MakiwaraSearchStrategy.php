@@ -20,6 +20,7 @@ final class MakiwaraSearchStrategy extends AbstractSearchStrategy
         return $this->makiwaraRepository->createQueryBuilder('m')
             ->leftJoin('m.ownerClub', 'owner')->addSelect('owner')
             ->leftJoin('m.borrowerClub', 'borrower')->addSelect('borrower')
+            ->leftJoin('m.ownerRegion', 'ownerRegion')->addSelect('ownerRegion')
             ->orderBy('m.id', 'DESC');
     }
 
