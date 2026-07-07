@@ -20,6 +20,7 @@ final class GakeSearchStrategy extends AbstractSearchStrategy
         return $this->gakeRepository->createQueryBuilder('g')
             ->leftJoin('g.ownerClub', 'owner')->addSelect('owner')
             ->leftJoin('g.borrowerClub', 'borrower')->addSelect('borrower')
+            ->leftJoin('g.ownerRegion', 'ownerRegion')->addSelect('ownerRegion')
             ->orderBy('g.id', 'DESC');
     }
 

@@ -20,6 +20,7 @@ final class YumitateSearchStrategy extends AbstractSearchStrategy
         return $this->yumitateRepository->createQueryBuilder('yt')
             ->leftJoin('yt.ownerClub', 'owner')->addSelect('owner')
             ->leftJoin('yt.borrowerClub', 'borrower')->addSelect('borrower')
+            ->leftJoin('yt.ownerRegion', 'ownerRegion')->addSelect('ownerRegion')
             ->orderBy('yt.id', 'DESC');
     }
 

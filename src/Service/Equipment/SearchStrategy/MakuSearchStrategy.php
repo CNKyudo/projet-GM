@@ -20,6 +20,7 @@ final class MakuSearchStrategy extends AbstractSearchStrategy
         return $this->makuRepository->createQueryBuilder('mk')
             ->leftJoin('mk.ownerClub', 'owner')->addSelect('owner')
             ->leftJoin('mk.borrowerClub', 'borrower')->addSelect('borrower')
+            ->leftJoin('mk.ownerRegion', 'ownerRegion')->addSelect('ownerRegion')
             ->orderBy('mk.id', 'DESC');
     }
 

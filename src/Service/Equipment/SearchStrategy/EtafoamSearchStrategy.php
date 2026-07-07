@@ -20,6 +20,7 @@ final class EtafoamSearchStrategy extends AbstractSearchStrategy
         return $this->etafoamRepository->createQueryBuilder('ef')
             ->leftJoin('ef.ownerClub', 'owner')->addSelect('owner')
             ->leftJoin('ef.borrowerClub', 'borrower')->addSelect('borrower')
+            ->leftJoin('ef.ownerRegion', 'ownerRegion')->addSelect('ownerRegion')
             ->orderBy('ef.id', 'DESC');
     }
 

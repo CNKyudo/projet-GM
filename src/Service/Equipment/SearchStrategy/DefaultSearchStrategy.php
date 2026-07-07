@@ -19,10 +19,11 @@ final class DefaultSearchStrategy extends AbstractSearchStrategy
     protected function createBaseQueryBuilder(): QueryBuilder
     {
         return $this->entityManager->createQueryBuilder()
-            ->select('e', 'owner', 'borrower')
+            ->select('e', 'owner', 'borrower', 'ownerRegion')
             ->from(Equipment::class, 'e')
             ->leftJoin('e.ownerClub', 'owner')
             ->leftJoin('e.borrowerClub', 'borrower')
+            ->leftJoin('e.ownerRegion', 'ownerRegion')
             ->orderBy('e.id', 'DESC');
     }
 
@@ -35,6 +36,7 @@ final class DefaultSearchStrategy extends AbstractSearchStrategy
             $queryBuilder->expr()->orX(
                 $queryBuilder->expr()->like('LOWER(owner.name)', ':term'),
                 $queryBuilder->expr()->like('LOWER(borrower.name)', ':term'),
+                $queryBuilder->expr()->like('LOWER(ownerRegion.name)', ':term'),
                 $queryBuilder->expr()->like(sprintf("CONCAT(%s.id, '')", $alias), ':term')
             )
         )->setParameter('term', $searchTerm);

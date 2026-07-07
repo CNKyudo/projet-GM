@@ -20,6 +20,7 @@ final class YumiSearchStrategy extends AbstractSearchStrategy
         return $this->yumiRepository->createQueryBuilder('y')
             ->leftJoin('y.ownerClub', 'owner')->addSelect('owner')
             ->leftJoin('y.borrowerClub', 'borrower')->addSelect('borrower')
+            ->leftJoin('y.ownerRegion', 'ownerRegion')->addSelect('ownerRegion')
             ->orderBy('y.id', 'DESC');
     }
 
