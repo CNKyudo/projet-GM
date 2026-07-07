@@ -8,6 +8,7 @@ equipment:
     yatate: "Yatate"
     maku: "Maku"
     etafoam: "Etafoam"
+    muneate: "Muneate"
   choose_type: "Choisir un type..."
   added: "{type} ajouté !"
   state:
@@ -65,3 +66,4 @@ log_entry:
     thickness: "Épaisseur"
     weight: "Poids (kg)"
     attachment: "Accroche"
+    quantity: "Quantité"

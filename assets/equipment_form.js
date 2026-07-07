@@ -78,10 +78,14 @@ function normalizeEquipmentType(selectElement) {
         return 'etafoam'
     }
 
+    if (normalizedCandidates.some(function (value) { return value.includes('muneate') })) {
+        return 'muneate'
+    }
+
     return ''
 }
 
-function updateEquipmentSections(selectElement, gakeSection, yumiSection, makiwaraSection, supportMakiwaraSection, yumitateSection, yatateSection, makuSection, etafoamSection) {
+function updateEquipmentSections(selectElement, gakeSection, yumiSection, makiwaraSection, supportMakiwaraSection, yumitateSection, yatateSection, makuSection, etafoamSection, muneateSection) {
     var equipmentType = normalizeEquipmentType(selectElement)
     var sections = {
         gake: gakeSection,
@@ -92,6 +96,7 @@ function updateEquipmentSections(selectElement, gakeSection, yumiSection, makiwa
         yatate: yatateSection,
         maku: makuSection,
         etafoam: etafoamSection,
+        muneate: muneateSection,
     }
 
     Object.values(sections).forEach(disableFormSection)
@@ -185,6 +190,8 @@ function initEquipmentForm(root) {
         || root.querySelector('#maku_form_section')
     const etafoamFormSection = root.querySelector('[data-equipment-form-section="etafoam"]')
         || root.querySelector('#etafoam_form_section')
+    const muneateFormSection = root.querySelector('[data-equipment-form-section="muneate"]')
+        || root.querySelector('#muneate_form_section')
     const refreshSections = function () {
         updateEquipmentSections(
             equipmentType,
@@ -195,7 +202,8 @@ function initEquipmentForm(root) {
             yumitateFormSection,
             yatateFormSection,
             makuFormSection,
-            etafoamFormSection
+            etafoamFormSection,
+            muneateFormSection
         )
     }
 

@@ -19,6 +19,7 @@ use App\Entity\Yumitate;
 use App\Entity\Yatate;
 use App\Entity\Maku;
 use App\Entity\Etafoam;
+use App\Entity\Muneate;
 use App\Enum\EquipmentState;
 use App\Enum\EquipmentType;
 use App\Repository\ClubRepository;
@@ -118,6 +119,9 @@ class EquipmentFormType extends AbstractType
                     ->add('etafoam_form', EtafoamFormType::class, [
                         'disabled' => true,
                     ])
+                    ->add('muneate_form', MuneateFormType::class, [
+                        'disabled' => true,
+                    ])
                 ;
             } elseif ($data instanceof Equipment) {
                 // Reconstruire les champs owner* avec l'option `data` pour que le select
@@ -142,6 +146,8 @@ class EquipmentFormType extends AbstractType
                     $form->add('maku_form', MakuFormType::class);
                 } elseif ($data instanceof Etafoam) {
                     $form->add('etafoam_form', EtafoamFormType::class);
+                } elseif ($data instanceof Muneate) {
+                    $form->add('muneate_form', MuneateFormType::class);
                 }
             }
         });
@@ -186,6 +192,10 @@ class EquipmentFormType extends AbstractType
 
             $form->add('etafoam_form', EtafoamFormType::class, [
                 'disabled' => $submittedType !== EquipmentType::ETAFOAM->value,
+            ]);
+
+            $form->add('muneate_form', MuneateFormType::class, [
+                'disabled' => $submittedType !== EquipmentType::MUNEATE->value,
             ]);
         });
 

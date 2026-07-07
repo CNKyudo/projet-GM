@@ -339,9 +339,40 @@
         {% endif %}
       </div>
 
+      <div id="muneate_form_section" data-equipment-form-section="muneate"
+        {% if (form.equipment_type is defined and form.equipment_type.vars.value != 'muneate') or form.muneate_form is not defined %}
+            class="hidden"
+        {% endif %}
+      >
+        {% if form.muneate_form is defined %}
+          <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
+            {{ form.muneate_form.size.vars.label|default('Taille') }}
+          </label>
+          {{ form_widget(form.muneate_form.size, {
+            attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
+          }) }}
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.muneate_form.size) }}</div>
+
+          <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
+            {{ form.muneate_form.material.vars.label|default('Matériau') }}
+          </label>
+          {{ form_widget(form.muneate_form.material, {
+            attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
+          }) }}
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.muneate_form.material) }}</div>
+
+          <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
+            {{ form.muneate_form.quantity.vars.label|default('Quantité') }}
+          </label>
+          {{ form_widget(form.muneate_form.quantity, {
+            attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
+          }) }}
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.muneate_form.quantity) }}</div>
+        {% endif %}
+      </div>
+
     </div>
   </section>
-
   {{ form_rest(form) }}
 
   <div class="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">

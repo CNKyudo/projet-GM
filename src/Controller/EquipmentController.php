@@ -17,6 +17,7 @@ use App\Entity\Yumitate;
 use App\Entity\Yatate;
 use App\Entity\Maku;
 use App\Entity\Etafoam;
+use App\Entity\Muneate;
 use App\Enum\EquipmentLevel;
 use App\Enum\EquipmentType;
 use App\Form\EquipmentFormType;
@@ -207,6 +208,7 @@ final class EquipmentController extends AbstractController
                 EquipmentType::YATATE => new Yatate(),
                 EquipmentType::MAKU => new Maku(),
                 EquipmentType::ETAFOAM => new Etafoam(),
+                EquipmentType::MUNEATE => new Muneate(),
             };
 
             // Déterminer le niveau et le propriétaire selon les champs soumis
@@ -289,6 +291,13 @@ final class EquipmentController extends AbstractController
                 $equipment->setWidth($etafoamForm->get('width')->getData());
                 $equipment->setThickness($etafoamForm->get('thickness')->getData());
                 $equipment->setQuantity($etafoamForm->get('quantity')->getData());
+            }
+
+            if ($equipment instanceof Muneate && $form->has('muneate_form')) {
+                $muneateForm = $form->get('muneate_form');
+                $equipment->setSize($muneateForm->get('size')->getData());
+                $equipment->setMaterial($muneateForm->get('material')->getData());
+                $equipment->setQuantity($muneateForm->get('quantity')->getData());
             }
 
             $entityManager->persist($equipment);
