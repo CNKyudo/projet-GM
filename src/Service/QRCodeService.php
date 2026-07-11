@@ -66,7 +66,7 @@ class QRCodeService
             foregroundColor: new Color(0, 0, 0),
             backgroundColor: new Color(255, 255, 255)
         );
-         
+
         $logo = $isNational
             ? new Logo(
                 path: $this->logoPathPDF,
@@ -103,7 +103,7 @@ class QRCodeService
             backgroundColor: new Color(255, 255, 255)
         );
 
-        $isNational = $qrCode->getEquipment()->getEquipmentLevel() === EquipmentLevel::NATIONAL;
+        $isNational = EquipmentLevel::NATIONAL === $qrCode->getEquipment()->getEquipmentLevel();
         $logo = $isNational
             ? new Logo(
                 path: $this->logoPathSVG,
@@ -145,7 +145,7 @@ class QRCodeService
         );
 
         // Génération PNG via endroid/qr-code (utilise GD, pas Imagick)
-        $isNational = $equipment->getEquipmentLevel() === EquipmentLevel::NATIONAL;
+        $isNational = EquipmentLevel::NATIONAL === $equipment->getEquipmentLevel();
         $pngBase64 = $this->generateStyledQrCode($url, $isNational);
 
         $html = $this->twig->render('qr-code.pdf.twig', [
