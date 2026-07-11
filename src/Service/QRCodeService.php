@@ -6,24 +6,20 @@ namespace App\Service;
 
 use App\Entity\Equipment;
 use App\Entity\QRCode;
-// use BaconQrCode\Renderer\Image\SvgImageBackEnd;
-// use BaconQrCode\Renderer\ImageRenderer;
-// use BaconQrCode\Renderer\RendererStyle\RendererStyle;
-// use BaconQrCode\Writer;
+use App\Enum\EquipmentLevel;
 use Doctrine\ORM\EntityManagerInterface;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use Endroid\QrCode\QrCode as EndroidQrCode;
 use Endroid\QrCode\Writer\PngWriter;
-// new start
+use Endroid\QrCode\Writer\SvgWriter;
 use Endroid\QrCode\Color\Color;
 use Endroid\QrCode\Encoding\Encoding;
 use Endroid\QrCode\ErrorCorrectionLevel;
 use Endroid\QrCode\Logo\Logo;
 use Endroid\QrCode\RoundBlockSizeMode;
-use Endroid\QrCode\Writer\SvgWriter;
-// new end
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Twig\Environment;
 
 class QRCodeService
@@ -32,6 +28,10 @@ class QRCodeService
         private readonly EntityManagerInterface $em,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly Environment $twig,
+        #[Autowire('%app.logo_svg%')]
+        private readonly string $logoPathSVG,
+        #[Autowire('%app.logo_pdf%')]
+        private readonly string $logoPathPDF,
     ) {
     }
 
@@ -52,7 +52,7 @@ class QRCodeService
     /**
      * Génère un QR code stylisé en PNG (via endroid/qr-code + GD) pour PDF.
      */
-    private function generateStyledQrCode(string $url): string
+    private function generateStyledQrCode(string $url, bool $isNational): string
     {
         $writer = new PngWriter();
 
@@ -66,12 +66,14 @@ class QRCodeService
             foregroundColor: new Color(0, 0, 0),
             backgroundColor: new Color(255, 255, 255)
         );
-
-        $logo = new Logo(
-            path: __DIR__.'/../../assets/pictures/FRANCE_KYUDO_LOGOTYPE_RVB_PRINCIPAL BLANC.png',
-            resizeToWidth: 150,
-            punchoutBackground: true
-        );
+         
+        $logo = $isNational
+            ? new Logo(
+                path: $this->logoPathPDF,
+                resizeToWidth: 150,
+                punchoutBackground: true
+            )
+            : null;
 
         $result = $writer->write($qrCode, $logo);
 
@@ -101,10 +103,13 @@ class QRCodeService
             backgroundColor: new Color(255, 255, 255)
         );
 
-        $logo = new Logo(
-            path: __DIR__.'/../../assets/pictures/FRANCE_KYUDO_LOGOTYPE_RVB_PRINCIPAL BLANC_BG-BLEU.png',
-            resizeToWidth: (int) ($size * 0.5)
-        );
+        $isNational = $qrCode->getEquipment()->getEquipmentLevel() === EquipmentLevel::NATIONAL;
+        $logo = $isNational
+            ? new Logo(
+                path: $this->logoPathSVG,
+                resizeToWidth: (int) ($size * 0.5)
+            )
+            : null;
 
         $writer = new SvgWriter();
 
@@ -140,7 +145,8 @@ class QRCodeService
         );
 
         // Génération PNG via endroid/qr-code (utilise GD, pas Imagick)
-        $pngBase64 = $this->generateStyledQrCode($url);
+        $isNational = $equipment->getEquipmentLevel() === EquipmentLevel::NATIONAL;
+        $pngBase64 = $this->generateStyledQrCode($url, $isNational);
 
         $html = $this->twig->render('qr-code.pdf.twig', [
             'equipmentLabel' => $equipmentLabel,

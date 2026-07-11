@@ -4,6 +4,8 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    app.logo_svg: '%kernel.project_dir%/assets/pictures/FRANCE_KYUDO_LOGOTYPE_RVB_PRINCIPAL BLANC_BG-BLEU.png' # an image with background, ideally blue (for svg)
+    app.logo_pdf: '%kernel.project_dir%/assets/pictures/FRANCE_KYUDO_LOGOTYPE_RVB_PRINCIPAL BLANC.png' # an image without background, ideally white (for pdf)
 
 services:
     # default configuration for services in *this* file
