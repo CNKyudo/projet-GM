@@ -46,57 +46,67 @@ function normalizeEquipmentType(selectElement) {
         return String(value || '').trim().toLowerCase()
     })
 
-    if (normalizedCandidates.some(function (value) { return value.includes('support_makiwara') })) {
-        return 'support_makiwara'
+    if (normalizedCandidates.some(function (value) { return value.includes('etafoam') })) {
+        return 'etafoam'
     }
-
-    if (normalizedCandidates.some(function (value) { return value.includes('makiwara') })) {
-        return 'makiwara'
-    }
-
+    // Gake doit être testé avant Shitagake, car "shitagake" contient "gake".
+    if (normalizedCandidates.some(function (value) { return value.includes('shitagake') })) {
+        return 'shitagake'
+    }    
     if (normalizedCandidates.some(function (value) { return value.includes('gake') })) {
         return 'gake'
     }
-
+    if (normalizedCandidates.some(function (value) { return value.includes('makiwara') })) {
+        return 'makiwara'
+    }
+    if (normalizedCandidates.some(function (value) { return value.includes('maku') })) {
+        return 'maku'
+    }
+    if (normalizedCandidates.some(function (value) { return value.includes('muneate') })) {
+        return 'muneate'
+    }    
+    if (normalizedCandidates.some(function (value) { return value.includes('support_makiwara') })) {
+        return 'support_makiwara'
+    }
     if (normalizedCandidates.some(function (value) { return value.includes('yatate') })) {
         return 'yatate'
     }
-
+    // Yumi doit être testé avant Yumitate, car "yumitate" contient "yumi".
     if (normalizedCandidates.some(function (value) { return value.includes('yumitate') })) {
         return 'yumitate'
     }
-
     if (normalizedCandidates.some(function (value) { return value.includes('yumi') })) {
         return 'yumi'
     }
 
-    if (normalizedCandidates.some(function (value) { return value.includes('maku') })) {
-        return 'maku'
-    }
-
-    if (normalizedCandidates.some(function (value) { return value.includes('etafoam') })) {
-        return 'etafoam'
-    }
-
-    if (normalizedCandidates.some(function (value) { return value.includes('muneate') })) {
-        return 'muneate'
-    }
 
     return ''
 }
 
-function updateEquipmentSections(selectElement, gakeSection, yumiSection, makiwaraSection, supportMakiwaraSection, yumitateSection, yatateSection, makuSection, etafoamSection, muneateSection) {
+function updateEquipmentSections(selectElement, 
+        etafoamSection, 
+        gakeSection, 
+        makiwaraSection, 
+        makuSection, 
+        muneateSection,
+        shitagakeSection,
+        supportMakiwaraSection, 
+        yatateSection, 
+        yumiSection, 
+        yumitateSection
+    ) {
     var equipmentType = normalizeEquipmentType(selectElement)
     var sections = {
-        gake: gakeSection,
-        yumi: yumiSection,
-        makiwara: makiwaraSection,
-        support_makiwara: supportMakiwaraSection,
-        yumitate: yumitateSection,
-        yatate: yatateSection,
-        maku: makuSection,
         etafoam: etafoamSection,
+        gake: gakeSection,
+        makiwara: makiwaraSection,
+        maku: makuSection,
         muneate: muneateSection,
+        shitagake: shitagakeSection,
+        support_makiwara: supportMakiwaraSection,
+        yatate: yatateSection,
+        yumi: yumiSection,
+        yumitate: yumitateSection
     }
 
     Object.values(sections).forEach(disableFormSection)
@@ -174,36 +184,39 @@ function initEquipmentForm(root) {
         return
     }
 
-    const gakeFormSection = root.querySelector('[data-equipment-form-section="gake"]')
-        || root.querySelector('#gake_form_section')
-    const yumiFormSection = root.querySelector('[data-equipment-form-section="yumi"]')
-        || root.querySelector('#yumi_form_section')
-    const makiwaraFormSection = root.querySelector('[data-equipment-form-section="makiwara"]')
-        || root.querySelector('#makiwara_form_section')
-    const supportMakiwaraFormSection = root.querySelector('[data-equipment-form-section="support_makiwara"]')
-        || root.querySelector('#support_makiwara_form_section')
-    const yumitateFormSection = root.querySelector('[data-equipment-form-section="yumitate"]')
-        || root.querySelector('#yumitate_form_section')
-    const yatateFormSection = root.querySelector('[data-equipment-form-section="yatate"]')
-        || root.querySelector('#yatate_form_section')
-    const makuFormSection = root.querySelector('[data-equipment-form-section="maku"]')
-        || root.querySelector('#maku_form_section')
     const etafoamFormSection = root.querySelector('[data-equipment-form-section="etafoam"]')
         || root.querySelector('#etafoam_form_section')
+    const gakeFormSection = root.querySelector('[data-equipment-form-section="gake"]')
+        || root.querySelector('#gake_form_section')
+    const makiwaraFormSection = root.querySelector('[data-equipment-form-section="makiwara"]')
+        || root.querySelector('#makiwara_form_section')
+    const makuFormSection = root.querySelector('[data-equipment-form-section="maku"]')
+        || root.querySelector('#maku_form_section')
     const muneateFormSection = root.querySelector('[data-equipment-form-section="muneate"]')
         || root.querySelector('#muneate_form_section')
+    const shitagakeFormSection = root.querySelector('[data-equipment-form-section="shitagake"]')
+        || root.querySelector('#shitagake_form_section')
+    const supportMakiwaraFormSection = root.querySelector('[data-equipment-form-section="support_makiwara"]')
+        || root.querySelector('#support_makiwara_form_section')
+    const yatateFormSection = root.querySelector('[data-equipment-form-section="yatate"]')
+        || root.querySelector('#yatate_form_section')
+    const yumiFormSection = root.querySelector('[data-equipment-form-section="yumi"]')
+        || root.querySelector('#yumi_form_section')
+    const yumitateFormSection = root.querySelector('[data-equipment-form-section="yumitate"]')
+        || root.querySelector('#yumitate_form_section')
     const refreshSections = function () {
         updateEquipmentSections(
             equipmentType,
-            gakeFormSection,
-            yumiFormSection,
-            makiwaraFormSection,
-            supportMakiwaraFormSection,
-            yumitateFormSection,
-            yatateFormSection,
-            makuFormSection,
             etafoamFormSection,
-            muneateFormSection
+            gakeFormSection,
+            makiwaraFormSection,
+            makuFormSection,
+            muneateFormSection,
+            shitagakeFormSection,
+            supportMakiwaraFormSection,
+            yatateFormSection,
+            yumiFormSection,
+            yumitateFormSection
         )
     }
 
