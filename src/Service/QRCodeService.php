@@ -28,9 +28,9 @@ class QRCodeService
         private readonly EntityManagerInterface $em,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly Environment $twig,
-        #[Autowire('%app.logo_svg%')]
+        #[Autowire('%app.logo_fg-white_bg-blue%')]
         private readonly string $logoPathSVG,
-        #[Autowire('%app.logo_pdf%')]
+        #[Autowire('%app.logo_fg-white_no-bg%')]
         private readonly string $logoPathPDF,
     ) {
     }
