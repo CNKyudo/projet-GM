@@ -13,6 +13,7 @@ enum EquipmentType: string
     case MUNEATE = 'muneate';
     case SHITAGAKE = 'shitagake';
     case SUPPORT_MAKIWARA = 'support_makiwara';
+    case TSURU = 'tsuru';
     case YATATE = 'yatate';
     case YUMI = 'yumi';
     case YUMITATE = 'yumitate';
@@ -27,6 +28,7 @@ enum EquipmentType: string
             self::MUNEATE => 'equipment.type.muneate',
             self::SHITAGAKE => 'equipment.type.shitagake',
             self::SUPPORT_MAKIWARA => 'equipment.type.support_makiwara',
+            self::TSURU => 'equipment.type.tsuru',
             self::YATATE => 'equipment.type.yatate',
             self::YUMI => 'equipment.type.yumi',
             self::YUMITATE => 'equipment.type.yumitate',

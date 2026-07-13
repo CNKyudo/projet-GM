@@ -15,6 +15,7 @@ use App\Entity\Muneate;
 use App\Entity\Region;
 use App\Entity\Shitagake;
 use App\Entity\SupportMakiwara;
+use App\Entity\Tsuru;
 use App\Entity\User;
 use App\Entity\Yatate;
 use App\Entity\Yumi;
@@ -208,6 +209,7 @@ final class EquipmentController extends AbstractController
                 EquipmentType::MUNEATE => new Muneate(),
                 EquipmentType::SHITAGAKE => new Shitagake(),
                 EquipmentType::SUPPORT_MAKIWARA => new SupportMakiwara(),
+                EquipmentType::TSURU => new Tsuru(),
                 EquipmentType::YATATE => new Yatate(),
                 EquipmentType::YUMI => new Yumi(),
                 EquipmentType::YUMITATE => new Yumitate(),
@@ -290,6 +292,14 @@ final class EquipmentController extends AbstractController
             if ($equipment instanceof SupportMakiwara && $form->has('support_makiwara_form')) {
                 $supportMakiwaraForm = $form->get('support_makiwara_form');
                 $equipment->setHeight($supportMakiwaraForm->get('height')->getData());
+            }
+
+            if ($equipment instanceof Tsuru && $form->has('tsuru_form')) {
+                $tsuruForm = $form->get('tsuru_form');
+                $equipment->setTsuruLength($tsuruForm->get('tsuru_length')->getData());
+                $equipment->setStrengthMin($tsuruForm->get('strength_min')->getData());
+                $equipment->setStrengthMax($tsuruForm->get('strength_max')->getData());
+                $equipment->setQuantity($tsuruForm->get('quantity')->getData());
             }
 
             if ($equipment instanceof Yatate && $form->has('yatate_form')) {

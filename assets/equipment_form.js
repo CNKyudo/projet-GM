@@ -68,6 +68,9 @@ function normalizeEquipmentType(selectElement) {
     if (normalizedCandidates.some(function (value) { return value.includes('support_makiwara') })) {
         return 'support_makiwara'
     }
+    if (normalizedCandidates.some(function (value) { return value.includes('tsuru') })) {
+        return 'tsuru'
+    }
     if (normalizedCandidates.some(function (value) { return value.includes('yatate') })) {
         return 'yatate'
     }
@@ -90,7 +93,8 @@ function updateEquipmentSections(selectElement,
         makuSection, 
         muneateSection,
         shitagakeSection,
-        supportMakiwaraSection, 
+        supportMakiwaraSection,
+        tsuruSection,
         yatateSection, 
         yumiSection, 
         yumitateSection
@@ -104,6 +108,7 @@ function updateEquipmentSections(selectElement,
         muneate: muneateSection,
         shitagake: shitagakeSection,
         support_makiwara: supportMakiwaraSection,
+        tsuru: tsuruSection,
         yatate: yatateSection,
         yumi: yumiSection,
         yumitate: yumitateSection
@@ -198,6 +203,8 @@ function initEquipmentForm(root) {
         || root.querySelector('#shitagake_form_section')
     const supportMakiwaraFormSection = root.querySelector('[data-equipment-form-section="support_makiwara"]')
         || root.querySelector('#support_makiwara_form_section')
+    const tsuruFormSection = root.querySelector('[data-equipment-form-section="tsuru"]')
+        || root.querySelector('#tsuru_form_section')
     const yatateFormSection = root.querySelector('[data-equipment-form-section="yatate"]')
         || root.querySelector('#yatate_form_section')
     const yumiFormSection = root.querySelector('[data-equipment-form-section="yumi"]')
@@ -214,6 +221,7 @@ function initEquipmentForm(root) {
             muneateFormSection,
             shitagakeFormSection,
             supportMakiwaraFormSection,
+            tsuruFormSection,
             yatateFormSection,
             yumiFormSection,
             yumitateFormSection

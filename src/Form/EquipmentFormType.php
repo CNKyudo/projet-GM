@@ -16,6 +16,7 @@ use App\Entity\Muneate;
 use App\Entity\Region;
 use App\Entity\Shitagake;
 use App\Entity\SupportMakiwara;
+use App\Entity\Tsuru;
 use App\Entity\User;
 use App\Entity\Yatate;
 use App\Entity\Yumi;
@@ -117,6 +118,9 @@ class EquipmentFormType extends AbstractType
                     ->add('support_makiwara_form', SupportMakiwaraFormType::class, [
                         'disabled' => true,
                     ])
+                    ->add('tsuru_form', TsuruFormType::class, [
+                        'disabled' => true,
+                    ])
                     ->add('yatate_form', YatateFormType::class, [
                         'disabled' => true,
                     ])
@@ -148,6 +152,8 @@ class EquipmentFormType extends AbstractType
                     $form->add('shitagake_form', ShitagakeFormType::class);
                 } elseif ($data instanceof SupportMakiwara) {
                     $form->add('support_makiwara_form', SupportMakiwaraFormType::class);
+                } elseif ($data instanceof Tsuru) {
+                    $form->add('tsuru_form', TsuruFormType::class);
                 } elseif ($data instanceof Yatate) {
                     $form->add('yatate_form', YatateFormType::class);
                 } elseif ($data instanceof Yumi) {
@@ -188,6 +194,9 @@ class EquipmentFormType extends AbstractType
             ]);
             $form->add('support_makiwara_form', SupportMakiwaraFormType::class, [
                 'disabled' => $submittedType !== EquipmentType::SUPPORT_MAKIWARA->value,
+            ]);
+            $form->add('tsuru_form', TsuruFormType::class, [
+                'disabled' => $submittedType !== EquipmentType::TSURU->value,
             ]);
             $form->add('yatate_form', YatateFormType::class, [
                 'disabled' => $submittedType !== EquipmentType::YATATE->value,

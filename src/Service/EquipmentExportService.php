@@ -12,6 +12,7 @@ use App\Entity\Maku;
 use App\Entity\Muneate;
 use App\Entity\Shitagake;
 use App\Entity\SupportMakiwara;
+use App\Entity\Tsuru;
 use App\Entity\Yatate;
 use App\Entity\Yumi;
 use App\Entity\Yumitate;
@@ -128,7 +129,7 @@ final readonly class EquipmentExportService
             // Colonnes spécifiques par type
             'Matériau',           // Makiwara, Maku, Muneate, Shitagake, Yumi
             'Force (kg)',         // Yumi
-            'Longueur arc',       // Yumi
+            'Longueur arc',       // Yumi, Tsuru
             'Nb doigts',          // Gake, Shitagake
             'Taille',             // Gake, Muneate, Shitagake
             'Hauteur (cm)',       // SupportMakiwara, Maku
@@ -138,9 +139,11 @@ final readonly class EquipmentExportService
             'Longueur (cm)',      // Maku, Etafoam
             'Largeur (cm)',       // Etafoam
             'Épaisseur (cm)',     // Etafoam
-            'Quantité',           // Etafoam, Muneate, Shitagake
+            'Quantité',           // Etafoam, Muneate, Shitagake, Tsuru
             'Poids (kg)',         // Maku
             'Attache',            // Maku
+            'Force min (kg)',     // Tsuru
+            'Force max (kg)',     // Tsuru
             'Notes',
             'Créé le',
             'Modifié le',
@@ -177,6 +180,8 @@ final readonly class EquipmentExportService
             $this->extractEtafoamThickness($equipment),
             $this->extractQuantity($equipment),
             $this->extractMakuWeight($equipment),
+            $this->extractTsuruStrengthMin($equipment),
+            $this->extractTsuruStrengthMax($equipment),
             $this->extractMakuAttachment($equipment),
             $equipment->getNotes() ?? '',
             $equipment->getCreatedAt()?->format('d/m/Y H:i') ?? '',
@@ -234,13 +239,37 @@ final readonly class EquipmentExportService
         return (string) ($equipment->getStrength() ?? '');
     }
 
-    private function extractYumiLength(Equipment $equipment): string
+    private function extractTsuruStrengthMin(Equipment $equipment): string
     {
-        if (!$equipment instanceof Yumi) {
+        if (!$equipment instanceof Tsuru) {
             return '';
         }
 
-        return $this->extractEnumValue($equipment->getYumiLength());
+        return (string) ($equipment->getStrengthMin() ?? '');
+    }
+
+    private function extractTsuruStrengthMax(Equipment $equipment): string
+    {
+        if (!$equipment instanceof Tsuru) {
+            return '';
+        }
+
+        return (string) ($equipment->getStrengthMax() ?? '');
+    }
+
+    private function extractYumiLength(Equipment $equipment): string
+    {
+
+        if ($equipment instanceof Tsuru) {
+            return $this->extractEnumValue($equipment->getTsuruLength());
+        }
+
+        if ($equipment instanceof Yumi) {
+            return $this->extractEnumValue($equipment->getYumiLength());
+        }
+
+        return '';
+
     }
 
     private function extractNbFingers(Equipment $equipment): string
@@ -355,6 +384,10 @@ final readonly class EquipmentExportService
         }
 
         if ($equipment instanceof Shitagake) {
+            return (string) $equipment->getQuantity();
+        }
+
+        if ($equipment instanceof Tsuru) {
             return (string) $equipment->getQuantity();
         }
 
