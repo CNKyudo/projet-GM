@@ -4,36 +4,37 @@ declare(strict_types=1);
 
 namespace App\Form;
 
-use Doctrine\ORM\QueryBuilder;
 use App\Entity\Club;
 use App\Entity\ClubMember;
 use App\Entity\Equipment;
+use App\Entity\Etafoam;
 use App\Entity\Federation;
 use App\Entity\Gake;
 use App\Entity\Makiwara;
+use App\Entity\Maku;
+use App\Entity\Muneate;
 use App\Entity\Region;
+use App\Entity\Shitagake;
 use App\Entity\SupportMakiwara;
 use App\Entity\User;
+use App\Entity\Yatate;
 use App\Entity\Yumi;
 use App\Entity\Yumitate;
-use App\Entity\Yatate;
-use App\Entity\Maku;
-use App\Entity\Etafoam;
-use App\Entity\Muneate;
 use App\Enum\EquipmentState;
 use App\Enum\EquipmentType;
 use App\Repository\ClubRepository;
 use App\Security\UserPermissionService;
 use App\Validator\ExactlyOneOwner;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\Extension\Core\Type\EnumType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -95,31 +96,34 @@ class EquipmentFormType extends AbstractType
                         'mapped' => false,
                         'required' => true,
                     ])
-                    ->add('gake_form', GakeFormType::class, [
+                    ->add('etafoam_form', EtafoamFormType::class, [
                         'disabled' => true,
                     ])
-                    ->add('yumi_form', YumiFormType::class, [
+                    ->add('gake_form', GakeFormType::class, [
                         'disabled' => true,
                     ])
                     ->add('makiwara_form', MakiwaraFormType::class, [
                         'disabled' => true,
                     ])
-                    ->add('support_makiwara_form', SupportMakiwaraFormType::class, [
+                    ->add('maku_form', MakuFormType::class, [
                         'disabled' => true,
                     ])
-                    ->add('yumitate_form', YumitateFormType::class, [
+                    ->add('muneate_form', MuneateFormType::class, [
+                        'disabled' => true,
+                    ])
+                    ->add('shitagake_form', ShitagakeFormType::class, [
+                        'disabled' => true,
+                    ])
+                    ->add('support_makiwara_form', SupportMakiwaraFormType::class, [
                         'disabled' => true,
                     ])
                     ->add('yatate_form', YatateFormType::class, [
                         'disabled' => true,
                     ])
-                    ->add('maku_form', MakuFormType::class, [
+                    ->add('yumi_form', YumiFormType::class, [
                         'disabled' => true,
                     ])
-                    ->add('etafoam_form', EtafoamFormType::class, [
-                        'disabled' => true,
-                    ])
-                    ->add('muneate_form', MuneateFormType::class, [
+                    ->add('yumitate_form', YumitateFormType::class, [
                         'disabled' => true,
                     ])
                 ;
@@ -130,24 +134,26 @@ class EquipmentFormType extends AbstractType
                 $currentUser = $form->getConfig()->getOption('current_user');
                 $this->addOwnerFields($form, $currentUser, $data);
 
-                if ($data instanceof Gake) {
+                if ($data instanceof Etafoam) {
+                    $form->add('etafoam_form', EtafoamFormType::class);
+                } elseif ($data instanceof Gake) {
                     $form->add('gake_form', GakeFormType::class);
-                } elseif ($data instanceof Yumi) {
-                    $form->add('yumi_form', YumiFormType::class);
                 } elseif ($data instanceof Makiwara) {
                     $form->add('makiwara_form', MakiwaraFormType::class);
-                } elseif ($data instanceof SupportMakiwara) {
-                    $form->add('support_makiwara_form', SupportMakiwaraFormType::class);
-                } elseif ($data instanceof Yumitate) {
-                    $form->add('yumitate_form', YumitateFormType::class);
-                } elseif ($data instanceof Yatate) {
-                    $form->add('yatate_form', YatateFormType::class);
                 } elseif ($data instanceof Maku) {
                     $form->add('maku_form', MakuFormType::class);
-                } elseif ($data instanceof Etafoam) {
-                    $form->add('etafoam_form', EtafoamFormType::class);
                 } elseif ($data instanceof Muneate) {
                     $form->add('muneate_form', MuneateFormType::class);
+                } elseif ($data instanceof Shitagake) {
+                    $form->add('shitagake_form', ShitagakeFormType::class);
+                } elseif ($data instanceof SupportMakiwara) {
+                    $form->add('support_makiwara_form', SupportMakiwaraFormType::class);
+                } elseif ($data instanceof Yatate) {
+                    $form->add('yatate_form', YatateFormType::class);
+                } elseif ($data instanceof Yumi) {
+                    $form->add('yumi_form', YumiFormType::class);
+                } elseif ($data instanceof Yumitate) {
+                    $form->add('yumitate_form', YumitateFormType::class);
                 }
             }
         });
@@ -162,40 +168,35 @@ class EquipmentFormType extends AbstractType
 
             $submittedType = is_array($data) ? ($data['equipment_type'] ?? null) : null;
 
-            $form->add('gake_form', GakeFormType::class, [
-                'disabled' => $submittedType !== EquipmentType::GAKE->value,
-            ]);
-
-            $form->add('yumi_form', YumiFormType::class, [
-                'disabled' => $submittedType !== EquipmentType::YUMI->value,
-            ]);
-
-            $form->add('makiwara_form', MakiwaraFormType::class, [
-                'disabled' => $submittedType !== EquipmentType::MAKIWARA->value,
-            ]);
-
-            $form->add('support_makiwara_form', SupportMakiwaraFormType::class, [
-                'disabled' => $submittedType !== EquipmentType::SUPPORT_MAKIWARA->value,
-            ]);
-
-            $form->add('yumitate_form', YumitateFormType::class, [
-                'disabled' => $submittedType !== EquipmentType::YUMITATE->value,
-            ]);
-
-            $form->add('yatate_form', YatateFormType::class, [
-                'disabled' => $submittedType !== EquipmentType::YATATE->value,
-            ]);
-
-            $form->add('maku_form', MakuFormType::class, [
-                'disabled' => $submittedType !== EquipmentType::MAKU->value,
-            ]);
-
             $form->add('etafoam_form', EtafoamFormType::class, [
                 'disabled' => $submittedType !== EquipmentType::ETAFOAM->value,
             ]);
-
+            $form->add('gake_form', GakeFormType::class, [
+                'disabled' => $submittedType !== EquipmentType::GAKE->value,
+            ]);
+            $form->add('makiwara_form', MakiwaraFormType::class, [
+                'disabled' => $submittedType !== EquipmentType::MAKIWARA->value,
+            ]);
+            $form->add('maku_form', MakuFormType::class, [
+                'disabled' => $submittedType !== EquipmentType::MAKU->value,
+            ]);
             $form->add('muneate_form', MuneateFormType::class, [
                 'disabled' => $submittedType !== EquipmentType::MUNEATE->value,
+            ]);
+            $form->add('shitagake_form', ShitagakeFormType::class, [
+                'disabled' => $submittedType !== EquipmentType::SHITAGAKE->value,
+            ]);
+            $form->add('support_makiwara_form', SupportMakiwaraFormType::class, [
+                'disabled' => $submittedType !== EquipmentType::SUPPORT_MAKIWARA->value,
+            ]);
+            $form->add('yatate_form', YatateFormType::class, [
+                'disabled' => $submittedType !== EquipmentType::YATATE->value,
+            ]);
+            $form->add('yumi_form', YumiFormType::class, [
+                'disabled' => $submittedType !== EquipmentType::YUMI->value,
+            ]);
+            $form->add('yumitate_form', YumitateFormType::class, [
+                'disabled' => $submittedType !== EquipmentType::YUMITATE->value,
             ]);
         });
 

@@ -20,15 +20,16 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
 #[InheritanceType('SINGLE_TABLE')]
 #[DiscriminatorColumn(name: 'equipment_type', type: 'string')]
 #[DiscriminatorMap([
-    'yumi' => Yumi::class,
+    'etafoam' => Etafoam::class,
     'gake' => Gake::class,
     'makiwara' => Makiwara::class,
-    'support_makiwara' => SupportMakiwara::class,
-    'yumitate' => Yumitate::class,
-    'yatate' => Yatate::class,
     'maku' => Maku::class,
-    'etafoam' => Etafoam::class,
     'muneate' => Muneate::class,
+    'shitagake' => Shitagake::class,
+    'support_makiwara' => SupportMakiwara::class,
+    'yatate' => Yatate::class,
+    'yumi' => Yumi::class,
+    'yumitate' => Yumitate::class,
 ])]
 #[Loggable]
 

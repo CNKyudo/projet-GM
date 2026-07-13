@@ -6,18 +6,19 @@ namespace App\Controller;
 
 use App\Entity\ClubMember;
 use App\Entity\Equipment;
+use App\Entity\Etafoam;
 use App\Entity\Federation;
 use App\Entity\Gake;
 use App\Entity\Makiwara;
+use App\Entity\Maku;
+use App\Entity\Muneate;
 use App\Entity\Region;
+use App\Entity\Shitagake;
 use App\Entity\SupportMakiwara;
 use App\Entity\User;
+use App\Entity\Yatate;
 use App\Entity\Yumi;
 use App\Entity\Yumitate;
-use App\Entity\Yatate;
-use App\Entity\Maku;
-use App\Entity\Etafoam;
-use App\Entity\Muneate;
 use App\Enum\EquipmentLevel;
 use App\Enum\EquipmentType;
 use App\Form\EquipmentFormType;
@@ -200,15 +201,16 @@ final class EquipmentController extends AbstractController
             }
 
             $equipment = match ($type) {
-                EquipmentType::YUMI => new Yumi(),
+                EquipmentType::ETAFOAM => new Etafoam(),
                 EquipmentType::GAKE => new Gake(),
                 EquipmentType::MAKIWARA => new Makiwara(),
-                EquipmentType::SUPPORT_MAKIWARA => new SupportMakiwara(),
-                EquipmentType::YUMITATE => new Yumitate(),
-                EquipmentType::YATATE => new Yatate(),
                 EquipmentType::MAKU => new Maku(),
-                EquipmentType::ETAFOAM => new Etafoam(),
                 EquipmentType::MUNEATE => new Muneate(),
+                EquipmentType::SHITAGAKE => new Shitagake(),
+                EquipmentType::SUPPORT_MAKIWARA => new SupportMakiwara(),
+                EquipmentType::YATATE => new Yatate(),
+                EquipmentType::YUMI => new Yumi(),
+                EquipmentType::YUMITATE => new Yumitate(),
             };
 
             // Déterminer le niveau et le propriétaire selon les champs soumis
@@ -241,39 +243,24 @@ final class EquipmentController extends AbstractController
             $equipment->setBorrowerClub($form->get('borrowerClub')->getData());
             $equipment->setBorrowerMember($form->get('borrowerMember')->getData());
 
+            if ($equipment instanceof Etafoam && $form->has('etafoam_form')) {
+                $etafoamForm = $form->get('etafoam_form');
+                $equipment->setEquipmentLength($etafoamForm->get('equipmentLength')->getData());
+                $equipment->setWidth($etafoamForm->get('width')->getData());
+                $equipment->setThickness($etafoamForm->get('thickness')->getData());
+                $equipment->setQuantity($etafoamForm->get('quantity')->getData());
+            }
+
             if ($equipment instanceof Gake && $form->has('gake_form')) {
                 $gakeForm = $form->get('gake_form');
                 $equipment->setNbFingers($gakeForm->get('nb_fingers')->getData());
                 $equipment->setSize($gakeForm->get('size')->getData());
             }
 
-            if ($equipment instanceof Yumi && $form->has('yumi_form')) {
-                $yumiForm = $form->get('yumi_form');
-                $equipment->setMaterial($yumiForm->get('material')->getData());
-                $equipment->setStrength($yumiForm->get('strength')->getData());
-                $equipment->setYumiLength($yumiForm->get('yumiLength')->getData());
-            }
-
             if ($equipment instanceof Makiwara && $form->has('makiwara_form')) {
                 $makiwaraForm = $form->get('makiwara_form');
                 $equipment->setMaterial($makiwaraForm->get('material')->getData());
                 $equipment->setDiameter($makiwaraForm->get('diameter')->getData());
-            }
-
-            if ($equipment instanceof SupportMakiwara && $form->has('support_makiwara_form')) {
-                $supportMakiwaraForm = $form->get('support_makiwara_form');
-                $equipment->setHeight($supportMakiwaraForm->get('height')->getData());
-            }
-
-            if ($equipment instanceof Yumitate && $form->has('yumitate_form')) {
-                $yumitateForm = $form->get('yumitate_form');
-                $equipment->setNbBows($yumitateForm->get('nb_bows')->getData());
-                $equipment->setOrientation($yumitateForm->get('orientation')->getData());
-            }
-
-            if ($equipment instanceof Yatate && $form->has('yatate_form')) {
-                $yatateForm = $form->get('yatate_form');
-                $equipment->setNbArrows($yatateForm->get('nb_arrows')->getData());
             }
 
             if ($equipment instanceof Maku && $form->has('maku_form')) {
@@ -285,19 +272,42 @@ final class EquipmentController extends AbstractController
                 $equipment->setAttachment($makuForm->get('attachment')->getData());
             }
 
-            if ($equipment instanceof Etafoam && $form->has('etafoam_form')) {
-                $etafoamForm = $form->get('etafoam_form');
-                $equipment->setEquipmentLength($etafoamForm->get('equipmentLength')->getData());
-                $equipment->setWidth($etafoamForm->get('width')->getData());
-                $equipment->setThickness($etafoamForm->get('thickness')->getData());
-                $equipment->setQuantity($etafoamForm->get('quantity')->getData());
-            }
-
             if ($equipment instanceof Muneate && $form->has('muneate_form')) {
                 $muneateForm = $form->get('muneate_form');
                 $equipment->setSize($muneateForm->get('size')->getData());
                 $equipment->setMaterial($muneateForm->get('material')->getData());
                 $equipment->setQuantity($muneateForm->get('quantity')->getData());
+            }
+
+            if ($equipment instanceof Shitagake && $form->has('shitagake_form')) {
+                $shitagakeForm = $form->get('shitagake_form');
+                $equipment->setNbFingers($shitagakeForm->get('nb_fingers')->getData());
+                $equipment->setSize($shitagakeForm->get('size')->getData());
+                $equipment->setMaterial($shitagakeForm->get('material')->getData());
+                $equipment->setQuantity($shitagakeForm->get('quantity')->getData());
+            }
+
+            if ($equipment instanceof SupportMakiwara && $form->has('support_makiwara_form')) {
+                $supportMakiwaraForm = $form->get('support_makiwara_form');
+                $equipment->setHeight($supportMakiwaraForm->get('height')->getData());
+            }
+
+            if ($equipment instanceof Yatate && $form->has('yatate_form')) {
+                $yatateForm = $form->get('yatate_form');
+                $equipment->setNbArrows($yatateForm->get('nb_arrows')->getData());
+            }
+
+            if ($equipment instanceof Yumi && $form->has('yumi_form')) {
+                $yumiForm = $form->get('yumi_form');
+                $equipment->setMaterial($yumiForm->get('material')->getData());
+                $equipment->setStrength($yumiForm->get('strength')->getData());
+                $equipment->setYumiLength($yumiForm->get('yumiLength')->getData());
+            }
+
+            if ($equipment instanceof Yumitate && $form->has('yumitate_form')) {
+                $yumitateForm = $form->get('yumitate_form');
+                $equipment->setNbBows($yumitateForm->get('nb_bows')->getData());
+                $equipment->setOrientation($yumitateForm->get('orientation')->getData());
             }
 
             $entityManager->persist($equipment);

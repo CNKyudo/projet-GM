@@ -7,9 +7,10 @@ namespace App\Service;
 use App\Entity\Equipment;
 use App\Entity\Etafoam;
 use App\Entity\Gake;
-use App\Entity\Maku;
 use App\Entity\Makiwara;
+use App\Entity\Maku;
 use App\Entity\Muneate;
+use App\Entity\Shitagake;
 use App\Entity\SupportMakiwara;
 use App\Entity\Yatate;
 use App\Entity\Yumi;
@@ -17,10 +18,10 @@ use App\Entity\Yumitate;
 use App\Enum\EquipmentLevel;
 use App\Enum\EquipmentState;
 use App\Enum\EquipmentType;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final readonly class EquipmentExportService
 {
@@ -125,11 +126,11 @@ final readonly class EquipmentExportService
             'Club emprunteur',
             'Membre emprunteur',
             // Colonnes spécifiques par type
-            'Matériau',           // Yumi, Makiwara, Maku, Muneate
+            'Matériau',           // Makiwara, Maku, Muneate, Shitagake, Yumi
             'Force (kg)',         // Yumi
             'Longueur arc',       // Yumi
-            'Nb doigts',          // Gake
-            'Taille',             // Gake, Muneate
+            'Nb doigts',          // Gake, Shitagake
+            'Taille',             // Gake, Muneate, Shitagake
             'Hauteur (cm)',       // SupportMakiwara, Maku
             'Nb arcs',            // Yumitate
             'Orientation',        // Yumitate
@@ -137,7 +138,7 @@ final readonly class EquipmentExportService
             'Longueur (cm)',      // Maku, Etafoam
             'Largeur (cm)',       // Etafoam
             'Épaisseur (cm)',     // Etafoam
-            'Quantité',           // Etafoam, Muneate
+            'Quantité',           // Etafoam, Muneate, Shitagake
             'Poids (kg)',         // Maku
             'Attache',            // Maku
             'Notes',
@@ -200,10 +201,6 @@ final readonly class EquipmentExportService
 
     private function extractMaterial(Equipment $equipment): string
     {
-        if ($equipment instanceof Yumi) {
-            return $equipment->getMaterial() ?? '';
-        }
-
         if ($equipment instanceof Makiwara) {
             return $this->extractEnumValue($equipment->getMaterial());
         }
@@ -215,6 +212,15 @@ final readonly class EquipmentExportService
         if ($equipment instanceof Muneate) {
             return $equipment->getMaterial() ?? '';
         }
+
+        if ($equipment instanceof Shitagake) {
+            return $equipment->getMaterial() ?? '';
+        }
+
+        if ($equipment instanceof Yumi) {
+            return $equipment->getMaterial() ?? '';
+        }
+
 
         return '';
     }
@@ -239,11 +245,15 @@ final readonly class EquipmentExportService
 
     private function extractNbFingers(Equipment $equipment): string
     {
-        if (!$equipment instanceof Gake) {
-            return '';
+        if ($equipment instanceof Gake) {
+            return (string) ($equipment->getNbFingers() ?? '');
         }
 
-        return (string) ($equipment->getNbFingers() ?? '');
+        if ($equipment instanceof Shitagake) {
+            return (string) ($equipment->getNbFingers() ?? '');
+        }
+
+        return '';
     }
 
     private function extractSize(Equipment $equipment): string
@@ -253,6 +263,10 @@ final readonly class EquipmentExportService
         }
 
         if ($equipment instanceof Muneate) {
+            return $equipment->getSize() ?? '';
+        }
+
+        if ($equipment instanceof Shitagake) {
             return $equipment->getSize() ?? '';
         }
 
@@ -337,6 +351,10 @@ final readonly class EquipmentExportService
         }
 
         if ($equipment instanceof Muneate) {
+            return (string) $equipment->getQuantity();
+        }
+
+        if ($equipment instanceof Shitagake) {
             return (string) $equipment->getQuantity();
         }
 

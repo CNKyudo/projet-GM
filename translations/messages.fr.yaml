@@ -1,14 +1,15 @@
 equipment:
   type:
-    yumi: "Arc (Yumi)"
+    etafoam: "Etafoam"
     gake: "Gant (Gake)"
     makiwara: "Makiwara"
-    support_makiwara: "Support makiwara"
-    yumitate: "Yumitate"
-    yatate: "Yatate"
     maku: "Maku"
-    etafoam: "Etafoam"
     muneate: "Muneate"
+    shitagake: "Shitagake"
+    support_makiwara: "Support makiwara"
+    yatate: "Yatate"
+    yumi: "Arc (Yumi)"
+    yumitate: "Yumitate"
   choose_type: "Choisir un type..."
   added: "{type} ajouté !"
   state:
