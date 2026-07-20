@@ -291,7 +291,7 @@ class EquipmentFormType extends AbstractType
                 'placeholder' => '--- Aucune région ---',
                 'required' => false,
                 'mapped' => false,
-                'label' => 'Région propriétaire (régional)',
+                'label' => 'Région dépositaire (régional)',
                 'data' => $equipment?->getOwnerRegion(),
             ]);
             $builder->add('ownerClub', EntityType::class, [
@@ -314,7 +314,7 @@ class EquipmentFormType extends AbstractType
                 'placeholder' => '--- Aucune région ---',
                 'required' => false,
                 'mapped' => false,
-                'label' => 'Région propriétaire (régional)',
+                'label' => 'Région dépositaire (régional)',
                 'data' => $equipment?->getOwnerRegion(),
             ]);
             $builder->add('ownerClub', EntityType::class, [

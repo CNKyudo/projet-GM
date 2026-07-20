@@ -38,7 +38,7 @@
       {% if form.ownerRegion is defined %}
         <div>
           <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
-            {{ form.ownerRegion.vars.label|default('Région propriétaire (régional)') }}
+            {{ form.ownerRegion.vars.label|default('Région dépositaire (régional)') }}
           </label>
           {{ form_widget(form.ownerRegion, {
             attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 text-kyudo-gm-dark shadow-sm outline-none focus:border-kyudo-gm-light-grey focus:ring-2 focus:ring-kyudo-washed-blue' }

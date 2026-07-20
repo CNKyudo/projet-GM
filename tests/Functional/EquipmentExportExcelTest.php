@@ -155,7 +155,7 @@ final class EquipmentExportExcelTest extends AbstractWebTestCase
             'État',
             'Niveau',
             'Club propriétaire',
-            'Région propriétaire',
+            'Région dépositaire',
             'Fédération propriétaire',
             'Club emprunteur',
             'Membre emprunteur',
