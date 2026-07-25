@@ -39,15 +39,35 @@
 
 					<dl class="mt-4 grid gap-4 sm:grid-cols-2">
 						<div class="rounded-2xl bg-kyudo-gm-light-grey p-4">
-							<dt class="text-xs font-medium text-">ID</dt>
-							<dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">{{ club.id }}</dd>
+							<div class="flex items-center gap-2">
+								<dt class="text-xs font-medium text-kyudo-gm-dark">
+									Président.e :
+								</dt>
+							</div>
+
+							{% if club.president %}
+								<dd class="mt-1 text-sm text-kyudo-gm-dark">
+									<a href="mailto:{{ club.president.email }}" class="hover:underline">
+										{{ club.president.email }}
+									</a>
+								</dd>
+							{% endif %}
 						</div>
 
 						<div class="rounded-2xl bg-kyudo-gm-light-grey p-4">
-							<dt class="text-xs font-medium text-">Président</dt>
-							<dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
-								{{ club.president ? club.president.fullName : '-' }}
-							</dd>
+							<div class="flex items-center gap-2">
+								<dt class="text-xs font-medium text-kyudo-gm-dark">
+									Gestionnaire matériel :
+								</dt>
+							</div>
+
+							{% if club.equipmentManager %}
+								<dd class="mt-1 text-sm text-kyudo-gm-dark">
+									<a href="mailto:{{ club.equipmentManager.email }}" class="hover:underline">
+										{{ club.equipmentManager.email }}
+									</a>
+								</dd>
+							{% endif %}
 						</div>
 
 						<div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
