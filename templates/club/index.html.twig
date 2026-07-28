@@ -69,8 +69,10 @@
 									<div class="flex items-start justify-between gap-3">
 										<div class="min-w-0">
 											<h2 class="truncate text-base font-semibold text-kyudo-gm-dark">{{ club.name }}</h2>
-											<p class="mt-1 text-xs text-kyudo-gm-grey">Président :
+											<p class="mt-1 text-xs text-kyudo-gm-grey">Président·e  :
 												{{ club.president ? club.president : '-' }}</p>
+											<p class="mt-1 text-xs text-kyudo-gm-grey">Gestionnaire matériel :
+												{{ club.equipmentManager ? club.equipmentManager : '-' }}</p>
 											<p class="mt-2 text-xs text-kyudo-gm-dark">
 												{% if club.email %}
 													<a class="text-blue-700 hover:underline" href="mailto:{{ club.email }}">{{ club.email }}</a>
@@ -111,9 +113,10 @@
 									<tr>
 										<th class="px-5 py-4">ID</th>
 										<th class="px-5 py-4">Nom</th>
-										<th class="px-5 py-4">Président</th>
+										<th class="px-5 py-4">Président·e</th>
+										<th class="px-5 py-4">Gestionnaire matériel</th>
 										<th class="px-5 py-4">Email</th>
-										<th class="px-5 py-4 text-right">Actions</th>
+										<th class="px-5 py-4 text-center">Actions</th>
 									</tr>
 								</thead>
 								<tbody class="divide-y divide-kyudo-gm-light-grey text-sm">
@@ -121,7 +124,20 @@
 										<tr class="hover:bg-kyudo-gm-light-grey">
 											<td class="px-5 py-4 text-kyudo-gm-grey">{{ club.id }}</td>
 											<td class="px-5 py-4 font-semibold text-kyudo-gm-dark">{{ club.name }}</td>
-											<td class="px-5 py-4 text-kyudo-gm-dark">{{ club.president ? club.president : '-' }}</td>
+											<td class="px-5 py-4">
+												{% if club.president %}
+													<a class="text-kyudo-gm-dark hover:text-blue-700" href="mailto:{{ club.president }}">{{ club.president.email }}</a>
+												{% else %}
+													<span class="text-">-</span>
+												{% endif %}
+											</td>
+											<td class="px-5 py-4">
+												{% if club.equipmentManager %}
+													<a class="text-kyudo-gm-dark hover:text-blue-700" href="mailto:{{ club.equipmentManager }}">{{ club.equipmentManager.email }}</a>
+												{% else %}
+													<span class="text-">-</span>
+												{% endif %}
+											</td>
 											<td class="px-5 py-4">
 												{% if club.email %}
 													<a class="text-kyudo-gm-dark hover:text-blue-700" href="mailto:{{ club.email }}">{{ club.email }}</a>
