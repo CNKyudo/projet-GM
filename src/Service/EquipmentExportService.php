@@ -121,7 +121,7 @@ final readonly class EquipmentExportService
             'État',
             'Niveau',
             'Club propriétaire',
-            'Région propriétaire',
+            'Région dépositaire',
             'Fédération propriétaire',
             'Club emprunteur',
             'Membre emprunteur',
