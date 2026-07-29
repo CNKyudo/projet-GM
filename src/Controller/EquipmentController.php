@@ -31,6 +31,7 @@ use App\Service\LogEntryEnricher;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -51,6 +52,8 @@ final class EquipmentController extends AbstractController
         private readonly EquipmentVisibilityFilterResolver $visibilityFilterResolver,
         private readonly TranslatorInterface $translator,
         private readonly UserRepository $userRepository,
+        #[Autowire('%app.convention_pret%')]
+        private readonly string $conventionPret,
     ) {
     }
 
@@ -106,6 +109,21 @@ final class EquipmentController extends AbstractController
             'status' => $status,
             'borrowed' => $borrowedUserId,
         ]);
+    }
+
+    #[Route('/equipment/convention/download', name: 'equipment.convention.download')]
+    #[IsGranted(UserPermissionVoter::BROWSE_ALL_EQUIPMENT)]
+    public function downloadConvention(): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    {
+        $filename = sprintf(
+            'convention_pret_%s.docx',
+            new \DateTime()->format('d-m-Y')
+        );
+
+        return $this->file(
+            $this->conventionPret,
+            $filename
+        );
     }
 
     #[Route('/equipment/export', name: 'equipment.export', methods: ['POST'])]
