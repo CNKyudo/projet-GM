@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Entity\Tsuru;
-use App\Enum\YumiLength;
+use App\Enum\TsuruLength;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -23,8 +23,8 @@ class TsuruFormType extends AbstractType
     {
         $builder
             ->add('tsuru_length', EnumType::class, [
-                'class' => YumiLength::class,
-                'choice_label' => fn (YumiLength $tsuru_length): string => $tsuru_length->label(),
+                'class' => TsuruLength::class,
+                'choice_label' => fn (TsuruLength $tsuru_length): string => $tsuru_length->label(),
                 'label' => 'Taille',
                 'placeholder' => 'Choisir une taille...',
                 'required' => true,

@@ -257,19 +257,23 @@ final readonly class EquipmentExportService
         return (string) ($equipment->getStrengthMax() ?? '');
     }
 
-    private function extractYumiLength(Equipment $equipment): string
+    private function extractTsuruLength(Equipment $equipment): string
     {
 
         if ($equipment instanceof Tsuru) {
-            return $this->extractEnumValue($equipment->getTsuruLength());
+            return '';
         }
+        
+        return $this->extractEnumValue($equipment->getTsuruLength());
+    }
 
-        if ($equipment instanceof Yumi) {
-            return $this->extractEnumValue($equipment->getYumiLength());
+    private function extractYumiLength(Equipment $equipment): string
+    {
+        if (!$equipment instanceof Yumi) {
+            return '';
         }
-
-        return '';
-
+        
+        return $this->extractEnumValue($equipment->getYumiLength());
     }
 
     private function extractNbFingers(Equipment $equipment): string

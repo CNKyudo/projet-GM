@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Enum\EquipmentType;
-use App\Enum\YumiLength;
+use App\Enum\TsuruLength;
 use App\Repository\TsuruRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation\Versioned;
@@ -13,9 +13,9 @@ use Gedmo\Mapping\Annotation\Versioned;
 #[ORM\Entity(repositoryClass: TsuruRepository::class)]
 class Tsuru extends Equipment
 {
-    #[ORM\Column(nullable: true, enumType: YumiLength::class)]
+    #[ORM\Column(nullable: true, enumType: TsuruLength::class)]
     #[Versioned]
-    private ?YumiLength $tsuru_length = null;
+    private ?TsuruLength $tsuru_length = null;
 
     #[ORM\Column(nullable: true)]
     #[Versioned]
@@ -34,12 +34,12 @@ class Tsuru extends Equipment
         return EquipmentType::TSURU;
     }
 
-    public function getTsuruLength(): ?YumiLength
+    public function getTsuruLength(): ?TsuruLength
     {
         return $this->tsuru_length;
     }
 
-    public function setTsuruLength(?YumiLength $tsuru_length): static
+    public function setTsuruLength(?TsuruLength $tsuru_length): static
     {
         $this->tsuru_length = $tsuru_length;
 
