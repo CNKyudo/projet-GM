@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\Equipment;
-use App\Entity\Etafoam;
+use App\Entity\Azuchi;
 use App\Entity\Gake;
 use App\Entity\Makiwara;
 use App\Entity\Maku;
@@ -135,10 +135,10 @@ final readonly class EquipmentExportService
             'Nb arcs',            // Yumitate
             'Orientation',        // Yumitate
             'Nb flèches',         // Yatate
-            'Longueur (cm)',      // Maku, Etafoam
-            'Largeur (cm)',       // Etafoam
-            'Épaisseur (cm)',     // Etafoam
-            'Quantité',           // Etafoam, Muneate, Shitagake
+            'Longueur (cm)',      // Maku, Azuchi
+            'Largeur (cm)',       // Azuchi
+            'Épaisseur (cm)',     // Azuchi
+            'Quantité',           // Azuchi, Muneate, Shitagake
             'Poids (kg)',         // Maku
             'Attache',            // Maku
             'Notes',
@@ -173,8 +173,8 @@ final readonly class EquipmentExportService
             $this->extractYumitateOrientation($equipment),
             $this->extractNbArrows($equipment),
             $this->extractLength($equipment),
-            $this->extractEtafoamWidth($equipment),
-            $this->extractEtafoamThickness($equipment),
+            $this->extractAzuchiWidth($equipment),
+            $this->extractAzuchiThickness($equipment),
             $this->extractQuantity($equipment),
             $this->extractMakuWeight($equipment),
             $this->extractMakuAttachment($equipment),
@@ -319,25 +319,25 @@ final readonly class EquipmentExportService
             return (string) ($equipment->getEquipmentLength() ?? '');
         }
 
-        if ($equipment instanceof Etafoam) {
+        if ($equipment instanceof Azuchi) {
             return (string) ($equipment->getEquipmentLength() ?? '');
         }
 
         return '';
     }
 
-    private function extractEtafoamWidth(Equipment $equipment): string
+    private function extractAzuchiWidth(Equipment $equipment): string
     {
-        if (!$equipment instanceof Etafoam) {
+        if (!$equipment instanceof Azuchi) {
             return '';
         }
 
         return (string) ($equipment->getWidth() ?? '');
     }
 
-    private function extractEtafoamThickness(Equipment $equipment): string
+    private function extractAzuchiThickness(Equipment $equipment): string
     {
-        if (!$equipment instanceof Etafoam) {
+        if (!$equipment instanceof Azuchi) {
             return '';
         }
 
@@ -346,7 +346,7 @@ final readonly class EquipmentExportService
 
     private function extractQuantity(Equipment $equipment): string
     {
-        if ($equipment instanceof Etafoam) {
+        if ($equipment instanceof Azuchi) {
             return (string) $equipment->getQuantity();
         }
 

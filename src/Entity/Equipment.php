@@ -20,7 +20,7 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
 #[InheritanceType('SINGLE_TABLE')]
 #[DiscriminatorColumn(name: 'equipment_type', type: 'string')]
 #[DiscriminatorMap([
-    'etafoam' => Etafoam::class,
+    'azuchi' => Azuchi::class,
     'gake' => Gake::class,
     'makiwara' => Makiwara::class,
     'maku' => Maku::class,
