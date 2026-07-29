@@ -5,23 +5,23 @@ declare(strict_types=1);
 namespace App\Service\Equipment\SearchStrategy;
 
 use App\Enum\EquipmentType;
-use App\Repository\EtafoamRepository;
+use App\Repository\AzuchiRepository;
 use Doctrine\ORM\QueryBuilder;
 
-final class EtafoamSearchStrategy extends AbstractSearchStrategy
+final class AzuchiSearchStrategy extends AbstractSearchStrategy
 {
     public function __construct(
-        private readonly EtafoamRepository $etafoamRepository,
+        private readonly AzuchiRepository $azuchiRepository,
     ) {
     }
 
     protected function createBaseQueryBuilder(): QueryBuilder
     {
-        return $this->etafoamRepository->createQueryBuilder('ef')
-            ->leftJoin('ef.ownerClub', 'owner')->addSelect('owner')
-            ->leftJoin('ef.borrowerClub', 'borrower')->addSelect('borrower')
-            ->leftJoin('ef.ownerRegion', 'ownerRegion')->addSelect('ownerRegion')
-            ->orderBy('ef.id', 'DESC');
+        return $this->azuchiRepository->createQueryBuilder('az')
+            ->leftJoin('az.ownerClub', 'owner')->addSelect('owner')
+            ->leftJoin('az.borrowerClub', 'borrower')->addSelect('borrower')
+            ->leftJoin('az.ownerRegion', 'ownerRegion')->addSelect('ownerRegion')
+            ->orderBy('az.id', 'DESC');
     }
 
     protected function applySpecificSearchConditions(
@@ -42,6 +42,6 @@ final class EtafoamSearchStrategy extends AbstractSearchStrategy
 
     public function getEquipmentType(): EquipmentType
     {
-        return EquipmentType::ETAFOAM;
+        return EquipmentType::AZUCHI;
     }
 }

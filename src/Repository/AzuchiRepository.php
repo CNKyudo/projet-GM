@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Entity\Etafoam;
+use App\Entity\Azuchi;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Etafoam>
+ * @extends ServiceEntityRepository<Azuchi>
  */
-class EtafoamRepository extends ServiceEntityRepository
+class AzuchiRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Etafoam::class);
+        parent::__construct($registry, Azuchi::class);
     }
 }

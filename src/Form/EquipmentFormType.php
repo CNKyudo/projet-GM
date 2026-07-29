@@ -7,7 +7,7 @@ namespace App\Form;
 use App\Entity\Club;
 use App\Entity\ClubMember;
 use App\Entity\Equipment;
-use App\Entity\Etafoam;
+use App\Entity\Azuchi;
 use App\Entity\Federation;
 use App\Entity\Gake;
 use App\Entity\Makiwara;
@@ -96,7 +96,7 @@ class EquipmentFormType extends AbstractType
                         'mapped' => false,
                         'required' => true,
                     ])
-                    ->add('etafoam_form', EtafoamFormType::class, [
+                    ->add('azuchi_form', AzuchiFormType::class, [
                         'disabled' => true,
                     ])
                     ->add('gake_form', GakeFormType::class, [
@@ -134,8 +134,8 @@ class EquipmentFormType extends AbstractType
                 $currentUser = $form->getConfig()->getOption('current_user');
                 $this->addOwnerFields($form, $currentUser, $data);
 
-                if ($data instanceof Etafoam) {
-                    $form->add('etafoam_form', EtafoamFormType::class);
+                if ($data instanceof Azuchi) {
+                    $form->add('azuchi_form', AzuchiFormType::class);
                 } elseif ($data instanceof Gake) {
                     $form->add('gake_form', GakeFormType::class);
                 } elseif ($data instanceof Makiwara) {
@@ -168,8 +168,8 @@ class EquipmentFormType extends AbstractType
 
             $submittedType = is_array($data) ? ($data['equipment_type'] ?? null) : null;
 
-            $form->add('etafoam_form', EtafoamFormType::class, [
-                'disabled' => $submittedType !== EquipmentType::ETAFOAM->value,
+            $form->add('azuchi_form', AzuchiFormType::class, [
+                'disabled' => $submittedType !== EquipmentType::AZUCHI->value,
             ]);
             $form->add('gake_form', GakeFormType::class, [
                 'disabled' => $submittedType !== EquipmentType::GAKE->value,
