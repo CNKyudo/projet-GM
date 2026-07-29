@@ -34,6 +34,11 @@ yumi:
     namisun: "Namisun"
     nisun_nobi: "Nisun nobi"
     yonsun_nobi: "Yonsun nobi"
+tsuru:
+  length:
+    namisun: "Namisun"
+    nisun_nobi: "Nisun nobi"
+    yonsun_nobi: "Yonsun nobi"
 yumitate:
   orientation:
     recto: "Recto"

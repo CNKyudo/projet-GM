@@ -226,19 +226,19 @@
               <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
                 <dt class="text-xs font-medium text-">Taille</dt>
                 <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
-                  {{ equipment.tsuru_length? equipment.tsuru_length.label|trans : '-' }}
+                  {{ equipment.tsuruLength? equipment.tsuruLength.label|trans : '-' }}
                 </dd>
               </div>
               <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
                 <dt class="text-xs font-medium text-">Force min (kg)</dt>
                 <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
-                  {{ equipment.strength_min ?: '-' }}
+                  {{ equipment.strengthMin ?: '-' }}
                 </dd>
               </div>
               <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
                 <dt class="text-xs font-medium text-">Force max (kg)</dt>
                 <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
-                  {{ equipment.strength_max ?: '-' }}
+                  {{ equipment.strengthMax ?: '-' }}
                 </dd>
               </div>
               <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
@@ -424,20 +424,21 @@
                         'ownerRegion': 'log_entry.field.owner_region',
                         'size': 'log_entry.field.size',
                         'state': 'log_entry.field.state',
-                        'strength_max': 'log_entry.field.strength_max',
-                        'strength_min': 'log_entry.field.strength_min',
+                        'strengthMax': 'log_entry.field.strength_max',
+                        'strengthMin': 'log_entry.field.strength_min',
                         'strength': 'log_entry.field.strength',
                         'thickness': 'log_entry.field.thickness',
-                        'tsuru_length': 'log_entry.field.tsuru_length',
+                        'tsuruLength': 'log_entry.field.tsuru_length',
                         'weight': 'log_entry.field.weight',
                         'width': 'log_entry.field.width',
                         'yumiLength': 'log_entry.field.yumi_length',
                       } %}
                       {% set transPrefix = {
-                        'state': 'equipment.state.',
                         'material': equipment.typeName == 'makiwara' ? 'makiwara.material.' : null,
-                        'yumiLength': 'yumi.length.',
                         'orientation': 'yumitate.orientation.',
+                        'state': 'equipment.state.',
+                        'tsuruLength': 'tsuru.length.',
+                        'yumiLength': 'yumi.length.',
                       } %}
                       <span class="font-medium">{{ (fieldLabel[field]|default(field))|trans }}</span> :
                       {% if value is iterable and value.display is defined %}

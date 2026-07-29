@@ -345,28 +345,28 @@
       >
         {% if form.tsuru_form is defined %}
           <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
-            {{ form.tsuru_form.tsuru_length.vars.label|default('Taille') }}
+            {{ form.tsuru_form.tsuruLength.vars.label|default('Taille') }}
           </label>
-          {{ form_widget(form.tsuru_form.tsuru_length, {
+          {{ form_widget(form.tsuru_form.tsuruLength, {
             attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
           }) }}
-          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.tsuru_form.tsuru_length) }}</div>
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.tsuru_form.tsuruLength) }}</div>
 
           <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
-            {{ form.tsuru_form.strength_min.vars.label|default('Force min') }}
+            {{ form.tsuru_form.strengthMin.vars.label|default('Force min') }}
           </label>
-          {{ form_widget(form.tsuru_form.strength_min, {
+          {{ form_widget(form.tsuru_form.strengthMin, {
             attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
           }) }}
-          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.tsuru_form.strength_min) }}</div>
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.tsuru_form.strengthMin) }}</div>
 
           <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
-            {{ form.tsuru_form.strength_max.vars.label|default('Force min') }}
+            {{ form.tsuru_form.strengthMax.vars.label|default('Force min') }}
           </label>
-          {{ form_widget(form.tsuru_form.strength_max, {
+          {{ form_widget(form.tsuru_form.strengthMax, {
             attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
           }) }}
-          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.tsuru_form.strength_max) }}</div>
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.tsuru_form.strengthMax) }}</div>
 
           <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
             {{ form.tsuru_form.quantity.vars.label|default('Quantité') }}

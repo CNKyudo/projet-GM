@@ -31,9 +31,9 @@ final class TsuruSearchStrategy extends AbstractSearchStrategy
     ): void {
         $queryBuilder->andWhere(
             $queryBuilder->expr()->orX(
-                $queryBuilder->expr()->like(sprintf('LOWER(%s.tsuru_length)', $alias), ':term'),
-                $queryBuilder->expr()->like(sprintf("CONCAT(%s.strength_min, '')", $alias), ':term'),
-                $queryBuilder->expr()->like(sprintf("CONCAT(%s.strength_max, '')", $alias), ':term'),
+                $queryBuilder->expr()->like(sprintf('LOWER(%s.tsuruLength)', $alias), ':term'),
+                $queryBuilder->expr()->like(sprintf("CONCAT(%s.strengthMin, '')", $alias), ':term'),
+                $queryBuilder->expr()->like(sprintf("CONCAT(%s.strengthMax, '')", $alias), ':term'),
                 $queryBuilder->expr()->like(sprintf("CONCAT(%s.quantity, '')", $alias), ':term'),
                 $queryBuilder->expr()->like('LOWER(owner.name)', ':term'),
                 $queryBuilder->expr()->like('LOWER(borrower.name)', ':term')

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Enum\EquipmentType;
-use App\Enum\YumiLength;
+use App\Enum\TsuruLength;
 use App\Repository\TsuruRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation\Versioned;
@@ -13,17 +13,17 @@ use Gedmo\Mapping\Annotation\Versioned;
 #[ORM\Entity(repositoryClass: TsuruRepository::class)]
 class Tsuru extends Equipment
 {
-    #[ORM\Column(nullable: true, enumType: YumiLength::class)]
+    #[ORM\Column(nullable: true, enumType: TsuruLength::class)]
     #[Versioned]
-    private ?YumiLength $tsuru_length = null;
+    private ?TsuruLength $tsuruLength = null;
 
     #[ORM\Column(nullable: true)]
     #[Versioned]
-    private ?float $strength_min = null;
+    private ?float $strengthMin = null;
 
     #[ORM\Column(nullable: true)]
     #[Versioned]
-    private ?float $strength_max = null;
+    private ?float $strengthMax = null;
 
     #[ORM\Column]
     #[Versioned]
@@ -34,38 +34,38 @@ class Tsuru extends Equipment
         return EquipmentType::TSURU;
     }
 
-    public function getTsuruLength(): ?YumiLength
+    public function getTsuruLength(): ?TsuruLength
     {
-        return $this->tsuru_length;
+        return $this->tsuruLength;
     }
 
-    public function setTsuruLength(?YumiLength $tsuru_length): static
+    public function setTsuruLength(?TsuruLength $tsuruLength): static
     {
-        $this->tsuru_length = $tsuru_length;
+        $this->tsuruLength = $tsuruLength;
 
         return $this;
     }
 
     public function getStrengthMin(): ?float
     {
-        return $this->strength_min;
+        return $this->strengthMin;
     }
 
-    public function setStrengthMin(?float $strength_min): static
+    public function setStrengthMin(?float $strengthMin): static
     {
-        $this->strength_min = $strength_min;
+        $this->strengthMin = $strengthMin;
 
         return $this;
     }
 
     public function getStrengthMax(): ?float
     {
-        return $this->strength_max;
+        return $this->strengthMax;
     }
 
-    public function setStrengthMax(?float $strength_max): static
+    public function setStrengthMax(?float $strengthMax): static
     {
-        $this->strength_max = $strength_max;
+        $this->strengthMax = $strengthMax;
 
         return $this;
     }

@@ -129,7 +129,8 @@ final readonly class EquipmentExportService
             // Colonnes spécifiques par type
             'Matériau',           // Makiwara, Maku, Muneate, Shitagake, Yumi
             'Force (kg)',         // Yumi
-            'Longueur arc',       // Yumi, Tsuru
+            'Longueur arc',       // Yumi
+            'Taille (tsuru)',     // Tsuru
             'Nb doigts',          // Gake, Shitagake
             'Taille',             // Gake, Muneate, Shitagake
             'Hauteur (cm)',       // SupportMakiwara, Maku
@@ -182,6 +183,7 @@ final readonly class EquipmentExportService
             $this->extractMakuWeight($equipment),
             $this->extractTsuruStrengthMin($equipment),
             $this->extractTsuruStrengthMax($equipment),
+            $this->extractTsuruLength($equipment),
             $this->extractMakuAttachment($equipment),
             $equipment->getNotes() ?? '',
             $equipment->getCreatedAt()?->format('d/m/Y H:i') ?? '',
@@ -226,7 +228,6 @@ final readonly class EquipmentExportService
             return $equipment->getMaterial() ?? '';
         }
 
-
         return '';
     }
 
@@ -257,19 +258,22 @@ final readonly class EquipmentExportService
         return (string) ($equipment->getStrengthMax() ?? '');
     }
 
+    private function extractTsuruLength(Equipment $equipment): string
+    {
+        if (!$equipment instanceof Tsuru) {
+            return '';
+        }
+
+        return $this->extractEnumValue($equipment->getTsuruLength());
+    }
+
     private function extractYumiLength(Equipment $equipment): string
     {
-
-        if ($equipment instanceof Tsuru) {
-            return $this->extractEnumValue($equipment->getTsuruLength());
+        if (!$equipment instanceof Yumi) {
+            return '';
         }
 
-        if ($equipment instanceof Yumi) {
-            return $this->extractEnumValue($equipment->getYumiLength());
-        }
-
-        return '';
-
+        return $this->extractEnumValue($equipment->getYumiLength());
     }
 
     private function extractNbFingers(Equipment $equipment): string

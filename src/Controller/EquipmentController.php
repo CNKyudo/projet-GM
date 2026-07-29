@@ -296,7 +296,7 @@ final class EquipmentController extends AbstractController
 
             if ($equipment instanceof Tsuru && $form->has('tsuru_form')) {
                 $tsuruForm = $form->get('tsuru_form');
-                $equipment->setTsuruLength($tsuruForm->get('tsuru_length')->getData());
+                $equipment->setTsuruLength($tsuruForm->get('tsuruLength')->getData());
                 $equipment->setStrengthMin($tsuruForm->get('strength_min')->getData());
                 $equipment->setStrengthMax($tsuruForm->get('strength_max')->getData());
                 $equipment->setQuantity($tsuruForm->get('quantity')->getData());
