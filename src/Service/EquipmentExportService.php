@@ -259,7 +259,7 @@ final readonly class EquipmentExportService
     private function extractSize(Equipment $equipment): string
     {
         if ($equipment instanceof Gake) {
-            return (string) ($equipment->getSize() ?? '');
+            return $equipment->getSize() ?? '';
         }
 
         if ($equipment instanceof Muneate) {

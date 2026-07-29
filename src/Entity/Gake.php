@@ -18,7 +18,7 @@ class Gake extends Equipment
 
     #[ORM\Column(nullable: true)]
     #[Versioned]
-    private ?int $size = null;
+    private ?string $size = null;
 
     public static function getType(): EquipmentType
     {
@@ -37,12 +37,12 @@ class Gake extends Equipment
         return $this;
     }
 
-    public function getSize(): ?int
+    public function getSize(): ?string
     {
         return $this->size;
     }
 
-    public function setSize(?int $size): static
+    public function setSize(?string $size): static
     {
         $this->size = $size;
 
