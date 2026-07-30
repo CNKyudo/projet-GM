@@ -474,14 +474,16 @@ class AppFixtures extends Fixture
         $gakeC = new Gake()
             ->setOwnerClub($clubC)
             ->setNbFingers(3)
-            ->setSize('6');
+            ->setSize('6')
+            ->setIsAvailableForLoan(true);
         $manager->persist($gakeC);
 
         // CLUB — Club G (Rennes)
         $gakeG = new Gake()
             ->setOwnerClub($clubG)
             ->setNbFingers(4)
-            ->setSize('L');
+            ->setSize('L')
+            ->setIsAvailableForLoan(true);
         $manager->persist($gakeG);
 
         // REGIONAL — Région A (Ile de France)
@@ -568,7 +570,8 @@ class AppFixtures extends Fixture
             ->setOwnerClub($clubG)
             ->setMaterial('carbone')
             ->setStrength(13)
-            ->setYumiLength(YumiLength::NISUN_NOBI);
+            ->setYumiLength(YumiLength::NISUN_NOBI)
+            ->setIsAvailableForLoan(true);
         $manager->persist($yumiG);
 
         // REGIONAL — Région B (Auvergne Rhone Alpe)

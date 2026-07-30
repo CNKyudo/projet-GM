@@ -1008,10 +1008,11 @@ final class EquipmentControllerTest extends AbstractWebTestCase
 
         $this->client->request(Request::METHOD_POST, '/equipment/'.$this->gakeAId.'/edit', [
             'equipment_form' => [
-                'ownerClub'       => (string) $gake->getOwnerClub()->getId(),
-                'state'           => $gake->getState()->value,
-                'borrowerClub'    => (string) $clubC->getId(),
-                'borrowerMember'  => '',
+                'ownerClub'           => (string) $gake->getOwnerClub()->getId(),
+                'state'               => $gake->getState()->value,
+                'borrowerClub'        => (string) $clubC->getId(),
+                'borrowerMember'      => '',
+                'isAvailableForLoan'  => '1',
                 'gake_form'      => [
                     'nb_fingers' => (string) $gake->getNbFingers(),
                     'size'       => (string) $gake->getSize(),
