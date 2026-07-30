@@ -228,9 +228,9 @@ final class UserPermissionService
      * Règles selon la matrice des droits v2 :
      *  - USER        : ❌ jamais
      *  - MEMBER      : ❌ jamais
-     *  - PRESIDENT   : ✅ même CTK, équipement disponible seulement
-     *  - MGR_CLUB    : ✅ même CTK, équipement disponible seulement
-     *  - MGR_CTK     : ✅ même CTK (dispo + prêtés), autres CTK (dispo seulement)
+     *  - PRESIDENT   : ✅ même CTK, équipement disponible et marqué prêt interclub seulement
+     *  - MGR_CLUB    : ✅ même CTK, équipement disponible et marqué prêt interclub seulement
+     *  - MGR_CTK     : ✅ même CTK (dispo + prêtés), autres CTK (dispo et marqué prêt interclub seulement)
      *  - MGR_CN      : ✅ tout
      *  - ADMIN       : ✅ tout
      */
@@ -249,17 +249,17 @@ final class UserPermissionService
         $clubRegion = $ownerClub->getRegion();
 
         if ($this->hasAnyRole($user, UserRole::EQUIPMENT_MANAGER_CTK)) {
-            // CTK : tout pour les clubs de ses régions gérées, dispo seulement ailleurs
+            // CTK : tout pour les clubs de ses régions gérées, dispo (et marqué prêt interclub) seulement ailleurs
             if ($clubRegion instanceof Region && $user->getManagedRegions()->contains($clubRegion)) {
                 return true;
             }
 
-            return !$isBorrowed;
+            return !$isBorrowed && $equipment->isAvailableForLoan();
         }
 
         if ($this->hasAnyRole($user, UserRole::CLUB_PRESIDENT) || $this->isClubLevel($user)) {
-            // PRESIDENT / MANAGER_CLUB : même CTK, équipement disponible seulement
-            if ($isBorrowed) {
+            // PRESIDENT / MANAGER_CLUB : même CTK, équipement disponible et marqué prêt interclub seulement
+            if ($isBorrowed || !$equipment->isAvailableForLoan()) {
                 return false;
             }
 
