@@ -87,6 +87,9 @@ abstract class Equipment
     #[Versioned]
     private ?string $notes = null;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $isAvailableForLoan = false;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -211,6 +214,18 @@ abstract class Equipment
     public function setBorrowerMember(?ClubMember $member): static
     {
         $this->borrowerMember = $member;
+
+        return $this;
+    }
+
+    public function isAvailableForLoan(): bool
+    {
+        return $this->isAvailableForLoan;
+    }
+
+    public function setIsAvailableForLoan(bool $isAvailableForLoan): static
+    {
+        $this->isAvailableForLoan = $isAvailableForLoan;
 
         return $this;
     }

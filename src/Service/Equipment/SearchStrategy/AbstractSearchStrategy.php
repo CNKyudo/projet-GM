@@ -105,6 +105,7 @@ abstract class AbstractSearchStrategy implements SearchStrategyInterface
 
         $orParts = [];
         $available = sprintf('%s.borrowerClub IS NULL AND %s.borrowerMember IS NULL', $alias, $alias);
+        $availableForLoan = sprintf('%s.isAvailableForLoan = :availableForLoan', $alias);
 
         // --- Niveau CLUB : clubs avec accès tous statuts ---
         if ([] !== $restrictToClubs) {
@@ -120,17 +121,21 @@ abstract class AbstractSearchStrategy implements SearchStrategyInterface
         if (null === $allowedClubsAvailableOnly) {
             // null = tous les clubs disponibles (sans restriction de club)
             $queryBuilder->setParameter('levelClubAvail', EquipmentLevel::CLUB);
+            $queryBuilder->setParameter('availableForLoan', true);
             $orParts[] = $queryBuilder->expr()->andX(
                 $queryBuilder->expr()->eq($alias.'.equipmentLevel', ':levelClubAvail'),
-                $queryBuilder->expr()->andX($available)
+                $queryBuilder->expr()->andX($available),
+                $queryBuilder->expr()->andX($availableForLoan)
             );
         } elseif ([] !== $allowedClubsAvailableOnly) {
             $queryBuilder->setParameter('allowedClubsAvail', $allowedClubsAvailableOnly);
             $queryBuilder->setParameter('levelClubAvailList', EquipmentLevel::CLUB);
+            $queryBuilder->setParameter('availableForLoan', true);
             $orParts[] = $queryBuilder->expr()->andX(
                 $queryBuilder->expr()->eq($alias.'.equipmentLevel', ':levelClubAvailList'),
                 $queryBuilder->expr()->in($alias.'.ownerClub', ':allowedClubsAvail'),
-                $queryBuilder->expr()->andX($available)
+                $queryBuilder->expr()->andX($available),
+                $queryBuilder->expr()->andX($availableForLoan)
             );
         }
 

@@ -28,6 +28,7 @@ use App\Validator\ExactlyOneOwner;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -65,6 +66,11 @@ class EquipmentFormType extends AbstractType
                 'choice_label' => 'fullName',
                 'placeholder' => '--- Aucun ---',
                 'required' => false,
+            ])
+            ->add('isAvailableForLoan', CheckboxType::class, [
+                'required' => false,
+                'label' => 'equipment.is_available_for_loan.label',
+                'translation_domain' => 'messages',
             ])
             ->add('state', EnumType::class, [
                 'class' => EquipmentState::class,
@@ -244,6 +250,20 @@ class EquipmentFormType extends AbstractType
             if ($borrowerClub instanceof Club && $borrowerMember instanceof ClubMember) {
                 $form->get('borrowerMember')->addError(
                     new FormError('Un équipement ne peut avoir qu\'un seul emprunteur : choisissez soit un club, soit un membre, pas les deux.')
+                );
+            }
+        });
+
+        // Validation : un prêt interclub (borrowerClub) nécessite isAvailableForLoan = true
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $formEvent): void {
+            $form = $formEvent->getForm();
+
+            $borrowerClub = $form->get('borrowerClub')->getData();
+            $isAvailableForLoan = $form->has('isAvailableForLoan') ? $form->get('isAvailableForLoan')->getData() : true;
+
+            if (!$isAvailableForLoan && $borrowerClub instanceof Club) {
+                $form->get('borrowerClub')->addError(
+                    new FormError('Le prêt interclub n\'est pas activé pour cet équipement. Cochez la case "Disponible pour le prêt interclub" pour autoriser le prêt à un autre club.')
                 );
             }
         });

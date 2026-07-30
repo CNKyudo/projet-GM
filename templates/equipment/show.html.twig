@@ -279,6 +279,12 @@
                     Disponible
                   </span>
                 {% endif %}
+
+                {% if equipment.isAvailableForLoan %}
+                  <span class="ml-2 inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-800">
+                    Prêt interclub autorisé
+                  </span>
+                {% endif %}
               </dd>
             </div>
           </dl>
@@ -390,6 +396,7 @@
                         'borrowerMember': 'log_entry.field.borrower_member',
                         'state': 'log_entry.field.state',
                         'notes': 'log_entry.field.notes',
+                        'isAvailableForLoan': 'log_entry.field.is_available_for_loan',
                         'material': 'log_entry.field.material',
                         'strength': 'log_entry.field.strength',
                         'yumiLength': 'log_entry.field.yumi_length',
