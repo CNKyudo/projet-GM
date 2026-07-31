@@ -196,7 +196,7 @@
 					<table class="min-w-full text-sm text-kyudo-gm-dark">
 						<thead class="bg-kyudo-gm-light-grey text-xs font-semibold uppercase tracking-wide">
 							<tr>
-								<th class="px-4 py-3 text-left">ID</th>
+								<th class="px-4 py-3 text-right">ID</th>
 								<th class="px-4 py-3 text-left">Type</th>
 								<th class="px-4 py-3 text-left">Détails</th>
 								<th class="px-4 py-3 text-left">Emprunteur</th>
@@ -205,20 +205,18 @@
 						<tbody class="divide-y divide-kyudo-gm-light-grey">
 							{% for equipment in club.ownedEquipments %}
 								<tr class="hover:bg-kyudo-gm-light-grey/40">
-									<td class="px-4 py-3 font-medium">{{ equipment.id }}</td>
+									<td class="px-4 py-3 font-medium text-right">{{ equipment.id }}</td>
 									<td class="px-4 py-3">{{ equipment.typeName }}</td>
 									<td class="px-4 py-3">
-										{% if equipment.typeName == 'yumi' %}
-											{% if equipment.material %}Matériau : {{ equipment.material }}{% endif %}
-											{% if equipment.strength %} &nbsp;·&nbsp; Force : {{ equipment.strength }} kg{% endif %}
-											{% if equipment.yumiLength %} &nbsp;·&nbsp; Longueur : {{ equipment.yumiLength.value }}{% endif %}
-											{% if not equipment.material and not equipment.strength and not equipment.yumiLength %}-{% endif %}
-										{% elseif equipment.typeName == 'gake' %}
-											{% if equipment.nbFingers %}Doigts : {{ equipment.nbFingers }}{% endif %}
-											{% if equipment.size %} &nbsp;·&nbsp; Taille : {{ equipment.size }}{% endif %}
-											{% if not equipment.nbFingers and not equipment.size %}-{% endif %}
-										{% else %}
+									    {% set fields = equipment_fields(equipment)|filter(f => f.value) %}
+
+										{% if fields is empty %}
 											-
+										{% else %}
+											{% for field in fields %}
+												{{ field.label }} : {{ field.value }}
+												{% if not loop.last %}&nbsp;·&nbsp;{% endif %}
+											{% endfor %}
 										{% endif %}
 									</td>
 									<td class="px-4 py-3">
@@ -233,6 +231,9 @@
 								</tr>
 							{% endfor %}
 						</tbody>
+
+						<td class="px-4 py-3">
+
 					</table>
 				</div>
 			{% endif %}
