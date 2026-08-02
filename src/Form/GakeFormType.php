@@ -7,8 +7,10 @@ namespace App\Form;
 use App\Entity\Gake;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\Range;
 
 /**
@@ -26,21 +28,16 @@ class GakeFormType extends AbstractType
                 ],
                 'required' => true,
             ])
-            ->add('size', IntegerType::class, [
+            ->add('size', TextType::class, [
                 'label' => 'Taille',
                 'constraints' => [
-                    new Range(
-                        notInRangeMessage: 'La taille doit être entre 3 et 11',
-                        min: 3,
-                        max: 11,
-                    ),
+                    new Length(max: 255),
+                ],
+                'attr' => [
+                    'maxlength' => 255,
+                    'placeholder' => 'Nombre ou S/M/L',
                 ],
                 'required' => false,
-                'attr' => [
-                    'min' => 3,
-                    'max' => 11,
-                    'placeholder' => 'Entre 3 et 11',
-                ],
             ]);
     }
 

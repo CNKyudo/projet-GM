@@ -28,6 +28,16 @@
 					{% if borrowed is defined and borrowed %}
 						<input type="hidden" name="borrowed" value="{{ borrowed }}">
 					{% endif %}
+
+					<a href="{{ path('equipment.convention.download') }}"
+						download
+						class="inline-flex items-center justify-center gap-1.5 rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 font-medium text-kyudo-gm-dark shadow-sm hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white) focus:outline-none focus:ring-2 focus:ring-kyudo-washed-blue">
+							<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+							</svg>
+							Convention prêt
+					</a>
+
 					<button type="submit" class="inline-flex items-center justify-center gap-1.5 rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 font-medium text-kyudo-gm-dark shadow-sm hover:bg-kyudo-washed-blue hover:text-(--color-kyudo-white) focus:outline-none focus:ring-2 focus:ring-kyudo-washed-blue">
 						<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
 							<path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
@@ -57,7 +67,7 @@
 				<div class="flex w-full flex-col gap-2 md:flex-row md:items-center md:gap-3">
 					<select name="equipmentType" class="w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 text-kyudo-gm-dark shadow-sm outline-none focus:border-kyudo-gm-light-grey focus:ring-2 focus:ring-kyudo-washed-blue md:w-auto">
 						<option value="">-- Aucun filtre --</option>
-						<option value="etafoam" {% if equipmentType == 'etafoam' %}selected{% endif %}>Etafoam</option>
+						<option value="azuchi" {% if equipmentType == 'azuchi' %}selected{% endif %}>Azuchi</option>
 						<option value="gake" {% if equipmentType == 'gake' %}selected{% endif %}>Gant (Gake)</option>
 						<option value="makiwara" {% if equipmentType == 'makiwara' %}selected{% endif %}>Makiwara</option>
 						<option value="maku" {% if equipmentType == 'maku' %}selected{% endif %}>Maku</option>

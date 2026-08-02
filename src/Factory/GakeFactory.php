@@ -18,13 +18,13 @@ final class GakeFactory extends PersistentProxyObjectFactory
     }
 
     /**
-     * @return array<string, int>
+     * @return array<string, int|string>
      */
     protected function defaults(): array
     {
         return [
             'nb_fingers' => self::faker()->numberBetween(3, 5),
-            'size' => self::faker()->numberBetween(6, 12),
+            'size' => (string) self::faker()->numberBetween(6, 12),
         ];
     }
 

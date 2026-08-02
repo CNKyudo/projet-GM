@@ -453,20 +453,20 @@ class AppFixtures extends Fixture
         $gakeA1 = new Gake()
             ->setOwnerClub($clubA)
             ->setNbFingers(3)
-            ->setSize(8);
+            ->setSize('8');
         $manager->persist($gakeA1);
 
         $gakeA2 = new Gake()
             ->setOwnerClub($clubA)
             ->setNbFingers(3)
-            ->setSize(7);
+            ->setSize('7');
         $manager->persist($gakeA2);
 
         // CLUB — Club B (Lyon) — avec emprunteur club (Vincennes emprunte à Lyon)
         $gakeB = new Gake()
             ->setOwnerClub($clubB)
             ->setNbFingers(3)
-            ->setSize(9)
+            ->setSize('9')
             ->setBorrowerClub($clubC);
         $manager->persist($gakeB);
 
@@ -474,14 +474,14 @@ class AppFixtures extends Fixture
         $gakeC = new Gake()
             ->setOwnerClub($clubC)
             ->setNbFingers(3)
-            ->setSize(6);
+            ->setSize('6');
         $manager->persist($gakeC);
 
         // CLUB — Club G (Rennes)
         $gakeG = new Gake()
             ->setOwnerClub($clubG)
             ->setNbFingers(4)
-            ->setSize(7);
+            ->setSize('L');
         $manager->persist($gakeG);
 
         // REGIONAL — Région A (Ile de France)
@@ -489,7 +489,7 @@ class AppFixtures extends Fixture
             ->setOwnerRegion($regionA)
             ->setEquipmentLevel(EquipmentLevel::REGIONAL)
             ->setNbFingers(3)
-            ->setSize(8);
+            ->setSize('8');
         $manager->persist($gakeRegA);
 
         // REGIONAL — Région C (Arc Atlantique)
@@ -497,7 +497,7 @@ class AppFixtures extends Fixture
             ->setOwnerRegion($regionC)
             ->setEquipmentLevel(EquipmentLevel::REGIONAL)
             ->setNbFingers(3)
-            ->setSize(7);
+            ->setSize('7');
         $manager->persist($gakeRegC);
 
         // NATIONAL
@@ -505,7 +505,7 @@ class AppFixtures extends Fixture
             ->setOwnerFederation($federation)
             ->setEquipmentLevel(EquipmentLevel::NATIONAL)
             ->setNbFingers(5)
-            ->setSize(10);
+            ->setSize('10');
         $manager->persist($gakeNat);
 
         // NATIONAL — emprunté (pour tester la restriction "dispo seulement" des rôles < CN)
@@ -513,7 +513,7 @@ class AppFixtures extends Fixture
             ->setOwnerFederation($federation)
             ->setEquipmentLevel(EquipmentLevel::NATIONAL)
             ->setNbFingers(3)
-            ->setSize(8)
+            ->setSize('8')
             ->setBorrowerMember($memberLinked);
         $manager->persist($gakeNatBorrowed);
 
@@ -523,7 +523,7 @@ class AppFixtures extends Fixture
             ->setOwnerRegion($regionA)
             ->setEquipmentLevel(EquipmentLevel::REGIONAL)
             ->setNbFingers(4)
-            ->setSize(7)
+            ->setSize('7')
             ->setBorrowerClub($clubA);
         $manager->persist($gakeRegABorrowed);
 

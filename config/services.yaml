@@ -6,6 +6,7 @@
 parameters:
     app.logo_fg-white_bg-blue: '%kernel.project_dir%/assets/pictures/FRANCE_KYUDO_LOGOTYPE_RVB_PRINCIPAL BLANC_BG-BLEU.png' # an image with background, ideally blue (for svg)
     app.logo_fg-white_no-bg: '%kernel.project_dir%/assets/pictures/FRANCE_KYUDO_LOGOTYPE_RVB_PRINCIPAL BLANC.png' # an image without background, ideally white (for pdf)
+    app.convention_pret: '%kernel.project_dir%/public/documents/modele_convention_pret_materiel_CTKyudo_Club_v2.docx'
 
 services:
     # default configuration for services in *this* file

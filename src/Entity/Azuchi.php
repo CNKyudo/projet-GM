@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Enum\EquipmentType;
-use App\Repository\EtafoamRepository;
+use App\Repository\AzuchiRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation\Versioned;
 
-#[ORM\Entity(repositoryClass: EtafoamRepository::class)]
-class Etafoam extends Equipment
+#[ORM\Entity(repositoryClass: AzuchiRepository::class)]
+class Azuchi extends Equipment
 {
     #[ORM\Column(type: Types::FLOAT, nullable: true)]
     #[Versioned]
@@ -31,7 +31,7 @@ class Etafoam extends Equipment
 
     public static function getType(): EquipmentType
     {
-        return EquipmentType::ETAFOAM;
+        return EquipmentType::AZUCHI;
     }
 
     public function getEquipmentLength(): ?float

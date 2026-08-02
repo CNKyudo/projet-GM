@@ -46,8 +46,8 @@ function normalizeEquipmentType(selectElement) {
         return String(value || '').trim().toLowerCase()
     })
 
-    if (normalizedCandidates.some(function (value) { return value.includes('etafoam') })) {
-        return 'etafoam'
+    if (normalizedCandidates.some(function (value) { return value.includes('azuchi') })) {
+        return 'azuchi'
     }
     // Gake doit être testé avant Shitagake, car "shitagake" contient "gake".
     if (normalizedCandidates.some(function (value) { return value.includes('shitagake') })) {
@@ -87,7 +87,7 @@ function normalizeEquipmentType(selectElement) {
 }
 
 function updateEquipmentSections(selectElement, 
-        etafoamSection, 
+        azuchiSection, 
         gakeSection, 
         makiwaraSection, 
         makuSection, 
@@ -101,7 +101,7 @@ function updateEquipmentSections(selectElement,
     ) {
     var equipmentType = normalizeEquipmentType(selectElement)
     var sections = {
-        etafoam: etafoamSection,
+        azuchi: azuchiSection,
         gake: gakeSection,
         makiwara: makiwaraSection,
         maku: makuSection,
@@ -189,8 +189,8 @@ function initEquipmentForm(root) {
         return
     }
 
-    const etafoamFormSection = root.querySelector('[data-equipment-form-section="etafoam"]')
-        || root.querySelector('#etafoam_form_section')
+    const azuchiFormSection = root.querySelector('[data-equipment-form-section="azuchi"]')
+        || root.querySelector('#azuchi_form_section')
     const gakeFormSection = root.querySelector('[data-equipment-form-section="gake"]')
         || root.querySelector('#gake_form_section')
     const makiwaraFormSection = root.querySelector('[data-equipment-form-section="makiwara"]')
@@ -214,7 +214,7 @@ function initEquipmentForm(root) {
     const refreshSections = function () {
         updateEquipmentSections(
             equipmentType,
-            etafoamFormSection,
+            azuchiFormSection,
             gakeFormSection,
             makiwaraFormSection,
             makuFormSection,

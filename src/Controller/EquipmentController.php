@@ -6,7 +6,7 @@ namespace App\Controller;
 
 use App\Entity\ClubMember;
 use App\Entity\Equipment;
-use App\Entity\Etafoam;
+use App\Entity\Azuchi;
 use App\Entity\Federation;
 use App\Entity\Gake;
 use App\Entity\Makiwara;
@@ -32,6 +32,7 @@ use App\Service\LogEntryEnricher;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -52,6 +53,8 @@ final class EquipmentController extends AbstractController
         private readonly EquipmentVisibilityFilterResolver $visibilityFilterResolver,
         private readonly TranslatorInterface $translator,
         private readonly UserRepository $userRepository,
+        #[Autowire('%app.convention_pret%')]
+        private readonly string $conventionPret,
     ) {
     }
 
@@ -107,6 +110,21 @@ final class EquipmentController extends AbstractController
             'status' => $status,
             'borrowed' => $borrowedUserId,
         ]);
+    }
+
+    #[Route('/equipment/convention/download', name: 'equipment.convention.download')]
+    #[IsGranted(UserPermissionVoter::BROWSE_ALL_EQUIPMENT)]
+    public function downloadConvention(): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    {
+        $filename = sprintf(
+            'convention_pret_%s.docx',
+            new \DateTime()->format('d-m-Y')
+        );
+
+        return $this->file(
+            $this->conventionPret,
+            $filename
+        );
     }
 
     #[Route('/equipment/export', name: 'equipment.export', methods: ['POST'])]
@@ -202,7 +220,7 @@ final class EquipmentController extends AbstractController
             }
 
             $equipment = match ($type) {
-                EquipmentType::ETAFOAM => new Etafoam(),
+                EquipmentType::AZUCHI => new Azuchi(),
                 EquipmentType::GAKE => new Gake(),
                 EquipmentType::MAKIWARA => new Makiwara(),
                 EquipmentType::MAKU => new Maku(),
@@ -245,12 +263,12 @@ final class EquipmentController extends AbstractController
             $equipment->setBorrowerClub($form->get('borrowerClub')->getData());
             $equipment->setBorrowerMember($form->get('borrowerMember')->getData());
 
-            if ($equipment instanceof Etafoam && $form->has('etafoam_form')) {
-                $etafoamForm = $form->get('etafoam_form');
-                $equipment->setEquipmentLength($etafoamForm->get('equipmentLength')->getData());
-                $equipment->setWidth($etafoamForm->get('width')->getData());
-                $equipment->setThickness($etafoamForm->get('thickness')->getData());
-                $equipment->setQuantity($etafoamForm->get('quantity')->getData());
+            if ($equipment instanceof Azuchi && $form->has('azuchi_form')) {
+                $azuchiForm = $form->get('azuchi_form');
+                $equipment->setEquipmentLength($azuchiForm->get('equipmentLength')->getData());
+                $equipment->setWidth($azuchiForm->get('width')->getData());
+                $equipment->setThickness($azuchiForm->get('thickness')->getData());
+                $equipment->setQuantity($azuchiForm->get('quantity')->getData());
             }
 
             if ($equipment instanceof Gake && $form->has('gake_form')) {

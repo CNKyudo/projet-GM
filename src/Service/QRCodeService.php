@@ -52,7 +52,7 @@ class QRCodeService
     /**
      * Génère un QR code stylisé en PNG (via endroid/qr-code + GD) pour PDF.
      */
-    private function generateStyledQrCode(string $url, bool $isNational): string
+    private function generateStyledQrCode(string $url, bool $hasLogo): string
     {
         $writer = new PngWriter();
 
@@ -67,7 +67,7 @@ class QRCodeService
             backgroundColor: new Color(255, 255, 255)
         );
 
-        $logo = $isNational
+        $logo = $hasLogo
             ? new Logo(
                 path: $this->logoPathPDF,
                 resizeToWidth: 150,
@@ -103,8 +103,10 @@ class QRCodeService
             backgroundColor: new Color(255, 255, 255)
         );
 
-        $isNational = EquipmentLevel::NATIONAL === $qrCode->getEquipment()->getEquipmentLevel();
-        $logo = $isNational
+        $level = $qrCode->getEquipment()->getEquipmentLevel();
+        // Logo affiché uniquement pour les équipements CNKyudo de niveau régional ou national.
+        $hasLogo = (EquipmentLevel::NATIONAL === $level) || (EquipmentLevel::REGIONAL === $level);
+        $logo = $hasLogo
             ? new Logo(
                 path: $this->logoPathSVG,
                 resizeToWidth: (int) ($size * 0.5)
@@ -144,9 +146,10 @@ class QRCodeService
             UrlGeneratorInterface::ABSOLUTE_URL
         );
 
-        // Génération PNG via endroid/qr-code (utilise GD, pas Imagick)
-        $isNational = EquipmentLevel::NATIONAL === $equipment->getEquipmentLevel();
-        $pngBase64 = $this->generateStyledQrCode($url, $isNational);
+        $level = $qrCode->getEquipment()->getEquipmentLevel();
+        // Logo affiché uniquement pour les équipements CNKyudo de niveau régional ou national.
+        $hasLogo = (EquipmentLevel::NATIONAL === $level) || (EquipmentLevel::REGIONAL === $level);
+        $pngBase64 = $this->generateStyledQrCode($url, $hasLogo);
 
         $html = $this->twig->render('qr-code.pdf.twig', [
             'equipmentLabel' => $equipmentLabel,
