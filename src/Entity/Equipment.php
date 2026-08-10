@@ -27,6 +27,7 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
     'muneate' => Muneate::class,
     'shitagake' => Shitagake::class,
     'support_makiwara' => SupportMakiwara::class,
+    'tsuru' => Tsuru::class,
     'yatate' => Yatate::class,
     'yumi' => Yumi::class,
     'yumitate' => Yumitate::class,

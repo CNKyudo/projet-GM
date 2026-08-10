@@ -222,6 +222,31 @@
                   {{ equipment.height is not null ? equipment.height : '-' }}
                 </dd>
               </div>
+            {% elseif equipment.typeName == 'tsuru' %}
+              <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
+                <dt class="text-xs font-medium text-">Taille</dt>
+                <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
+                  {{ equipment.tsuruLength? equipment.tsuruLength.label|trans : '-' }}
+                </dd>
+              </div>
+              <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
+                <dt class="text-xs font-medium text-">Force min (kg)</dt>
+                <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
+                  {{ equipment.strengthMin ?: '-' }}
+                </dd>
+              </div>
+              <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
+                <dt class="text-xs font-medium text-">Force max (kg)</dt>
+                <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
+                  {{ equipment.strengthMax ?: '-' }}
+                </dd>
+              </div>
+              <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
+                <dt class="text-xs font-medium text-">Quantité</dt>
+                <dd class="mt-1 text-sm font-semibold text-kyudo-gm-dark">
+                  {{ equipment.quantity }}
+                </dd>
+              </div>
             {% elseif equipment.typeName == 'yatate' %}
               <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
                 <dt class="text-xs font-medium text-">Nombre de flèches</dt>
@@ -382,34 +407,38 @@
                   {% if not (entry.action == 'create' and value is null) %}
                     <li class="text-xs text-kyudo-gm-dark">
                       {% set fieldLabel = {
-                        'ownerClub': 'log_entry.field.owner_club',
-                        'ownerRegion': 'log_entry.field.owner_region',
-                        'ownerFederation': 'log_entry.field.owner_federation',
-                        'equipmentLevel': 'log_entry.field.equipment_level',
+                        'attachment': 'log_entry.field.attachment',
                         'borrowerClub': 'log_entry.field.borrower_club',
                         'borrowerMember': 'log_entry.field.borrower_member',
-                        'state': 'log_entry.field.state',
-                        'notes': 'log_entry.field.notes',
-                        'material': 'log_entry.field.material',
-                        'strength': 'log_entry.field.strength',
-                        'yumiLength': 'log_entry.field.yumi_length',
-                        'nb_fingers': 'log_entry.field.nb_fingers',
-                        'size': 'log_entry.field.size',
-                        'height': 'log_entry.field.height',
-                        'nb_bows': 'log_entry.field.nb_bows',
-                        'nb_arrows': 'log_entry.field.nb_arrows',
-                        'orientation': 'log_entry.field.orientation',
                         'equipmentLength': 'log_entry.field.equipment_length',
-                        'width': 'log_entry.field.width',
+                        'equipmentLevel': 'log_entry.field.equipment_level',
+                        'height': 'log_entry.field.height',
+                        'material': 'log_entry.field.material',
+                        'nb_arrows': 'log_entry.field.nb_arrows',
+                        'nb_bows': 'log_entry.field.nb_bows',
+                        'nb_fingers': 'log_entry.field.nb_fingers',
+                        'notes': 'log_entry.field.notes',
+                        'orientation': 'log_entry.field.orientation',
+                        'ownerClub': 'log_entry.field.owner_club',
+                        'ownerFederation': 'log_entry.field.owner_federation',
+                        'ownerRegion': 'log_entry.field.owner_region',
+                        'size': 'log_entry.field.size',
+                        'state': 'log_entry.field.state',
+                        'strengthMax': 'log_entry.field.strength_max',
+                        'strengthMin': 'log_entry.field.strength_min',
+                        'strength': 'log_entry.field.strength',
                         'thickness': 'log_entry.field.thickness',
+                        'tsuruLength': 'log_entry.field.tsuru_length',
                         'weight': 'log_entry.field.weight',
-                        'attachment': 'log_entry.field.attachment',
+                        'width': 'log_entry.field.width',
+                        'yumiLength': 'log_entry.field.yumi_length',
                       } %}
                       {% set transPrefix = {
-                        'state': 'equipment.state.',
                         'material': equipment.typeName == 'makiwara' ? 'makiwara.material.' : null,
-                        'yumiLength': 'yumi.length.',
                         'orientation': 'yumitate.orientation.',
+                        'state': 'equipment.state.',
+                        'tsuruLength': 'tsuru.length.',
+                        'yumiLength': 'yumi.length.',
                       } %}
                       <span class="font-medium">{{ (fieldLabel[field]|default(field))|trans }}</span> :
                       {% if value is iterable and value.display is defined %}

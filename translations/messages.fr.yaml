@@ -7,6 +7,7 @@ equipment:
     muneate: "Muneate"
     shitagake: "Shitagake"
     support_makiwara: "Support makiwara"
+    tsuru: "Tsuru"
     yatate: "Yatate"
     yumi: "Arc (Yumi)"
     yumitate: "Yumitate"
@@ -29,6 +30,11 @@ makiwara:
     cardboard: "Carton"
     foam: "Mousse"
 yumi:
+  length:
+    namisun: "Namisun"
+    nisun_nobi: "Nisun nobi"
+    yonsun_nobi: "Yonsun nobi"
+tsuru:
   length:
     namisun: "Namisun"
     nisun_nobi: "Nisun nobi"
