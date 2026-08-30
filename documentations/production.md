@@ -1,107 +1,256 @@
 # Informations sur la production
 
+Ce serveur VPS OVH héberge 3 projets, chacun avec son utilisateur système, sa base
+PostgreSQL et son pool PHP-FPM dédiés :
+
+| Projet | Domaine | User système | Base PostgreSQL |
+|---|---|---|---|
+| projet-GM | `gm.kyudo.fr` | `gm_user` | `projet_gm` |
+| pikaichu-symfony | `pikaichu-symfony.kyudo.fr` | `pikaichu_user` | `pikaichu` |
+| Kyudopedia (MediaWiki) | `kyudopedia.kyudo.fr` | `mediawiki` | `mediawiki_db` |
+
+Un compte `backup_pg` (lecture seule) sauvegarde les 3 bases quotidiennement (cf.
+section Sauvegardes). L'administration système se fait via le compte `sgandossi`.
+
 ## Firewall UFW
 
-Le firewall bloque tous ce qui rentre sur le serveur sauf les ports SSH, HTTP et HTTPS.
-Pour vérifier qu'il est actif, il suffit de taper la commande :
+Le firewall bloque tout ce qui rentre sur le serveur sauf les ports SSH, HTTP et
+HTTPS (en IPv4 et IPv6). Le trafic sortant est autorisé par défaut.
 
 ```bash
-sudo ufw status
+sudo ufw status verbose
 ```
 
 ## Fail2ban
 
-Fail2ban est un outils qui bloque les tentatives de bruteforce.
-C'est à dire les tentatives de connection intempestives dans le but de trouver des informations pour entrer dans le serveur.
-Pour cela il analyse le traffic et s'il y a beaucoup d'erreur venant d'une seule personne (adresse IP), il la bloque pendant quelques minutes.
-Deux règles principales sont actives :
+Fail2ban bloque les tentatives de bruteforce : il analyse le trafic et bannit
+temporairement une IP après trop d'échecs.
 
-- SSH, il bloque les tentatives de connexions infructueuses trop nombreuses
-- nginx, il bloque l'utilisateur s'il rencontre trop de requête en erreur (404)
+```bash
+sudo fail2ban-client status
+```
+
+Jails actives :
+
+- `sshd` : bannit les IP après trop de tentatives de connexion SSH infructueuses
+- `nginx-404` : bannit les IP qui génèrent trop d'erreurs 404 (scans de
+  vulnérabilités). **Important** : le `logpath` doit couvrir les logs des 3
+  projets, pas seulement le fichier par défaut de Nginx :
+  `logpath = /var/log/nginx/*_access.log`
+- `nginx-botsearch` : bannit les IP qui scannent des chemins typiques de
+  webshells/exploits (`R57.php`, `bolt.php`, etc.), indépendamment du code HTTP
+  retourné — complète `nginx-404` puisque ces scans tombent souvent sur le vhost
+  par défaut avec un code `301`/`444`, pas `404`
+
+Statut détaillé d'une jail :
+
+```bash
+sudo fail2ban-client status sshd
+sudo fail2ban-client status nginx-404
+sudo fail2ban-client status nginx-botsearch
+```
+
+## SSH
+
+Configuration durcie dans `/etc/ssh/sshd_config` :
+
+- `PermitRootLogin no` — connexion root directe interdite
+- `PasswordAuthentication no` — **authentification par clé uniquement** (le
+  volume de bruteforce observé sur `sshd`, plusieurs dizaines de milliers de
+  tentatives, rend l'auth par mot de passe risquée)
+- `PubkeyAuthentication yes`
+- `AllowTcpForwarding no`, `AllowAgentForwarding no`, `X11Forwarding no`,
+  `TCPKeepAlive no` — surface d'attaque réduite, ces fonctionnalités ne sont pas
+  utilisées sur ce serveur
+- `MaxAuthTries 3`, `MaxSessions 2`, `ClientAliveCountMax 2`
+- `LogLevel VERBOSE`
+- `Banner /etc/issue.net` — bannière légale affichée avant connexion (propriété
+  CNKyudo/FFJDA, accès réservé à la commission Outils numériques)
+
+Vérifier la configuration effective :
+
+```bash
+sudo sshd -T | grep -Ei 'permitrootlogin|passwordauthentication|pubkeyauthentication'
+```
+
+**Point de vigilance non résolu** : le compte `ubuntu` (créé par défaut par
+cloud-init OVH) a un sudo `NOPASSWD:ALL` et un mot de passe encore actif (pas de
+clé SSH associée, donc pas d'accès distant possible tant que
+`PasswordAuthentication` reste désactivé). À verrouiller quand on aura le temps :
+`sudo passwd -l ubuntu`, `sudo usermod -s /usr/sbin/nologin ubuntu`, et retrouver
+puis neutraliser la règle sudoers correspondante (pas dans
+`/etc/sudoers.d/90-cloud-init-users`, à identifier via
+`sudo grep -rl "ubuntu" /etc/sudoers /etc/sudoers.d/`).
 
 ## Nginx
 
-Avec PHP il permet de rendre le site visible sur internet.
-Son dossier est `/var/www/projet-GM/production` qui est un lien symbolique vers le un dossier de releases. (cf. déploiement)
-
-La configuration Nginx pour le projet se situe ici :
+Chaque projet a son propre vhost. Nginx sert le contenu de `production/` qui est
+un lien symbolique vers un dossier de release (cf. Déploiement).
 
 ```bash
-sudo vim /etc/nginx/sites-available/projet-gm.conf
+sudo vim /etc/nginx/sites-available/<projet>.conf
 ```
 
-Les logs de l'application sont ici :
+Logs par projet :
 
-- `/var/log/nginx/projet-GM_access.log`
-- `/var/log/nginx/projet-GM_error.log`
+- `/var/log/nginx/projet-GM_access.log` / `_error.log`
+- `/var/log/nginx/pikaichu-symfony_access.log` / `_error.log`
+- `/var/log/nginx/mediawiki_access.log` / `_error.log`
+
+**Vhost catch-all** (`/etc/nginx/sites-available/000-default-catchall.conf`) :
+toute requête avec un `Host` qui ne correspond à aucun des 3 domaines ci-dessus
+tombe sur ce vhost, qui coupe la connexion sans réponse (`return 444;` en HTTP,
+`ssl_reject_handshake on;` en HTTPS). Sans ce vhost explicite, Nginx retombe
+silencieusement sur le premier vhost chargé par ordre alphabétique — comportement
+fragile qu'on a corrigé après l'avoir identifié pendant l'audit de sécurité.
 
 ## PHP
 
-Ce projet a un pool PHP dédié, ce qui permet d'avoir à l'avenir d'autre projet hébergés par le serveur avec des configurations différentes.
-Le pool se configure ici :
+Chaque projet a un pool PHP-FPM dédié, avec son propre socket Unix, ce qui
+permet d'isoler la configuration et les processus d'un projet à l'autre.
 
 ```bash
-sudo vim /etc/php/8.4/fpm/pool.d/projet-gm.conf
+sudo vim /etc/php/8.4/fpm/pool.d/<projet>.conf
 ```
+
+`allow_url_fopen = Off` dans `php.ini` (désactive les inclusions de fichiers
+distants).
 
 ## PostgreSQL
 
-La base de donnée est sur le serveur également et n'est pas accessible de l'extérieur par mesure de sécurité.
-Il y a deux utilisateurs pour le moment :
+La base de données est sur le serveur, non accessible depuis l'extérieur
+(authentification restreinte à `localhost`/socket Unix dans `pg_hba.conf`).
 
-- `postgres` : l'administrateur de la base de donnée
-- `gm_user` : le propriétaire et le gestionnaire de la base de donnée du projet
+Rôles :
 
-Pour faire des modifications sur la base de donnée pour le projet, il faut utilise `gm_user` qui a tous les droits sur la base du projet.
+- `postgres` : superutilisateur, administration du cluster
+- `gm_user`, `pikaichu_user`, `mediawiki_user` : un rôle par projet, propriétaire
+  de sa base, sans attribut spécial (pas de superuser/createdb/createrole)
+- `backup_pg` : lecture seule sur les 3 bases, utilisé par le script de sauvegarde
 
-Pour créer une nouvelle base de donnée ou gérer les droits, on peut utiliser l'utilisateur `postgres`, comme ceci :
+**Isolation entre projets** : chaque base a eu son droit `CONNECT` retiré à
+`PUBLIC` (comportement par défaut de PostgreSQL à la création d'une base,
+souvent oublié — sans ce retrait, n'importe quel rôle du cluster peut se
+connecter à n'importe quelle base avec son propre mot de passe). Seuls le
+propriétaire et `backup_pg` ont `CONNECT` explicite :
+
+```sql
+REVOKE CONNECT ON DATABASE <db> FROM PUBLIC;
+GRANT CONNECT ON DATABASE <db> TO backup_pg;
+```
+
+Vérifier l'état des droits :
+
+```bash
+sudo -u postgres psql -c "SELECT datname, datacl FROM pg_database;"
+```
+
+Administration (créer une base, gérer les rôles) :
 
 ```bash
 sudo -i -u postgres
 psql
 ```
 
-Pour faire des requêtes sur la base de donnée du projet, il faut utiliser `gm_user` comme ceci :
+Requêtes sur la base d'un projet :
 
 ```bash
 psql -U gm_user -d projet_gm -h 127.0.0.1 -W
-
 ```
+
+## Sauvegardes
+
+Script `/usr/local/bin/pg_backup_s3.sh`, exécuté quotidiennement à 3h du matin
+via le crontab de `backup_pg` :
+
+```bash
+sudo crontab -l -u backup_pg
+```
+
+Il dump les 3 bases (`projet_gm`, `pikaichu`, `mediawiki_db`), les compresse et
+les envoie vers OVH Object Storage (`s3cmd`), avec une purge locale à 30 jours
+(la purge côté bucket S3 n'est pas automatisée — à surveiller si le volume de
+stockage grossit trop).
+
+Logs : `/var/log/pg_backup.log`
+
+Le script et le fichier `~backup_pg/.s3cfg` contiennent des identifiants en
+clair (mot de passe PostgreSQL, clés S3) : leurs permissions doivent rester
+strictes (`700`/`600`, propriétaire `backup_pg` uniquement) :
+
+```bash
+ls -la /usr/local/bin/pg_backup_s3.sh ~backup_pg/.s3cfg
+```
+
+## Malware / intégrité
+
+`rkhunter` est installé pour scanner périodiquement le système à la recherche de
+rootkits/malwares connus :
+
+```bash
+sudo rkhunter --check --sk
+```
+
+Rapport dans `/var/log/rkhunter.log`. Les bases secondaires
+(`programs_bad.dat`, `backdoorports.dat`, `suspscan.dat`, `i18n.ver`) ne se
+mettent pas à jour via `--update` à cause d'un `mirrors.dat` vide par défaut
+dans le paquet Debian/Ubuntu — sans impact sur le fonctionnement de `--check`,
+qui utilise la base principale de signatures fournie par le paquet.
 
 ## Déploiement
 
-Le déploiement est lancé automatiquement lorsqu'une Pull Request Github est merge sur la branche `main`.
-Il copie le script `deploy.sh` sur le serveur avec l'utilisateur `gm_user` et le lance.
+Le déploiement est lancé automatiquement lorsqu'un commit est poussé sur la
+branche `main` de chaque projet (via GitHub Actions + SSH).
 
-Ce script crée une dossiers avec le hash du commit dans `/var/www/projet-GM/releases/{HASH_COMMIT}`.
-Dans ce dossier il git clone le projet, insère le `.env.local` contenant les variables d'environnement.
-Ensuite il lance les commandes Symfony pour "préparer" le dossier.
-Enfin, lorsque tout s'est terminé avec succès il crée un lien symbolique de `/var/www/projet-GM/releases/{HASH_COMMIT}` vers `/var/www/projet-GM/production`.
+Pour projet-GM, le script `deploy.sh` est copié sur le serveur puis exécuté avec
+l'utilisateur `gm_user`. Il crée un dossier avec le hash du commit dans
+`/var/www/projet-GM/releases/{HASH_COMMIT}`, y clone le projet, insère le
+`.env.local` (depuis un dossier `shared/` persistant pour pikaichu-symfony ;
+projet-GM utilise encore l'ancien schéma avec `.env.local` dans `production/`),
+lance les commandes Symfony de préparation, puis met à jour le lien symbolique
+`/var/www/projet-GM/releases/{HASH_COMMIT}` → `/var/www/projet-GM/production`.
 
-Ce script supprimes les anciennes releases pour n'en garder que 5.
+Le script garde les 5 dernières releases et supprime les plus anciennes.
 
-Il est donc possible de rollback un déploiement en changeant le lien symbolique vers l'ancien hash (en s'aidant des logs git ou des dates) :
+Rollback manuel (en s'aidant des logs git ou des dates) :
 
 ```bash
 ln -sfn "/var/www/projet-GM/releases/{HASH_COMMIT}" "/var/www/projet-GM/production"
-
 ```
+
+pikaichu-symfony suit le même principe (voir le repo pikaichu-symfony pour le
+détail de son `deploy.sh` et sa procédure de premier déploiement).
 
 ## HTTPS
 
-Le HTTPS certificat TLS est géré par l'autorité de certificat Let's Encrypt qui propose des certificats TLS de 3 mois.
-Le certificat est généré sur le serveur et lié à la configuration Nginx pour servir du HTTPS.
-Un Timer est lancé régulièrement pour tenter de renouveller le certificat.
-Pour avoir des infos sur le Timer, et quelle sera son prochain passage (Trigger), on peut utiliser la commande :
+Les certificats TLS sont gérés par Let's Encrypt (durée de vie 3 mois),
+générés sur le serveur et liés à la configuration Nginx de chaque projet.
+
+```bash
+sudo certbot certificates
+```
+
+Un timer systemd tente le renouvellement automatique deux fois par jour :
 
 ```bash
 sudo systemctl status certbot.timer
 ```
 
-Les logs letsencrypt sont ici : `/var/log/letsencrypt/letsencrypt.log`.
+Logs : `/var/log/letsencrypt/letsencrypt.log`
 
-On peut faire un test immédiat "à blanc" (--dry-run simule le renouvellement) :
+Test de renouvellement à blanc (ne modifie rien) :
 
 ```bash
-sudo sudo certbot renew --dry-run
+sudo certbot renew --dry-run
 ```
+
+## Historique des audits de sécurité
+
+- **2026-08-30** : audit complet (Lynis, UFW, fail2ban, SSH, séparation des
+  utilisateurs, PostgreSQL, mises à jour, sauvegardes, certificats). Hardening
+  index Lynis passé de 70 à 76/100. Failles corrigées : permissions fichiers
+  PostgreSQL, durcissement SSH (dont désactivation de l'auth par mot de passe),
+  bannière SMTP Postfix, vhost Nginx catch-all manquant, jails fail2ban mal
+  configurées, et surtout l'absence de `REVOKE CONNECT ... FROM PUBLIC` sur les
+  3 bases PostgreSQL qui cassait l'isolation entre projets. Voir le point de
+  vigilance non résolu sur le compte `ubuntu` ci-dessus.
