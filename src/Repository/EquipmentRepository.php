@@ -41,7 +41,7 @@ class EquipmentRepository extends ServiceEntityRepository
      * Retourne un QueryBuilder construit par la bonne stratégie.
      *
      * @param string             $query                       Terme de recherche
-     * @param EquipmentType|null $equipmentType               Type d'équipement (null, YUMI, GAKE)
+     * @param EquipmentType|null $equipmentType               Type d'équipement (null, YUMI, YUGAKE)
      * @param string             $status                      Statut global ('all', 'available', 'loaned')
      * @param array<Club>|null   $restrictToClubs             null = aucune restriction ; [] = aucun ; [Club...] = filtre tous statuts
      * @param array<Club>|null   $allowedClubsAvailableOnly   null = tous clubs disponibles ; [] = aucun ; [Club...] = filtre disponibles seulement

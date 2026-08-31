@@ -6,7 +6,7 @@ namespace App\Tests\Functional;
 
 use App\DataFixtures\AppFixtures;
 use App\Entity\Equipment;
-use App\Entity\Gake;
+use App\Entity\Yugake;
 use App\Repository\EquipmentRepository;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Reader\Exception as ReaderException;
@@ -29,10 +29,10 @@ use Symfony\Component\HttpFoundation\Request;
 final class EquipmentExportExcelTest extends AbstractWebTestCase
 {
     /** ID du gant appartenant au Club A */
-    private int $gakeAId;
+    private int $yugakeAId;
 
     /** ID du gant appartenant au Club G (autre CTK, disponible) */
-    private int $gakeGId;
+    private int $yugakeGId;
 
     protected function setUp(): void
     {
@@ -46,14 +46,14 @@ final class EquipmentExportExcelTest extends AbstractWebTestCase
         $equipments = $repo->findAll();
 
         foreach ($equipments as $equipment) {
-            if (!$equipment instanceof Gake) {
+            if (!$equipment instanceof Yugake) {
                 continue;
             }
 
             if (AppFixtures::CLUB_A === $equipment->getOwnerClub()?->getName()) {
-                $this->gakeAId = $equipment->getId();
+                $this->yugakeAId = $equipment->getId();
             } elseif (AppFixtures::CLUB_G === $equipment->getOwnerClub()?->getName()) {
-                $this->gakeGId = $equipment->getId();
+                $this->yugakeGId = $equipment->getId();
             }
         }
     }
@@ -170,12 +170,12 @@ final class EquipmentExportExcelTest extends AbstractWebTestCase
     // Filtres propagés : equipmentType
     // -----------------------------------------------------------------------
 
-    public function testExportExcelFilterByEquipmentTypeGake(): void
+    public function testExportExcelFilterByEquipmentTypeYugake(): void
     {
         $this->loginAs(AppFixtures::USER_ADMIN);
         $this->client->request(Request::METHOD_POST, '/equipment/export', [
             'format' => 'xlsx',
-            'equipmentType' => 'gake',
+            'equipmentType' => 'yugake',
         ]);
 
         $this->assertResponseIsSuccessful();
@@ -189,14 +189,14 @@ final class EquipmentExportExcelTest extends AbstractWebTestCase
         $this->assertNotFalse($typeIndex);
         $counter = count($data);
 
-        // Vérifier que toutes les lignes (sauf header) sont de type "Gant (Gake)"
+        // Vérifier que toutes les lignes (sauf header) sont de type "Yugake"
         for ($i = 1; $i < $counter; ++$i) {
             $row = $data[$i];
             if (!isset($row[$typeIndex]) || '' === $row[$typeIndex]) {
                 continue;
             }
 
-            $this->assertSame('Gant (Gake)', (string) $row[$typeIndex], 'Toutes les lignes doivent être de type Gant (Gake)');
+            $this->assertSame('Yugake', (string) $row[$typeIndex], 'Toutes les lignes doivent être de type Yugake');
         }
     }
 
@@ -308,7 +308,7 @@ final class EquipmentExportExcelTest extends AbstractWebTestCase
         $this->assertNotFalse($idIndex);
 
         $exportedIds = array_column(array_slice($data, 1), $idIndex);
-        $this->assertContains((string) $this->gakeAId, $exportedIds, 'Le gant du Club A doit être dans l\'export du MEMBER');
+        $this->assertContains((string) $this->yugakeAId, $exportedIds, 'Le gant du Club A doit être dans l\'export du MEMBER');
     }
 
     public function testExportExcelDoesNotContainOtherCtkEquipmentForMember(): void
@@ -326,7 +326,7 @@ final class EquipmentExportExcelTest extends AbstractWebTestCase
         $this->assertNotFalse($idIndex);
 
         $exportedIds = array_column(array_slice($data, 1), $idIndex);
-        $this->assertNotContains((string) $this->gakeGId, $exportedIds, 'MEMBER ne doit pas voir le gant du Club G (autre CTK)');
+        $this->assertNotContains((string) $this->yugakeGId, $exportedIds, 'MEMBER ne doit pas voir le gant du Club G (autre CTK)');
     }
 
     // -----------------------------------------------------------------------
@@ -338,7 +338,7 @@ final class EquipmentExportExcelTest extends AbstractWebTestCase
         $this->loginAs(AppFixtures::USER_ADMIN);
         $this->client->request(Request::METHOD_POST, '/equipment/export', [
             'format' => 'xlsx',
-            'equipmentType' => 'gake',
+            'equipmentType' => 'yugake',
         ]);
 
         $this->assertResponseIsSuccessful();
@@ -356,9 +356,9 @@ final class EquipmentExportExcelTest extends AbstractWebTestCase
             $row = $data[$i];
             $type = (string) ($row[$typeIndex] ?? '');
             $this->assertSame(
-                'Gant (Gake)',
+                'Gant (Yugake)',
                 $type,
-                'Le type doit utiliser la valeur traduite par le translator (messages.fr.yaml: equipment.type.gake)'
+                'Le type doit utiliser la valeur traduite par le translator (messages.fr.yaml: equipment.type.yugake)'
             );
         }
     }

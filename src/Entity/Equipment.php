@@ -21,7 +21,6 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
 #[DiscriminatorColumn(name: 'equipment_type', type: 'string')]
 #[DiscriminatorMap([
     'azuchi' => Azuchi::class,
-    'gake' => Gake::class,
     'makiwara' => Makiwara::class,
     'maku' => Maku::class,
     'muneate' => Muneate::class,
@@ -29,6 +28,7 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
     'support_makiwara' => SupportMakiwara::class,
     'tsuru' => Tsuru::class,
     'yatate' => Yatate::class,
+    'yugake' => Yugake::class,
     'yumi' => Yumi::class,
     'yumitate' => Yumitate::class,
 ])]

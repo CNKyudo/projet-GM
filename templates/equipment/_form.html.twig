@@ -154,27 +154,27 @@
         {% endif %}
       </div>
 
-      <div id="gake_form_section" data-equipment-form-section="gake"
-        {% if (form.equipment_type is defined and form.equipment_type.vars.value != 'gake') or form.gake_form is not defined %}
+      <div id="yugake_form_section" data-equipment-form-section="yugake"
+        {% if (form.equipment_type is defined and form.equipment_type.vars.value != 'yugake') or form.yugake_form is not defined %}
             class="hidden"
         {% endif %}
       >
-        {% if form.gake_form is defined %}
+        {% if form.yugake_form is defined %}
           <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
-            {{ form.gake_form.nb_fingers.vars.label|default('Nombre de doigts') }}
+            {{ form.yugake_form.nb_fingers.vars.label|default('Nombre de doigts') }}
           </label>
-          {{ form_widget(form.gake_form.nb_fingers, {
+          {{ form_widget(form.yugake_form.nb_fingers, {
             attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
           }) }}
-          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.gake_form.nb_fingers) }}</div>
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.yugake_form.nb_fingers) }}</div>
 
           <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
-            {{ form.gake_form.size.vars.label|default('Taille') }}
+            {{ form.yugake_form.size.vars.label|default('Taille') }}
           </label>
-          {{ form_widget(form.gake_form.size, {
+          {{ form_widget(form.yugake_form.size, {
             attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
           }) }}
-          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.gake_form.size) }}</div>
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.yugake_form.size) }}</div>
         {% endif %}
       </div>
 
@@ -353,20 +353,20 @@
           <div class="mt-1 text-sm text-red-600">{{ form_errors(form.tsuru_form.tsuruLength) }}</div>
 
           <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
-            {{ form.tsuru_form.strengthMin.vars.label|default('Force min') }}
+            {{ form.tsuru_form.strength_min.vars.label|default('Force min') }}
           </label>
-          {{ form_widget(form.tsuru_form.strengthMin, {
+          {{ form_widget(form.tsuru_form.strength_min, {
             attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
           }) }}
-          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.tsuru_form.strengthMin) }}</div>
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.tsuru_form.strength_min) }}</div>
 
           <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
-            {{ form.tsuru_form.strengthMax.vars.label|default('Force min') }}
+            {{ form.tsuru_form.strength_max.vars.label|default('Force max') }}
           </label>
-          {{ form_widget(form.tsuru_form.strengthMax, {
+          {{ form_widget(form.tsuru_form.strength_max, {
             attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
           }) }}
-          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.tsuru_form.strengthMax) }}</div>
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.tsuru_form.strength_max) }}</div>
 
           <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
             {{ form.tsuru_form.quantity.vars.label|default('Quantité') }}

@@ -9,7 +9,6 @@ use App\Entity\ClubMember;
 use App\Entity\Equipment;
 use App\Entity\Azuchi;
 use App\Entity\Federation;
-use App\Entity\Gake;
 use App\Entity\Makiwara;
 use App\Entity\Maku;
 use App\Entity\Muneate;
@@ -19,6 +18,7 @@ use App\Entity\SupportMakiwara;
 use App\Entity\Tsuru;
 use App\Entity\User;
 use App\Entity\Yatate;
+use App\Entity\Yugake;
 use App\Entity\Yumi;
 use App\Entity\Yumitate;
 use App\Enum\EquipmentState;
@@ -100,9 +100,6 @@ class EquipmentFormType extends AbstractType
                     ->add('azuchi_form', AzuchiFormType::class, [
                         'disabled' => true,
                     ])
-                    ->add('gake_form', GakeFormType::class, [
-                        'disabled' => true,
-                    ])
                     ->add('makiwara_form', MakiwaraFormType::class, [
                         'disabled' => true,
                     ])
@@ -124,6 +121,9 @@ class EquipmentFormType extends AbstractType
                     ->add('yatate_form', YatateFormType::class, [
                         'disabled' => true,
                     ])
+                    ->add('yugake_form', YugakeFormType::class, [
+                        'disabled' => true,
+                    ])
                     ->add('yumi_form', YumiFormType::class, [
                         'disabled' => true,
                     ])
@@ -140,8 +140,6 @@ class EquipmentFormType extends AbstractType
 
                 if ($data instanceof Azuchi) {
                     $form->add('azuchi_form', AzuchiFormType::class);
-                } elseif ($data instanceof Gake) {
-                    $form->add('gake_form', GakeFormType::class);
                 } elseif ($data instanceof Makiwara) {
                     $form->add('makiwara_form', MakiwaraFormType::class);
                 } elseif ($data instanceof Maku) {
@@ -156,6 +154,8 @@ class EquipmentFormType extends AbstractType
                     $form->add('tsuru_form', TsuruFormType::class);
                 } elseif ($data instanceof Yatate) {
                     $form->add('yatate_form', YatateFormType::class);
+                } elseif ($data instanceof Yugake) {
+                    $form->add('gake_form', YugakeFormType::class);
                 } elseif ($data instanceof Yumi) {
                     $form->add('yumi_form', YumiFormType::class);
                 } elseif ($data instanceof Yumitate) {
@@ -177,8 +177,8 @@ class EquipmentFormType extends AbstractType
             $form->add('azuchi_form', AzuchiFormType::class, [
                 'disabled' => $submittedType !== EquipmentType::AZUCHI->value,
             ]);
-            $form->add('gake_form', GakeFormType::class, [
-                'disabled' => $submittedType !== EquipmentType::GAKE->value,
+            $form->add('yugake_form', YugakeFormType::class, [
+                'disabled' => $submittedType !== EquipmentType::YUGAKE->value,
             ]);
             $form->add('makiwara_form', MakiwaraFormType::class, [
                 'disabled' => $submittedType !== EquipmentType::MAKIWARA->value,

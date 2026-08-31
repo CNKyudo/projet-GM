@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\Equipment;
 use App\Entity\Azuchi;
-use App\Entity\Gake;
+use App\Entity\Equipment;
 use App\Entity\Makiwara;
 use App\Entity\Maku;
 use App\Entity\Muneate;
@@ -14,6 +13,7 @@ use App\Entity\Shitagake;
 use App\Entity\SupportMakiwara;
 use App\Entity\Tsuru;
 use App\Entity\Yatate;
+use App\Entity\Yugake;
 use App\Entity\Yumi;
 use App\Entity\Yumitate;
 use App\Enum\EquipmentLevel;
@@ -131,8 +131,8 @@ final readonly class EquipmentExportService
             'Force (kg)',         // Yumi
             'Longueur arc',       // Yumi
             'Taille (tsuru)',     // Tsuru
-            'Nb doigts',          // Gake, Shitagake
-            'Taille',             // Gake, Muneate, Shitagake
+            'Nb doigts',          // Yugake, Shitagake
+            'Taille',             // Yugake, Muneate, Shitagake
             'Hauteur (cm)',       // SupportMakiwara, Maku
             'Nb arcs',            // Yumitate
             'Orientation',        // Yumitate
@@ -278,7 +278,7 @@ final readonly class EquipmentExportService
 
     private function extractNbFingers(Equipment $equipment): string
     {
-        if ($equipment instanceof Gake) {
+        if ($equipment instanceof Yugake) {
             return (string) ($equipment->getNbFingers() ?? '');
         }
 
@@ -291,7 +291,7 @@ final readonly class EquipmentExportService
 
     private function extractSize(Equipment $equipment): string
     {
-        if ($equipment instanceof Gake) {
+        if ($equipment instanceof Yugake) {
             return $equipment->getSize() ?? '';
         }
 

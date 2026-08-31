@@ -49,13 +49,9 @@ function normalizeEquipmentType(selectElement) {
     if (normalizedCandidates.some(function (value) { return value.includes('azuchi') })) {
         return 'azuchi'
     }
-    // Gake doit être testé avant Shitagake, car "shitagake" contient "gake".
     if (normalizedCandidates.some(function (value) { return value.includes('shitagake') })) {
         return 'shitagake'
     }    
-    if (normalizedCandidates.some(function (value) { return value.includes('gake') })) {
-        return 'gake'
-    }
     if (normalizedCandidates.some(function (value) { return value.includes('makiwara') })) {
         return 'makiwara'
     }
@@ -74,6 +70,9 @@ function normalizeEquipmentType(selectElement) {
     if (normalizedCandidates.some(function (value) { return value.includes('yatate') })) {
         return 'yatate'
     }
+        if (normalizedCandidates.some(function (value) { return value.includes('yugake') })) {
+        return 'yugake'
+    }
     // Yumi doit être testé avant Yumitate, car "yumitate" contient "yumi".
     if (normalizedCandidates.some(function (value) { return value.includes('yumitate') })) {
         return 'yumitate'
@@ -88,7 +87,6 @@ function normalizeEquipmentType(selectElement) {
 
 function updateEquipmentSections(selectElement, 
         azuchiSection, 
-        gakeSection, 
         makiwaraSection, 
         makuSection, 
         muneateSection,
@@ -96,13 +94,13 @@ function updateEquipmentSections(selectElement,
         supportMakiwaraSection,
         tsuruSection,
         yatateSection, 
+        yugakeSection, 
         yumiSection, 
         yumitateSection
     ) {
     var equipmentType = normalizeEquipmentType(selectElement)
     var sections = {
         azuchi: azuchiSection,
-        gake: gakeSection,
         makiwara: makiwaraSection,
         maku: makuSection,
         muneate: muneateSection,
@@ -110,6 +108,7 @@ function updateEquipmentSections(selectElement,
         support_makiwara: supportMakiwaraSection,
         tsuru: tsuruSection,
         yatate: yatateSection,
+        yugake: yugakeSection,
         yumi: yumiSection,
         yumitate: yumitateSection
     }
@@ -191,8 +190,6 @@ function initEquipmentForm(root) {
 
     const azuchiFormSection = root.querySelector('[data-equipment-form-section="azuchi"]')
         || root.querySelector('#azuchi_form_section')
-    const gakeFormSection = root.querySelector('[data-equipment-form-section="gake"]')
-        || root.querySelector('#gake_form_section')
     const makiwaraFormSection = root.querySelector('[data-equipment-form-section="makiwara"]')
         || root.querySelector('#makiwara_form_section')
     const makuFormSection = root.querySelector('[data-equipment-form-section="maku"]')
@@ -207,6 +204,8 @@ function initEquipmentForm(root) {
         || root.querySelector('#tsuru_form_section')
     const yatateFormSection = root.querySelector('[data-equipment-form-section="yatate"]')
         || root.querySelector('#yatate_form_section')
+    const yugakeFormSection = root.querySelector('[data-equipment-form-section="yugake"]')
+        || root.querySelector('#yugake_form_section')
     const yumiFormSection = root.querySelector('[data-equipment-form-section="yumi"]')
         || root.querySelector('#yumi_form_section')
     const yumitateFormSection = root.querySelector('[data-equipment-form-section="yumitate"]')
@@ -215,7 +214,6 @@ function initEquipmentForm(root) {
         updateEquipmentSections(
             equipmentType,
             azuchiFormSection,
-            gakeFormSection,
             makiwaraFormSection,
             makuFormSection,
             muneateFormSection,
@@ -223,6 +221,7 @@ function initEquipmentForm(root) {
             supportMakiwaraFormSection,
             tsuruFormSection,
             yatateFormSection,
+            yugakeFormSection,
             yumiFormSection,
             yumitateFormSection
         )

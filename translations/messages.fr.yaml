@@ -1,7 +1,6 @@
 equipment:
   type:
     azuchi: "Azuchi"
-    gake: "Gant (Gake)"
     makiwara: "Makiwara"
     maku: "Maku"
     muneate: "Muneate"
@@ -9,7 +8,8 @@ equipment:
     support_makiwara: "Support makiwara"
     tsuru: "Tsuru"
     yatate: "Yatate"
-    yumi: "Arc (Yumi)"
+    yugake: "Yugake"
+    yumi: "Yumi"
     yumitate: "Yumitate"
   choose_type: "Choisir un type..."
   added: "{type} ajouté !"
