@@ -212,8 +212,8 @@ function initEquipmentForm(root) {
         || root.querySelector('#yumitate_form_section')
     const refreshSections = function () {
         updateEquipmentSections(
-            azuchiFormSection,
             equipmentType,
+            azuchiFormSection,
             makiwaraFormSection,
             makuFormSection,
             muneateFormSection,
