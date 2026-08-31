@@ -7,7 +7,7 @@ namespace App\DataFixtures;
 use App\Entity\Club;
 use App\Entity\ClubMember;
 use App\Entity\Federation;
-use App\Entity\Gake;
+use App\Entity\Yugake;
 use App\Entity\Region;
 use App\Entity\User;
 use App\Entity\Yumi;
@@ -70,7 +70,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
  *     - Kyudo Toulouse           (Club O)
  *
  * Équipements (19) :
- *   Gants (Gake) :
+ *   Gants (Yugake) :
  *     - 3 × niveau CLUB (clubs A, B, C)
  *     - 1 × niveau CLUB avec emprunteur club (Club G → Rennes)
  *     - 1 × niveau REGIONAL (Région A) disponible
@@ -446,86 +446,86 @@ class AppFixtures extends Fixture
         $manager->persist($memberLyon2);
 
         // ────────────────────────────────────────────────────────────────────
-        // Équipements — Gants (Gake)
+        // Équipements — Gants (Yugake)
         // ────────────────────────────────────────────────────────────────────
 
         // CLUB — Club A (Paris Marais)
-        $gakeA1 = new Gake()
+        $yugakeA1 = new Yugake()
             ->setOwnerClub($clubA)
             ->setNbFingers(3)
             ->setSize('8');
-        $manager->persist($gakeA1);
+        $manager->persist($yugakeA1);
 
-        $gakeA2 = new Gake()
+        $yugakeA2 = new Yugake()
             ->setOwnerClub($clubA)
             ->setNbFingers(3)
             ->setSize('7');
-        $manager->persist($gakeA2);
+        $manager->persist($yugakeA2);
 
         // CLUB — Club B (Lyon) — avec emprunteur club (Vincennes emprunte à Lyon)
-        $gakeB = new Gake()
+        $yugakeB = new Yugake()
             ->setOwnerClub($clubB)
             ->setNbFingers(3)
             ->setSize('9')
             ->setBorrowerClub($clubC);
-        $manager->persist($gakeB);
+        $manager->persist($yugakeB);
 
         // CLUB — Club C (Vincennes)
-        $gakeC = new Gake()
+        $yugakeC = new Yugake()
             ->setOwnerClub($clubC)
             ->setNbFingers(3)
             ->setSize('6');
-        $manager->persist($gakeC);
+        $manager->persist($yugakeC);
 
         // CLUB — Club G (Rennes)
-        $gakeG = new Gake()
+        $yugakeG = new Yugake()
             ->setOwnerClub($clubG)
             ->setNbFingers(4)
             ->setSize('L');
-        $manager->persist($gakeG);
+        $manager->persist($yugakeG);
 
         // REGIONAL — Région A (Ile de France)
-        $gakeRegA = new Gake()
+        $yugakeRegA = new Yugake()
             ->setOwnerRegion($regionA)
             ->setEquipmentLevel(EquipmentLevel::REGIONAL)
             ->setNbFingers(3)
             ->setSize('8');
-        $manager->persist($gakeRegA);
+        $manager->persist($yugakeRegA);
 
         // REGIONAL — Région C (Arc Atlantique)
-        $gakeRegC = new Gake()
+        $yugakeRegC = new Yugake()
             ->setOwnerRegion($regionC)
             ->setEquipmentLevel(EquipmentLevel::REGIONAL)
             ->setNbFingers(3)
             ->setSize('7');
-        $manager->persist($gakeRegC);
+        $manager->persist($yugakeRegC);
 
         // NATIONAL
-        $gakeNat = new Gake()
+        $yugakeNat = new Yugake()
             ->setOwnerFederation($federation)
             ->setEquipmentLevel(EquipmentLevel::NATIONAL)
             ->setNbFingers(5)
             ->setSize('10');
-        $manager->persist($gakeNat);
+        $manager->persist($yugakeNat);
 
         // NATIONAL — emprunté (pour tester la restriction "dispo seulement" des rôles < CN)
-        $gakeNatBorrowed = new Gake()
+        $yugakeNatBorrowed = new Yugake()
             ->setOwnerFederation($federation)
             ->setEquipmentLevel(EquipmentLevel::NATIONAL)
             ->setNbFingers(3)
             ->setSize('8')
             ->setBorrowerMember($memberLinked);
-        $manager->persist($gakeNatBorrowed);
+        $manager->persist($yugakeNatBorrowed);
 
         // REGIONAL — Région A (Ile de France) — emprunté
         // (pour tester la restriction "dispo seulement" de MEMBER / PRESIDENT / MANAGER_CLUB)
-        $gakeRegABorrowed = new Gake()
+        $yugakeRegABorrowed = new Yugake()
             ->setOwnerRegion($regionA)
             ->setEquipmentLevel(EquipmentLevel::REGIONAL)
             ->setNbFingers(4)
             ->setSize('7')
             ->setBorrowerClub($clubA);
-        $manager->persist($gakeRegABorrowed);
+        $manager->persist($yugakeRegABorrowed);
 
         // ────────────────────────────────────────────────────────────────────
         // Équipements — Arcs (Yumi)

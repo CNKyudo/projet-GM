@@ -5,19 +5,19 @@ declare(strict_types=1);
 namespace App\Service\Equipment\SearchStrategy;
 
 use App\Enum\EquipmentType;
-use App\Repository\GakeRepository;
+use App\Repository\YugakeRepository;
 use Doctrine\ORM\QueryBuilder;
 
-final class GakeSearchStrategy extends AbstractSearchStrategy
+final class YugakeSearchStrategy extends AbstractSearchStrategy
 {
     public function __construct(
-        private readonly GakeRepository $gakeRepository,
+        private readonly YugakeRepository $yugakeRepository,
     ) {
     }
 
     protected function createBaseQueryBuilder(): QueryBuilder
     {
-        return $this->gakeRepository->createQueryBuilder('g')
+        return $this->yugakeRepository->createQueryBuilder('g')
             ->leftJoin('g.ownerClub', 'owner')->addSelect('owner')
             ->leftJoin('g.borrowerClub', 'borrower')->addSelect('borrower')
             ->leftJoin('g.ownerRegion', 'ownerRegion')->addSelect('ownerRegion')
@@ -41,6 +41,6 @@ final class GakeSearchStrategy extends AbstractSearchStrategy
 
     public function getEquipmentType(): EquipmentType
     {
-        return EquipmentType::GAKE;
+        return EquipmentType::YUGAKE;
     }
 }

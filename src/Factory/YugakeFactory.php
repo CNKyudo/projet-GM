@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Factory;
 
-use App\Entity\Gake;
+use App\Entity\Yugake;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**
- * @extends PersistentProxyObjectFactory<Gake>
+ * @extends PersistentProxyObjectFactory<Yugake>
  */
-final class GakeFactory extends PersistentProxyObjectFactory
+final class YugakeFactory extends PersistentProxyObjectFactory
 {
     public static function class(): string
     {
-        return Gake::class;
+        return Yugake::class;
     }
 
     /**

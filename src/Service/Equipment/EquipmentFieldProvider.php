@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\Equipment;
 
-use App\Entity\Etafoam;
-use App\Entity\Gake;
+use App\Entity\Azuchi;
 use App\Entity\Makiwara;
 use App\Entity\Maku;
 use App\Entity\Muneate;
@@ -13,6 +12,7 @@ use App\Entity\Shitagake;
 use App\Entity\SupportMakiwara;
 use App\Entity\Tsuru;
 use App\Entity\Yatate;
+use App\Entity\Yugake;
 use App\Entity\Yumi;
 use App\Entity\Yumitate;
 use App\Entity\Equipment;
@@ -25,9 +25,7 @@ class EquipmentFieldProvider
     public function getFields(Equipment $equipment): array
     {
         return match (true) {
-            $equipment instanceof Etafoam => [
-                // return match ($equipment->getTypeName()) {
-                // 'etafoam' => [
+            $equipment instanceof Azuchi => [
                 [
                     'label' => 'Longueur (cm)',
                     'value' => $equipment->getEquipmentLength(),
@@ -42,7 +40,7 @@ class EquipmentFieldProvider
                 ],
             ],
 
-            $equipment instanceof Gake => [
+            $equipment instanceof Yugake => [
                 [
                     'label' => 'Doigts',
                     'value' => $equipment->getNbFingers(),

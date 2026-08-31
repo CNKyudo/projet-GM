@@ -6,9 +6,8 @@ namespace App\Controller;
 
 use App\Entity\ClubMember;
 use App\Entity\Equipment;
-use App\Entity\Azuchi;
 use App\Entity\Federation;
-use App\Entity\Gake;
+use App\Entity\Azuchi;
 use App\Entity\Makiwara;
 use App\Entity\Maku;
 use App\Entity\Muneate;
@@ -18,6 +17,7 @@ use App\Entity\SupportMakiwara;
 use App\Entity\Tsuru;
 use App\Entity\User;
 use App\Entity\Yatate;
+use App\Entity\Yugake;
 use App\Entity\Yumi;
 use App\Entity\Yumitate;
 use App\Enum\EquipmentLevel;
@@ -221,7 +221,6 @@ final class EquipmentController extends AbstractController
 
             $equipment = match ($type) {
                 EquipmentType::AZUCHI => new Azuchi(),
-                EquipmentType::GAKE => new Gake(),
                 EquipmentType::MAKIWARA => new Makiwara(),
                 EquipmentType::MAKU => new Maku(),
                 EquipmentType::MUNEATE => new Muneate(),
@@ -229,6 +228,7 @@ final class EquipmentController extends AbstractController
                 EquipmentType::SUPPORT_MAKIWARA => new SupportMakiwara(),
                 EquipmentType::TSURU => new Tsuru(),
                 EquipmentType::YATATE => new Yatate(),
+                EquipmentType::YUGAKE => new Yugake(),
                 EquipmentType::YUMI => new Yumi(),
                 EquipmentType::YUMITATE => new Yumitate(),
             };
@@ -271,10 +271,10 @@ final class EquipmentController extends AbstractController
                 $equipment->setQuantity($azuchiForm->get('quantity')->getData());
             }
 
-            if ($equipment instanceof Gake && $form->has('gake_form')) {
-                $gakeForm = $form->get('gake_form');
-                $equipment->setNbFingers($gakeForm->get('nb_fingers')->getData());
-                $equipment->setSize($gakeForm->get('size')->getData());
+            if ($equipment instanceof Yugake && $form->has('yugake_form')) {
+                $yugakeForm = $form->get('yugake_form');
+                $equipment->setNbFingers($yugakeForm->get('nb_fingers')->getData());
+                $equipment->setSize($yugakeForm->get('size')->getData());
             }
 
             if ($equipment instanceof Makiwara && $form->has('makiwara_form')) {
