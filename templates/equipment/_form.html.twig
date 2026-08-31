@@ -353,20 +353,20 @@
           <div class="mt-1 text-sm text-red-600">{{ form_errors(form.tsuru_form.tsuruLength) }}</div>
 
           <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
-            {{ form.tsuru_form.strengthMin.vars.label|default('Force min') }}
+            {{ form.tsuru_form.strength_min.vars.label|default('Force min') }}
           </label>
-          {{ form_widget(form.tsuru_form.strengthMin, {
+          {{ form_widget(form.tsuru_form.strength_min, {
             attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
           }) }}
-          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.tsuru_form.strengthMin) }}</div>
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.tsuru_form.strength_min) }}</div>
 
           <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
-            {{ form.tsuru_form.strengthMax.vars.label|default('Force min') }}
+            {{ form.tsuru_form.strength_max.vars.label|default('Force max') }}
           </label>
-          {{ form_widget(form.tsuru_form.strengthMax, {
+          {{ form_widget(form.tsuru_form.strength_max, {
             attr: { class: 'w-full rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-white px-4 py-2.5 shadow-sm outline-none focus:ring-2 focus:ring-kyudo-washed-blue' }
           }) }}
-          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.tsuru_form.strengthMax) }}</div>
+          <div class="mt-1 text-sm text-red-600">{{ form_errors(form.tsuru_form.strength_max) }}</div>
 
           <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
             {{ form.tsuru_form.quantity.vars.label|default('Quantité') }}
