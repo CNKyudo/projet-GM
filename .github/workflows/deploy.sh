@@ -39,12 +39,20 @@ composer install --no-dev --classmap-authoritative --no-interaction --prefer-dis
 
 echo "Permission management..."
 
-# Donner les droits de lecture/écriture/exécution (rwX) à www-data
-setfacl -R -m u:www-data:rwX "$RELEASE_DIR/var/cache" "$RELEASE_DIR/var/log"
-# Définir les ACL par défaut 
-setfacl -dR -m u:www-data:rwX "$RELEASE_DIR/var/cache" "$RELEASE_DIR/var/log"
+# PHP-FPM tourne sous l'utilisateur système du projet (gm_user), pas
+# www-data (cf. roles/php_fpm dans vps-ansible) — les deux doivent donc
+# pouvoir écrire dans var/cache et var/log : www-data pour Nginx/PHP-FPM,
+# $DEPLOY_USER (l'utilisateur courant de ce script, propriétaire du dossier)
+# pour que les prochains déploiements/commandes console puissent aussi
+# écrire par-dessus ce qu'un précédent process aura créé.
+DEPLOY_USER="$(id -un)"
 
-echo "✅ ACL configurées pour www-data sur var/cache et var/log"
+# Donner les droits de lecture/écriture/exécution (rwX) à www-data et à l'utilisateur de déploiement
+setfacl -R -m u:www-data:rwX -m "u:$DEPLOY_USER:rwX" "$RELEASE_DIR/var/cache" "$RELEASE_DIR/var/log"
+# Définir les ACL par défaut
+setfacl -dR -m u:www-data:rwX -m "u:$DEPLOY_USER:rwX" "$RELEASE_DIR/var/cache" "$RELEASE_DIR/var/log"
+
+echo "✅ ACL configurées pour www-data et $DEPLOY_USER sur var/cache et var/log"
 
 php bin/console cache:clear --env=prod
 php bin/console importmap:install --env=prod
