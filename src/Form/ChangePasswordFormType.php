@@ -23,17 +23,6 @@ class ChangePasswordFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('currentPassword', PasswordType::class, [
-                'mapped' => false,
-                'label' => 'Mot de passe actuel',
-                'constraints' => [
-                    new NotBlank(message: 'Veuillez saisir votre mot de passe actuel'),
-                    new UserPassword(message: 'Le mot de passe actuel est incorrect'),
-                ],
-                'attr' => [
-                    'autocomplete' => 'current-password',
-                ],
-            ])
             ->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
                 'options' => [
@@ -52,10 +41,10 @@ class ChangePasswordFormType extends AbstractType
                         new PasswordStrength(),
                         new NotCompromisedPassword(),
                     ],
-                    'label' => 'Nouveau mode de passe',
+                    'label' => 'Nouveau mot de passe',
                 ],
                 'second_options' => [
-                    'label' => 'Confirmez votre mode de passe',
+                    'label' => 'Confirmez votre mot de passe',
                 ],
                 'invalid_message' => 'Les 2 mots de passe entrés doivent correspondre',
                 // Instead of being set onto the object directly,
