@@ -13,27 +13,15 @@ use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotCompromisedPassword;
 use Symfony\Component\Validator\Constraints\PasswordStrength;
-use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
 
 /**
  * @extends AbstractType<mixed>
  */
-class ChangePasswordFormType extends AbstractType
+class ResetPasswordFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('currentPassword', PasswordType::class, [
-                'mapped' => false,
-                'label' => 'Mot de passe actuel',
-                'constraints' => [
-                    new NotBlank(message: 'Veuillez saisir votre mot de passe actuel'),
-                    new UserPassword(message: 'Le mot de passe actuel est incorrect'),
-                ],
-                'attr' => [
-                    'autocomplete' => 'current-password',
-                ],
-            ])
             ->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
                 'options' => [
@@ -43,7 +31,7 @@ class ChangePasswordFormType extends AbstractType
                 ],
                 'first_options' => [
                     'constraints' => [
-                        new NotBlank(message: 'Entrez un mode de passe'),
+                        new NotBlank(message: 'Entrez un mot de passe'),
                         new Length(
                             min: 12,
                             max: 4096,
