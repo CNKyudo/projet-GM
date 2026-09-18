@@ -42,23 +42,44 @@
                                 } only %}
 						{% endif %}
 
-						<div>
-							<label for="{{ resetForm.plainPassword.vars.id }}" class="mb-1 block text-sm font-medium text-kyudo-gm-grey">
-								{{ resetForm.plainPassword.vars.label|default('Nouveau mot de passe') }}
-							</label>
-							{{ form_widget(resetForm.plainPassword, {
-                                    attr: {
-                                        class: resetForm.plainPassword.vars.errors|length ? invalidFieldClass : defaultFieldClass
-                                    }
-                                }) }}
-							{% if resetForm.plainPassword.vars.errors|length %}
-								{% include 'partials/_alert.html.twig' with {
-                                        type: 'error',
-                                        label: 'Champ invalide',
-                                        errors: resetForm.plainPassword.vars.errors,
-                                        class: 'mt-3'
-                                    } only %}
-							{% endif %}
+						<div class="space-y-5">
+							<div>
+								<label for="{{ resetForm.plainPassword.first.vars.id }}" class="mb-1 block text-sm font-medium text-kyudo-gm-grey">
+									{{ resetForm.plainPassword.first.vars.label|default('Nouveau mot de passe') }}
+								</label>
+								{{ form_widget(resetForm.plainPassword.first, {
+                                        attr: {
+                                            class: (resetForm.plainPassword.first.vars.errors|length or resetForm.plainPassword.vars.errors|length) ? invalidFieldClass : defaultFieldClass
+                                        }
+                                    }) }}
+								{% if resetForm.plainPassword.first.vars.errors|length %}
+									{% include 'partials/_alert.html.twig' with {
+                                            type: 'error',
+                                            label: 'Champ invalide',
+                                            errors: resetForm.plainPassword.first.vars.errors,
+                                            class: 'mt-3'
+                                        } only %}
+								{% endif %}
+							</div>
+
+							<div>
+								<label for="{{ resetForm.plainPassword.second.vars.id }}" class="mb-1 block text-sm font-medium text-kyudo-gm-grey">
+									{{ resetForm.plainPassword.second.vars.label|default('Confirmation du mot de passe') }}
+								</label>
+								{{ form_widget(resetForm.plainPassword.second, {
+                                        attr: {
+                                            class: (resetForm.plainPassword.second.vars.errors|length or resetForm.plainPassword.vars.errors|length) ? invalidFieldClass : defaultFieldClass
+                                        }
+                                    }) }}
+								{% if resetForm.plainPassword.second.vars.errors|length %}
+									{% include 'partials/_alert.html.twig' with {
+                                            type: 'error',
+                                            label: 'Champ invalide',
+                                            errors: resetForm.plainPassword.second.vars.errors,
+                                            class: 'mt-3'
+                                        } only %}
+								{% endif %}
+							</div>
 						</div>
 
 						<div class="mt-6 flex flex-col gap-3">
