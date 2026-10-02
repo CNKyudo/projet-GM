@@ -304,6 +304,12 @@
                     Disponible
                   </span>
                 {% endif %}
+
+                {% if equipment.isAvailableForLoan %}
+                  <span class="ml-2 inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-800">
+                    Prêt interclub autorisé
+                  </span>
+                {% endif %}
               </dd>
             </div>
           </dl>
@@ -413,6 +419,7 @@
                         'equipmentLength': 'log_entry.field.equipment_length',
                         'equipmentLevel': 'log_entry.field.equipment_level',
                         'height': 'log_entry.field.height',
+                        'isAvailableForLoan': 'log_entry.field.is_available_for_loan',
                         'material': 'log_entry.field.material',
                         'nb_arrows': 'log_entry.field.nb_arrows',
                         'nb_bows': 'log_entry.field.nb_bows',

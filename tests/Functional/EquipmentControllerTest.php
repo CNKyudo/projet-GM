@@ -836,7 +836,7 @@ final class EquipmentControllerTest extends AbstractWebTestCase
                 'ownerClub'      => (string) $clubA->getId(),
                 'borrowerClub'   => '',
                 'borrowerMember' => '',
-                'gake_form'     => ['nb_fingers' => '3', 'size' => '7'],
+                'yugake_form'   => ['nb_fingers' => '3', 'size' => '7'],
                 'yumi_form'      => ['material' => '', 'strength' => '', 'length' => ''],
             ],
         ]);
@@ -1007,10 +1007,11 @@ final class EquipmentControllerTest extends AbstractWebTestCase
 
         $this->client->request(Request::METHOD_POST, '/equipment/'.$this->yugakeAId.'/edit', [
             'equipment_form' => [
-                'ownerClub'       => (string) $yugake->getOwnerClub()->getId(),
-                'state'           => $yugake->getState()->value,
-                'borrowerClub'    => (string) $clubC->getId(),
-                'borrowerMember'  => '',
+                'ownerClub'           => (string) $yugake->getOwnerClub()->getId(),
+                'state'               => $yugake->getState()->value,
+                'borrowerClub'        => (string) $clubC->getId(),
+                'borrowerMember'      => '',
+                'isAvailableForLoan'  => '1',
                 'yugake_form'    => [
                     'nb_fingers' => (string) $yugake->getNbFingers(),
                     'size'       => (string) $yugake->getSize(),

@@ -82,6 +82,16 @@
         </div>
       </div>
 
+      <div class="sm:col-span-2">
+        <label class="inline-flex items-center gap-2 cursor-pointer">
+          {{ form_widget(form.isAvailableForLoan, {
+            attr: { class: 'rounded border-kyudo-gm-light-grey text-kyudo-blue shadow-sm focus:ring-kyudo-washed-blue' }
+          }) }}
+          <span class="text-sm font-medium text-kyudo-gm-dark">{{ 'equipment.is_available_for_loan.label'|trans({}, 'messages') }}</span>
+        </label>
+        <p class="mt-1 text-xs text-kyudo-gm-grey">{{ 'equipment.is_available_for_loan.help'|trans({}, 'messages') }}</p>
+      </div>
+
       <div>
         <label class="mb-1 block text-sm font-medium text-kyudo-gm-dark">
           {{ form.state.vars.label|trans({}, 'messages') }}

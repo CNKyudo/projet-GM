@@ -453,7 +453,8 @@ class AppFixtures extends Fixture
         $yugakeA1 = new Yugake()
             ->setOwnerClub($clubA)
             ->setNbFingers(3)
-            ->setSize('8');
+            ->setSize('8')
+            ->setIsAvailableForLoan(false);
         $manager->persist($yugakeA1);
 
         $yugakeA2 = new Yugake()
@@ -474,14 +475,16 @@ class AppFixtures extends Fixture
         $yugakeC = new Yugake()
             ->setOwnerClub($clubC)
             ->setNbFingers(3)
-            ->setSize('6');
+            ->setSize('6')
+            ->setIsAvailableForLoan(true);
         $manager->persist($yugakeC);
 
         // CLUB — Club G (Rennes)
         $yugakeG = new Yugake()
             ->setOwnerClub($clubG)
             ->setNbFingers(4)
-            ->setSize('L');
+            ->setSize('L')
+            ->setIsAvailableForLoan(true);
         $manager->persist($yugakeG);
 
         // REGIONAL — Région A (Ile de France)
@@ -568,7 +571,8 @@ class AppFixtures extends Fixture
             ->setOwnerClub($clubG)
             ->setMaterial('carbone')
             ->setStrength(13)
-            ->setYumiLength(YumiLength::NISUN_NOBI);
+            ->setYumiLength(YumiLength::NISUN_NOBI)
+            ->setIsAvailableForLoan(true);
         $manager->persist($yumiG);
 
         // REGIONAL — Région B (Auvergne Rhone Alpe)
