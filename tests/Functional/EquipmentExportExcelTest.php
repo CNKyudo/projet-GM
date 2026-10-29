@@ -189,14 +189,14 @@ final class EquipmentExportExcelTest extends AbstractWebTestCase
         $this->assertNotFalse($typeIndex);
         $counter = count($data);
 
-        // Vérifier que toutes les lignes (sauf header) sont de type "Gant (Yugake)"
+        // Vérifier que toutes les lignes (sauf header) sont de type "Yugake"
         for ($i = 1; $i < $counter; ++$i) {
             $row = $data[$i];
             if (!isset($row[$typeIndex]) || '' === $row[$typeIndex]) {
                 continue;
             }
 
-            $this->assertSame('Gant (Yugake)', (string) $row[$typeIndex], 'Toutes les lignes doivent être de type Gant (Yugake)');
+            $this->assertSame('Yugake', (string) $row[$typeIndex], 'Toutes les lignes doivent être de type Yugake');
         }
     }
 
@@ -356,7 +356,7 @@ final class EquipmentExportExcelTest extends AbstractWebTestCase
             $row = $data[$i];
             $type = (string) ($row[$typeIndex] ?? '');
             $this->assertSame(
-                'Gant (Yugake)',
+                'Yugake',
                 $type,
                 'Le type doit utiliser la valeur traduite par le translator (messages.fr.yaml: equipment.type.yugake)'
             );
