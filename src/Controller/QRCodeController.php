@@ -61,12 +61,15 @@ final class QRCodeController extends AbstractController
     }
 
     /**
-     * Route de SCAN : redirige vers la page de l'équipement associé.
-     * Accessible à tous les utilisateurs authentifiés.
+     * Route de SCAN : point d'entrée public du QR code physique.
+     * Accessible sans authentification (voir security.yaml) : affiche des informations
+     * limitées sur l'équipement. Si l'utilisateur est déjà authentifié et autorisé à voir
+     * l'équipement, il est redirigé directement vers la fiche complète.
      * IMPORTANT : cette route doit être déclarée AVANT les routes préfixées /qr-code/{uuid}/...
+     * et son chemin ne doit jamais changer (QR codes déjà imprimés et en circulation).
      */
     #[Route('/{uuid}', name: 'qr_code.scan', requirements: ['uuid' => '[0-9a-f\-]{36}'], methods: ['GET'], priority: 10)]
-    public function scan(string $uuid, QRCodeRepository $repository): \Symfony\Component\HttpFoundation\RedirectResponse
+    public function scan(string $uuid, QRCodeRepository $repository): Response
     {
         $qrCode = $repository->findByUuid($uuid);
 
@@ -74,8 +77,14 @@ final class QRCodeController extends AbstractController
             throw $this->createNotFoundException('QR code introuvable ou équipement supprimé.');
         }
 
-        return $this->redirectToRoute('equipment.show', [
-            'id' => $qrCode->getEquipment()->getId(),
+        $equipment = $qrCode->getEquipment();
+
+        if ($this->isGranted(UserPermissionVoter::VIEW_EQUIPMENT, $equipment)) {
+            return $this->redirectToRoute('equipment.show', ['id' => $equipment->getId()]);
+        }
+
+        return $this->render('qr_code/public_equipment.html.twig', [
+            'equipment' => $equipment,
         ]);
     }
 

@@ -189,14 +189,14 @@ final class EquipmentExportExcelTest extends AbstractWebTestCase
         $this->assertNotFalse($typeIndex);
         $counter = count($data);
 
-        // Vérifier que toutes les lignes (sauf header) sont de type "Yugake"
+        // Vérifier que toutes les lignes (sauf header) sont de type "Gant (Yugake)"
         for ($i = 1; $i < $counter; ++$i) {
             $row = $data[$i];
             if (!isset($row[$typeIndex]) || '' === $row[$typeIndex]) {
                 continue;
             }
 
-            $this->assertSame('Yugake', (string) $row[$typeIndex], 'Toutes les lignes doivent être de type Yugake');
+            $this->assertSame('Gant (Yugake)', (string) $row[$typeIndex], 'Toutes les lignes doivent être de type Gant (Yugake)');
         }
     }
 

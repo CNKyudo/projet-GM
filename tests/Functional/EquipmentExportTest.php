@@ -151,7 +151,7 @@ final class EquipmentExportTest extends AbstractWebTestCase
         $this->assertResponseIsSuccessful();
         $content = (string) $this->client->getResponse()->getContent();
 
-        // Tous les types dans un export filtré sur "yugake" doivent être "Yugake"
+        // Tous les types dans un export filtré sur "yugake" doivent être "Gant (Yugake)"
         $lines = $this->parseCsvLines($content);
         $headers = array_shift($lines);
         $this->assertNotNull($headers);
@@ -164,7 +164,7 @@ final class EquipmentExportTest extends AbstractWebTestCase
                 continue;
             }
 
-            $this->assertSame('Yugake', $line[$typeIndex], 'Toutes les lignes doivent être de type Yugake');
+            $this->assertSame('Gant (Yugake)', $line[$typeIndex], 'Toutes les lignes doivent être de type Gant (Yugake)');
         }
     }
 
@@ -325,7 +325,7 @@ final class EquipmentExportTest extends AbstractWebTestCase
             }
 
             $this->assertSame(
-                'Yugake',
+                'Gant (Yugake)',
                 $line[$typeIndex],
                 'Le type doit utiliser la valeur traduite par le translator (messages.fr.yaml: equipment.type.yugake)'
             );

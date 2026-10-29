@@ -94,4 +94,24 @@ final class QRCodeControllerTest extends AbstractWebTestCase
 
         $this->assertSame(200, $response->getStatusCode(), 'The SVG route should be accessible without authentication');
     }
+
+    public function testScanAccessibleWithoutAuthenticationShowsLimitedInfo(): void
+    {
+        // Ne PAS appeler loginAs() → accès anonyme
+        $this->client->request('GET', '/qr-code/'.$this->qrCodeUuid);
+
+        $response = $this->client->getResponse();
+
+        $this->assertSame(200, $response->getStatusCode(), 'The scan route should be accessible without authentication');
+        $this->assertStringContainsString('Se connecter pour plus de détails', (string) $response->getContent());
+    }
+
+    public function testScanRedirectsToFullEquipmentPageWhenAuthenticatedAndAuthorized(): void
+    {
+        $this->loginAs(AppFixtures::USER_MANAGER_CLUB);
+
+        $this->client->request('GET', '/qr-code/'.$this->qrCodeUuid);
+
+        $this->assertResponseRedirects();
+    }
 }
