@@ -300,7 +300,7 @@ final class EquipmentExportTest extends AbstractWebTestCase
 
     /**
      * Vérifie que le type dans le CSV utilise la valeur traduite par le translator
-     * (ex: "Gant (Yugake)" depuis messages.fr.yaml, pas "Gant" en dur).
+     * (ex: "Yugake" depuis messages.fr.yaml).
      */
     public function testExportTypeColumnUsesTranslator(): void
     {

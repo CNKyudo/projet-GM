@@ -356,7 +356,7 @@ final class EquipmentExportExcelTest extends AbstractWebTestCase
             $row = $data[$i];
             $type = (string) ($row[$typeIndex] ?? '');
             $this->assertSame(
-                'Gant (Yugake)',
+                'Yugake',
                 $type,
                 'Le type doit utiliser la valeur traduite par le translator (messages.fr.yaml: equipment.type.yugake)'
             );

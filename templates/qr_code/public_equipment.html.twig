@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Équipement{% endblock %}
+
+{% block body %}
+  <div class="h-screen-with-navbar bg-kyudo-equipment pt-16 pb-10 px-4 sm:px-6">
+    <div class="mx-auto max-w-2xl rounded-3xl bg-kyudo-white shadow-xl p-5 sm:p-8 md:p-12">
+
+      <div class="text-sm font-medium text-">Équipement</div>
+      <h1 class="mt-1 text-3xl font-semibold tracking-tight text-kyudo-gm-dark">
+        #{{ equipment.id }} - {{ equipment.type.label|trans }}
+      </h1>
+
+      <dl class="mt-6 grid gap-4 sm:grid-cols-2">
+        <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
+          <dt class="text-xs font-medium text-">Propriétaire</dt>
+          <dd class="mt-1 flex flex-wrap items-center">
+            {% set level = equipment.equipmentLevel.value %}
+            {% if level == 'national' %}
+              <span class="inline-flex items-center rounded-full bg-purple-100 px-2 py-0.5 text-xs font-semibold text-purple-800">National</span>
+              <span class="text-sm font-semibold text-kyudo-gm-dark">&nbsp;- {{ equipment.ownerFederation ? equipment.ownerFederation.name : '-' }}</span>
+            {% elseif level == 'regional' %}
+              <span class="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-800">Régional</span>
+              <span class="text-sm font-semibold text-kyudo-gm-dark">&nbsp;- {{ equipment.ownerRegion ? equipment.ownerRegion.name : '-' }}</span>
+            {% else %}
+              <span class="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-800">Club</span>
+              <span class="text-sm font-semibold text-kyudo-gm-dark">&nbsp;- {{ equipment.ownerClub ? equipment.ownerClub.name : '-' }}</span>
+            {% endif %}
+          </dd>
+        </div>
+
+        <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
+          <dt class="text-xs font-medium text-">{{ 'equipment.state.label'|trans }}</dt>
+          <dd class="mt-1">
+            <span class="inline-flex items-center rounded-full
+               {% if equipment.state.value == constant('App\\Enum\\EquipmentState::NEW').value %}
+                bg-emerald-50 text-emerald-800
+              {% elseif equipment.state.value == constant('App\\Enum\\EquipmentState::USED').value %}
+                bg-amber-50 text-amber-800
+              {% elseif equipment.state.value == constant('App\\Enum\\EquipmentState::TO_REPAIR').value %}
+                bg-red-100 text-red-900
+              {% endif %}
+              px-3 py-1 text-xs font-medium">
+              {{ ('equipment.state.' ~ equipment.state.value)|trans }}
+            </span>
+          </dd>
+        </div>
+
+        <div class="rounded-2xl bg-kyudo-gm-light-grey p-4 sm:col-span-2">
+          <dt class="text-xs font-medium text-">Disponibilité</dt>
+          <dd class="mt-2">
+            {% if equipment.borrowerClub or equipment.borrowerMember %}
+              <span class="rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-800">
+                Actuellement prêté
+              </span>
+            {% else %}
+              <span class="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-800">
+                Disponible
+              </span>
+            {% endif %}
+
+            {% if equipment.isAvailableForLoan %}
+              <span class="ml-2 inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-800">
+                Prêt interclub autorisé
+              </span>
+            {% endif %}
+          </dd>
+        </div>
+      </dl>
+
+      <div class="mt-8 rounded-2xl border border-kyudo-gm-light-grey bg-kyudo-washed-blue/10 p-5 text-center">
+        <p class="text-sm text-kyudo-gm-grey">
+          Connectez-vous pour consulter l'historique, l'emprunteur et les caractéristiques détaillées.
+        </p>
+        <a
+          href="{{ path('equipment.show', {'id': equipment.id}) }}"
+          class="mt-3 inline-flex items-center justify-center rounded-2xl bg-kyudo-blue px-5 py-2.5 font-medium text-(--color-kyudo-white) shadow-sm hover:bg-kyudo-royal-blue focus:outline-none focus:ring-2 focus:ring-kyudo-washed-blue"
+        >
+          Se connecter pour plus de détails
+        </a>
+      </div>
+
+    </div>
+  </div>
+{% endblock %}
